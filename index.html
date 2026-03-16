@@ -1,102 +1,179 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Happy Birthday Thùy 🎂</title>
+<title>Happy Birthday Thùy</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
 
 <style>
 
-body{
+*{
+box-sizing:border-box;
 margin:0;
-font-family:'Poppins',sans-serif;
+padding:0;
+}
+
+body{
+
+font-family:Poppins;
 background:linear-gradient(135deg,#ff9a9e,#fad0c4);
 height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-text-align:center;
-color:white;
 overflow:hidden;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+text-align:center;
+
 }
 
 .container{
+
 max-width:700px;
-padding:20px;
-}
+width:90%;
 
-h1{
-font-family:'Great Vibes';
-font-size:70px;
-margin-bottom:10px;
-}
-
-button{
-padding:12px 28px;
-border:none;
-border-radius:30px;
-background:white;
-color:#ff4d6d;
-font-weight:600;
-cursor:pointer;
-font-size:16px;
-transition:0.3s;
-}
-
-button:hover{
-transform:scale(1.1);
 }
 
 .hidden{
 display:none;
 }
 
-.cake{
-font-size:120px;
+h1{
+
+font-family:"Great Vibes";
+font-size:60px;
+margin-bottom:20px;
+
+}
+
+p{
+
+line-height:1.6;
+font-size:18px;
+
+}
+
+button{
+
+margin-top:25px;
+padding:12px 25px;
+border:none;
+border-radius:30px;
+font-size:16px;
 cursor:pointer;
+background:white;
+color:#ff4d6d;
+font-weight:600;
+transition:0.3s;
+
+}
+
+button:hover{
+
+transform:scale(1.1);
+
+}
+
+.cake{
+
+font-size:110px;
+cursor:pointer;
+
 }
 
 .candle{
-font-size:50px;
-}
 
-.message{
-font-size:18px;
-margin-top:20px;
-line-height:1.6;
-}
+font-size:40px;
 
-.gift{
-font-size:25px;
-margin-top:25px;
-color:#fff;
 }
 
 .heart{
+
 position:fixed;
-color:white;
 font-size:20px;
-animation:float 5s linear infinite;
+animation:float 6s linear infinite;
+
 }
 
 @keyframes float{
+
 0%{transform:translateY(100vh)}
 100%{transform:translateY(-10vh)}
+
 }
 
-.firework{
+.star{
+
+position:fixed;
+color:white;
+font-size:12px;
+opacity:0.8;
+animation:twinkle 2s infinite;
+
+}
+
+@keyframes twinkle{
+
+0%,100%{opacity:0.2}
+50%{opacity:1}
+
+}
+
+.fire{
+
 position:fixed;
 font-size:30px;
-animation:explode 1s ease-out forwards;
+animation:boom 1s forwards;
+
 }
 
-@keyframes explode{
+@keyframes boom{
+
 0%{transform:scale(0)}
 100%{transform:scale(2);opacity:0}
+
+}
+
+.gameArea{
+
+margin-top:30px;
+height:200px;
+border:2px dashed white;
+border-radius:20px;
+position:relative;
+
+}
+
+.catchHeart{
+
+position:absolute;
+font-size:30px;
+cursor:pointer;
+
+}
+
+.gift{
+
+font-size:22px;
+margin-top:20px;
+
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+h1{font-size:40px}
+
+p{font-size:16px}
+
+.cake{font-size:80px}
+
 }
 
 </style>
@@ -109,19 +186,24 @@ animation:explode 1s ease-out forwards;
 
 <div id="intro">
 
-<h1>Hey Thùy 🎂</h1>
+<h1>Hey Thùy</h1>
 
-<p>
-Có một cô gái sinh ngày <b>19/03/2009</b>.<br><br>
+<p id="typing"></p>
 
-Và cô gái đó…<br>
-lại vô tình quen một thằng IT hơi ngốc.<br><br>
+<button onclick="start()">Bắt đầu</button>
 
-Nhưng hôm nay<br>
-thằng đó muốn làm một điều nhỏ nhỏ cho em.
-</p>
+</div>
 
-<button onclick="start()">Bắt đầu bất ngờ ✨</button>
+
+<div id="game" class="hidden">
+
+<h1>Mini Game</h1>
+
+<p>Bắt 5 trái tim để tiếp tục ❤️</p>
+
+<div class="gameArea" id="gameArea"></div>
+
+<p id="score">0 / 5</p>
 
 </div>
 
@@ -130,9 +212,9 @@ thằng đó muốn làm một điều nhỏ nhỏ cho em.
 
 <h1>Happy Birthday Thùy</h1>
 
-<p>Hãy ước một điều rồi click vào bánh để thổi nến 🎂</p>
+<p>Ước điều gì đó rồi click bánh để thổi nến</p>
 
-<div onclick="blowCandle()">
+<div onclick="blow()">
 
 <div class="candle">🕯️ 🕯️ 🕯️</div>
 <div class="cake">🎂</div>
@@ -142,36 +224,35 @@ thằng đó muốn làm một điều nhỏ nhỏ cho em.
 </div>
 
 
-<div id="wishScene" class="hidden">
+<div id="message" class="hidden">
 
-<h1>🎉 Điều ước đã được gửi</h1>
+<h1>🎉</h1>
 
-<p class="message">
+<p>
 
-Anh biết hôm nay anh không ở bên em.<br><br>
+Anh biết hôm nay anh không ở cạnh em.<br><br>
 
-Nhưng anh vẫn muốn làm một thứ gì đó<br>
-để ngày sinh nhật này trở nên đặc biệt hơn một chút.<br><br>
+Nhưng anh vẫn muốn làm một thứ nhỏ nhỏ<br>
+để sinh nhật của em trở nên đặc biệt hơn.<br><br>
 
-Nếu em đang mỉm cười khi đọc đến đây<br>
-thì anh nghĩ mình đã thành công rồi.
+Nếu em đang mỉm cười lúc này<br>
+thì anh nghĩ mình đã làm đúng rồi.
 
 </p>
 
-<button onclick="openGift()">Mở quà 🎁</button>
+<button onclick="gift()">Mở quà</button>
 
 </div>
 
 
 <div id="giftScene" class="hidden">
 
-<h1>🎁 Một món quà nhỏ</h1>
+<h1>Một món quà nhỏ</h1>
 
-<p class="message">
+<p>
 
 Khi em xem phim,<br>
 hãy nhớ rằng<br>
-ở đâu đó<br>
 có một thằng IT<br>
 đang nghĩ về em.
 
@@ -179,9 +260,9 @@ có một thằng IT<br>
 
 <p class="gift">
 
-Netflix 1 Month 4K Code:<br><br>
+Netflix Code<br><br>
 
-<b>XXXX-XXXX-XXXX</b>
+<strong>XXXX-XXXX-XXXX</strong>
 
 </p>
 
@@ -192,15 +273,84 @@ Netflix 1 Month 4K Code:<br><br>
 
 <script>
 
+let text="Có một cô gái sinh ngày 19/03/2009. Và cô gái đó... lại vô tình quen một thằng sinh viên IT hơi ngốc. Nhưng hôm nay thằng đó muốn làm một điều nhỏ nhỏ cho em."
+
+let i=0
+
+function typing(){
+
+if(i<text.length){
+
+document.getElementById("typing").innerHTML+=text.charAt(i)
+
+i++
+
+setTimeout(typing,40)
+
+}
+
+}
+
+typing()
+
+
 function start(){
 
 document.getElementById("intro").classList.add("hidden")
-document.getElementById("cakeScene").classList.remove("hidden")
+
+document.getElementById("game").classList.remove("hidden")
+
+spawnHeart()
 
 }
 
 
-function blowCandle(){
+let score=0
+
+function spawnHeart(){
+
+let area=document.getElementById("gameArea")
+
+let h=document.createElement("div")
+
+h.className="catchHeart"
+
+h.innerHTML="💖"
+
+h.style.left=Math.random()*90+"%"
+
+h.style.top=Math.random()*80+"%"
+
+h.onclick=function(){
+
+score++
+
+document.getElementById("score").innerHTML=score+" / 5"
+
+h.remove()
+
+if(score>=5){
+
+document.getElementById("game").classList.add("hidden")
+
+document.getElementById("cakeScene").classList.remove("hidden")
+
+}
+
+else{
+
+spawnHeart()
+
+}
+
+}
+
+area.appendChild(h)
+
+}
+
+
+function blow(){
 
 document.querySelector(".candle").innerHTML="💨💨💨"
 
@@ -209,16 +359,18 @@ fireworks()
 setTimeout(()=>{
 
 document.getElementById("cakeScene").classList.add("hidden")
-document.getElementById("wishScene").classList.remove("hidden")
+
+document.getElementById("message").classList.remove("hidden")
 
 },2000)
 
 }
 
 
-function openGift(){
+function gift(){
 
-document.getElementById("wishScene").classList.add("hidden")
+document.getElementById("message").classList.add("hidden")
+
 document.getElementById("giftScene").classList.remove("hidden")
 
 }
@@ -226,19 +378,21 @@ document.getElementById("giftScene").classList.remove("hidden")
 
 function fireworks(){
 
-for(let i=0;i<25;i++){
+for(let i=0;i<30;i++){
 
-let fw=document.createElement("div")
+let f=document.createElement("div")
 
-fw.className="firework"
-fw.innerHTML="✨"
+f.className="fire"
 
-fw.style.left=Math.random()*100+"vw"
-fw.style.top=Math.random()*100+"vh"
+f.innerHTML="✨"
 
-document.body.appendChild(fw)
+f.style.left=Math.random()*100+"vw"
 
-setTimeout(()=>fw.remove(),1000)
+f.style.top=Math.random()*100+"vh"
+
+document.body.appendChild(f)
+
+setTimeout(()=>f.remove(),1000)
 
 }
 
@@ -250,18 +404,37 @@ setInterval(()=>{
 let heart=document.createElement("div")
 
 heart.className="heart"
-heart.innerHTML="💖"
+
+heart.innerHTML="💗"
 
 heart.style.left=Math.random()*100+"vw"
 
 document.body.appendChild(heart)
 
-setTimeout(()=>heart.remove(),5000)
+setTimeout(()=>heart.remove(),6000)
 
-},400)
+},500)
+
+
+setInterval(()=>{
+
+let star=document.createElement("div")
+
+star.className="star"
+
+star.innerHTML="✦"
+
+star.style.left=Math.random()*100+"vw"
+
+star.style.top=Math.random()*100+"vh"
+
+document.body.appendChild(star)
+
+setTimeout(()=>star.remove(),4000)
+
+},800)
 
 </script>
 
 </body>
-
 </html>
