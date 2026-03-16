@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Happy Birthday Thùy 🎂</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -10,36 +13,38 @@
 
 body{
 margin:0;
-font-family:Poppins;
-background:linear-gradient(135deg,#ff8fab,#ffc2d1,#fff0f3);
-color:#333;
+font-family:'Poppins',sans-serif;
+background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
 text-align:center;
-overflow-x:hidden;
+color:white;
+overflow:hidden;
 }
 
 .container{
-width:80%;
 max-width:700px;
-margin:auto;
-margin-top:10vh;
+padding:20px;
 }
 
 h1{
-font-family:"Great Vibes";
-font-size:60px;
-color:#ff4d6d;
+font-family:'Great Vibes';
+font-size:70px;
+margin-bottom:10px;
 }
 
 button{
-padding:12px 25px;
+padding:12px 28px;
 border:none;
-border-radius:25px;
-background:#ff4d6d;
-color:white;
-font-size:16px;
+border-radius:30px;
+background:white;
+color:#ff4d6d;
+font-weight:600;
 cursor:pointer;
+font-size:16px;
 transition:0.3s;
-margin-top:20px;
 }
 
 button:hover{
@@ -50,23 +55,32 @@ transform:scale(1.1);
 display:none;
 }
 
-.option{
-background:white;
-padding:15px;
-margin:10px;
-border-radius:20px;
+.cake{
+font-size:120px;
 cursor:pointer;
-box-shadow:0 5px 10px rgba(0,0,0,0.1);
 }
 
-.option:hover{
-background:#ffe5ec;
+.candle{
+font-size:50px;
+}
+
+.message{
+font-size:18px;
+margin-top:20px;
+line-height:1.6;
+}
+
+.gift{
+font-size:25px;
+margin-top:25px;
+color:#fff;
 }
 
 .heart{
 position:fixed;
-color:#ff4d6d;
-animation:float 6s linear infinite;
+color:white;
+font-size:20px;
+animation:float 5s linear infinite;
 }
 
 @keyframes float{
@@ -74,228 +88,180 @@ animation:float 6s linear infinite;
 100%{transform:translateY(-10vh)}
 }
 
-.chest{
-font-size:100px;
-cursor:pointer;
+.firework{
+position:fixed;
+font-size:30px;
+animation:explode 1s ease-out forwards;
 }
 
-.gift{
-font-size:28px;
-color:#ff4d6d;
-margin-top:20px;
+@keyframes explode{
+0%{transform:scale(0)}
+100%{transform:scale(2);opacity:0}
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-<!-- INTRO -->
-
 <div id="intro">
 
-<h1>Hey Thùy 🌙</h1>
+<h1>Hey Thùy 🎂</h1>
 
 <p>
-Hôm nay là một ngày hơi đặc biệt.<br><br>
+Có một cô gái sinh ngày <b>19/03/2009</b>.<br><br>
 
-19 / 03 / 2009<br><br>
+Và cô gái đó…<br>
+lại vô tình quen một thằng IT hơi ngốc.<br><br>
 
-Một cô gái đã xuất hiện trên thế giới này.<br><br>
-
-Và vài năm sau...<br><br>
-
-cô ấy vô tình gặp một thằng sinh viên IT hơi ngốc.<br><br>
-
-Nhưng thằng đó hôm nay muốn làm<br>
-một điều gì đó đặc biệt cho cô ấy.
+Nhưng hôm nay<br>
+thằng đó muốn làm một điều nhỏ nhỏ cho em.
 </p>
 
-<button onclick="start()">✨ Bắt đầu hành trình</button>
+<button onclick="start()">Bắt đầu bất ngờ ✨</button>
 
 </div>
 
-<!-- MAGIC -->
 
-<div id="magic" class="hidden">
+<div id="cakeScene" class="hidden">
 
-<h2>Một chút ảo thuật cho Thùy 🎩</h2>
+<h1>Happy Birthday Thùy</h1>
 
-<p>
-Hãy nghĩ đến một điều em thích.<br>
-Đừng nói ra nhé.
+<p>Hãy ước một điều rồi click vào bánh để thổi nến 🎂</p>
+
+<div onclick="blowCandle()">
+
+<div class="candle">🕯️ 🕯️ 🕯️</div>
+<div class="cake">🎂</div>
+
+</div>
+
+</div>
+
+
+<div id="wishScene" class="hidden">
+
+<h1>🎉 Điều ước đã được gửi</h1>
+
+<p class="message">
+
+Anh biết hôm nay anh không ở bên em.<br><br>
+
+Nhưng anh vẫn muốn làm một thứ gì đó<br>
+để ngày sinh nhật này trở nên đặc biệt hơn một chút.<br><br>
+
+Nếu em đang mỉm cười khi đọc đến đây<br>
+thì anh nghĩ mình đã thành công rồi.
+
 </p>
 
-<button onclick="magic()">🔮 Để anh thử đoán</button>
-
-<p id="magicResult"></p>
-
-<button id="next1" class="hidden" onclick="quiz()">Tiếp tục</button>
+<button onclick="openGift()">Mở quà 🎁</button>
 
 </div>
 
-<!-- QUIZ -->
 
-<div id="quiz" class="hidden">
+<div id="giftScene" class="hidden">
 
-<h2>Mini game nhỏ cho Thùy 💌</h2>
+<h1>🎁 Một món quà nhỏ</h1>
 
-<p>Ai là người dễ thương nhất hôm nay?</p>
+<p class="message">
 
-<div class="option" onclick="correct()">A. Thùy</div>
-<div class="option" onclick="correct()">B. Thùy</div>
-<div class="option" onclick="correct()">C. Thùy</div>
-<div class="option" onclick="correct()">D. Tất cả đáp án trên</div>
-
-<p id="quizResult"></p>
-
-</div>
-
-<!-- HEART GAME -->
-
-<div id="heartGame" class="hidden">
-
-<h2>Tìm trái tim đúng ❤️</h2>
-
-<p>
-Một trong ba trái tim này dành cho em.
-</p>
-
-<div style="font-size:60px">
-
-<span onclick="wrong()">💔</span>
-<span onclick="correctHeart()">❤️</span>
-<span onclick="wrong()">💔</span>
-
-</div>
-
-<p id="heartResult"></p>
-
-</div>
-
-<!-- TREASURE -->
-
-<div id="treasure" class="hidden">
-
-<h2>Chiếc rương bí mật</h2>
-
-<p>Click để mở</p>
-
-<div class="chest" onclick="openChest()">🎁</div>
-
-<p id="giftText" class="hidden gift">
-
-Anh biết anh đang ở khá xa.<br><br>
-
-Anh cũng không thể ở bên em<br>
-trong ngày sinh nhật này.<br><br>
-
-Nhưng anh vẫn muốn tặng em<br>
-một món quà nhỏ.<br><br>
-
-Để khi em xem phim...<br>
-có thể nhớ rằng<br><br>
-
+Khi em xem phim,<br>
+hãy nhớ rằng<br>
 ở đâu đó<br>
-vẫn có một người<br>
-đang nghĩ về em.<br><br>
+có một thằng IT<br>
+đang nghĩ về em.
 
-🎂 Happy Birthday Thùy 🎂<br><br>
+</p>
+
+<p class="gift">
 
 Netflix 1 Month 4K Code:<br><br>
 
-<strong>XXXX-XXXX-XXXX</strong>
+<b>XXXX-XXXX-XXXX</b>
 
 </p>
 
 </div>
 
 </div>
+
 
 <script>
 
 function start(){
-document.getElementById("intro").classList.add("hidden");
-document.getElementById("magic").classList.remove("hidden");
-}
 
-function magic(){
-
-let emojis=["🍜","🎬","🐱","🎧","🍓","🌙","📚"]
-
-let result=emojis[Math.floor(Math.random()*emojis.length)]
-
-document.getElementById("magicResult").innerHTML=
-"Anh đoán là... "+result+" ? 😏<br><br>Hay là em thích xem phim?"
-
-document.getElementById("next1").classList.remove("hidden")
+document.getElementById("intro").classList.add("hidden")
+document.getElementById("cakeScene").classList.remove("hidden")
 
 }
 
-function quiz(){
 
-document.getElementById("magic").classList.add("hidden")
-document.getElementById("quiz").classList.remove("hidden")
+function blowCandle(){
 
-}
+document.querySelector(".candle").innerHTML="💨💨💨"
 
-function correct(){
-
-document.getElementById("quizResult").innerHTML=
-"Correct answer detected 💖"
+fireworks()
 
 setTimeout(()=>{
-document.getElementById("quiz").classList.add("hidden")
-document.getElementById("heartGame").classList.remove("hidden")
-},1500)
+
+document.getElementById("cakeScene").classList.add("hidden")
+document.getElementById("wishScene").classList.remove("hidden")
+
+},2000)
 
 }
 
-function wrong(){
 
-document.getElementById("heartResult").innerHTML=
-"Không phải cái này 😆 thử lại nhé"
+function openGift(){
 
-}
-
-function correctHeart(){
-
-document.getElementById("heartResult").innerHTML=
-"Em đã tìm đúng trái tim ❤️"
-
-setTimeout(()=>{
-document.getElementById("heartGame").classList.add("hidden")
-document.getElementById("treasure").classList.remove("hidden")
-},1500)
+document.getElementById("wishScene").classList.add("hidden")
+document.getElementById("giftScene").classList.remove("hidden")
 
 }
 
-function openChest(){
 
-document.getElementById("giftText").classList.remove("hidden")
+function fireworks(){
+
+for(let i=0;i<25;i++){
+
+let fw=document.createElement("div")
+
+fw.className="firework"
+fw.innerHTML="✨"
+
+fw.style.left=Math.random()*100+"vw"
+fw.style.top=Math.random()*100+"vh"
+
+document.body.appendChild(fw)
+
+setTimeout(()=>fw.remove(),1000)
 
 }
+
+}
+
 
 setInterval(()=>{
 
 let heart=document.createElement("div")
+
 heart.className="heart"
 heart.innerHTML="💖"
+
 heart.style.left=Math.random()*100+"vw"
-heart.style.fontSize=(Math.random()*20+20)+"px"
 
 document.body.appendChild(heart)
 
-setTimeout(()=>{
-heart.remove()
-},6000)
+setTimeout(()=>heart.remove(),5000)
 
-},500)
+},400)
 
 </script>
 
 </body>
+
 </html>
-<!-- update -->
