@@ -1,440 +1,257 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>Happy Birthday Thùy</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-}
-
-body{
-
-font-family:Poppins;
-background:linear-gradient(135deg,#ff9a9e,#fad0c4);
-height:100vh;
-overflow:hidden;
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-text-align:center;
-
-}
-
-.container{
-
-max-width:700px;
-width:90%;
-
-}
-
-.hidden{
-display:none;
-}
-
-h1{
-
-font-family:"Great Vibes";
-font-size:60px;
-margin-bottom:20px;
-
-}
-
-p{
-
-line-height:1.6;
-font-size:18px;
-
-}
-
-button{
-
-margin-top:25px;
-padding:12px 25px;
-border:none;
-border-radius:30px;
-font-size:16px;
-cursor:pointer;
-background:white;
-color:#ff4d6d;
-font-weight:600;
-transition:0.3s;
-
-}
-
-button:hover{
-
-transform:scale(1.1);
-
-}
-
-.cake{
-
-font-size:110px;
-cursor:pointer;
-
-}
-
-.candle{
-
-font-size:40px;
-
-}
-
-.heart{
-
-position:fixed;
-font-size:20px;
-animation:float 6s linear infinite;
-
-}
-
-@keyframes float{
-
-0%{transform:translateY(100vh)}
-100%{transform:translateY(-10vh)}
-
-}
-
-.star{
-
-position:fixed;
-color:white;
-font-size:12px;
-opacity:0.8;
-animation:twinkle 2s infinite;
-
-}
-
-@keyframes twinkle{
-
-0%,100%{opacity:0.2}
-50%{opacity:1}
-
-}
-
-.fire{
-
-position:fixed;
-font-size:30px;
-animation:boom 1s forwards;
-
-}
-
-@keyframes boom{
-
-0%{transform:scale(0)}
-100%{transform:scale(2);opacity:0}
-
-}
-
-.gameArea{
-
-margin-top:30px;
-height:200px;
-border:2px dashed white;
-border-radius:20px;
-position:relative;
-
-}
-
-.catchHeart{
-
-position:absolute;
-font-size:30px;
-cursor:pointer;
-
-}
-
-.gift{
-
-font-size:22px;
-margin-top:20px;
-
-}
-
-/* MOBILE */
-
-@media(max-width:600px){
-
-h1{font-size:40px}
-
-p{font-size:16px}
-
-.cake{font-size:80px}
-
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gửi Thùy - Món quà từ phương xa ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rose: #ff4d6d;
+            --gold: #ffb703;
+            --dark: #0b090a;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--dark);
+            color: white;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Hiệu ứng hạt nền (Magic Dust) */
+        #canvas-bg {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: -1;
+        }
+
+        /* Sân khấu chính */
+        .scene {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .active { display: flex; animation: fadeIn 1s forwards; }
+
+        /* Hiệu ứng chữ gõ (Typewriter) */
+        .typewriter h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: var(--rose);
+            text-shadow: 0 0 15px rgba(255, 77, 109, 0.5);
+            margin-bottom: 20px;
+        }
+
+        /* Box tương tác */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        /* Nút bấm xịn */
+        .magic-btn {
+            background: linear-gradient(45deg, var(--rose), #ff758f);
+            border: none;
+            padding: 15px 35px;
+            color: white;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: 0.4s;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+        }
+
+        .magic-btn:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 8px 25px var(--rose);
+        }
+
+        /* Mini Game Cards */
+        .card-container { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; justify-content: center; }
+        .card {
+            width: 80px; height: 120px;
+            background: white; border-radius: 8px;
+            cursor: pointer; transition: 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        .card:hover { transform: rotateY(180deg) translateY(-20px); }
+
+        /* CSS Pháo hoa đơn giản */
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        /* Hiệu ứng Floating Hearts */
+        .heart {
+            position: absolute;
+            color: var(--rose);
+            animation: float 4s infinite ease-in;
+            opacity: 0;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="container">
-
-<div id="intro">
-
-<h1>Hey Thùy</h1>
-
-<p id="typing"></p>
-
-<button onclick="start()">Bắt đầu</button>
-
-</div>
-
-
-<div id="game" class="hidden">
-
-<h1>Mini Game</h1>
-
-<p>Bắt 5 trái tim để tiếp tục ❤️</p>
-
-<div class="gameArea" id="gameArea"></div>
-
-<p id="score">0 / 5</p>
-
-</div>
-
-
-<div id="cakeScene" class="hidden">
-
-<h1>Happy Birthday Thùy</h1>
-
-<p>Ước điều gì đó rồi click bánh để thổi nến</p>
-
-<div onclick="blow()">
-
-<div class="candle">🕯️ 🕯️ 🕯️</div>
-<div class="cake">🎂</div>
-
-</div>
-
-</div>
-
-
-<div id="message" class="hidden">
-
-<h1>🎉</h1>
-
-<p>
-
-Anh biết hôm nay anh không ở cạnh em.<br><br>
-
-Nhưng anh vẫn muốn làm một thứ nhỏ nhỏ<br>
-để sinh nhật của em trở nên đặc biệt hơn.<br><br>
-
-Nếu em đang mỉm cười lúc này<br>
-thì anh nghĩ mình đã làm đúng rồi.
-
-</p>
-
-<button onclick="gift()">Mở quà</button>
-
-</div>
-
-
-<div id="giftScene" class="hidden">
-
-<h1>Một món quà nhỏ</h1>
-
-<p>
-
-Khi em xem phim,<br>
-hãy nhớ rằng<br>
-có một thằng IT<br>
-đang nghĩ về em.
-
-</p>
-
-<p class="gift">
-
-Netflix Code<br><br>
-
-<strong>XXXX-XXXX-XXXX</strong>
-
-</p>
-
-</div>
-
-</div>
-
-
-<script>
-
-let text="Có một cô gái sinh ngày 19/03/2009. Và cô gái đó... lại vô tình quen một thằng sinh viên IT hơi ngốc. Nhưng hôm nay thằng đó muốn làm một điều nhỏ nhỏ cho em."
-
-let i=0
-
-function typing(){
-
-if(i<text.length){
-
-document.getElementById("typing").innerHTML+=text.charAt(i)
-
-i++
-
-setTimeout(typing,40)
-
-}
-
-}
-
-typing()
-
-
-function start(){
-
-document.getElementById("intro").classList.add("hidden")
-
-document.getElementById("game").classList.remove("hidden")
-
-spawnHeart()
-
-}
-
-
-let score=0
-
-function spawnHeart(){
-
-let area=document.getElementById("gameArea")
-
-let h=document.createElement("div")
-
-h.className="catchHeart"
-
-h.innerHTML="💖"
-
-h.style.left=Math.random()*90+"%"
-
-h.style.top=Math.random()*80+"%"
-
-h.onclick=function(){
-
-score++
-
-document.getElementById("score").innerHTML=score+" / 5"
-
-h.remove()
-
-if(score>=5){
-
-document.getElementById("game").classList.add("hidden")
-
-document.getElementById("cakeScene").classList.remove("hidden")
-
-}
-
-else{
-
-spawnHeart()
-
-}
-
-}
-
-area.appendChild(h)
-
-}
-
-
-function blow(){
-
-document.querySelector(".candle").innerHTML="💨💨💨"
-
-fireworks()
-
-setTimeout(()=>{
-
-document.getElementById("cakeScene").classList.add("hidden")
-
-document.getElementById("message").classList.remove("hidden")
-
-},2000)
-
-}
-
-
-function gift(){
-
-document.getElementById("message").classList.add("hidden")
-
-document.getElementById("giftScene").classList.remove("hidden")
-
-}
-
-
-function fireworks(){
-
-for(let i=0;i<30;i++){
-
-let f=document.createElement("div")
-
-f.className="fire"
-
-f.innerHTML="✨"
-
-f.style.left=Math.random()*100+"vw"
-
-f.style.top=Math.random()*100+"vh"
-
-document.body.appendChild(f)
-
-setTimeout(()=>f.remove(),1000)
-
-}
-
-}
-
-
-setInterval(()=>{
-
-let heart=document.createElement("div")
-
-heart.className="heart"
-
-heart.innerHTML="💗"
-
-heart.style.left=Math.random()*100+"vw"
-
-document.body.appendChild(heart)
-
-setTimeout(()=>heart.remove(),6000)
-
-},500)
-
-
-setInterval(()=>{
-
-let star=document.createElement("div")
-
-star.className="star"
-
-star.innerHTML="✦"
-
-star.style.left=Math.random()*100+"vw"
-
-star.style.top=Math.random()*100+"vh"
-
-document.body.appendChild(star)
-
-setTimeout(()=>star.remove(),4000)
-
-},800)
-
-</script>
-
+    <canvas id="canvas-bg"></canvas>
+
+    <div id="scene1" class="scene active typewriter">
+        <h1>Chào Thùy, cô gái tháng 3...</h1>
+        <div class="glass-card">
+            <p>Anh là một sinh viên IT, anh không biết diễn ảo thuật bằng tay...</p>
+            <p>Nhưng hôm nay, anh sẽ diễn ảo thuật bằng những dòng code dành riêng cho em.</p>
+            <button class="magic-btn" onclick="goToScene(2)">Mở màn buổi diễn 🎩</button>
+        </div>
+    </div>
+
+    <div id="scene2" class="scene">
+        <div class="glass-card">
+            <h2 style="color: var(--gold)">Câu hỏi check-in ❤️</h2>
+            <p id="quiz-text" style="margin: 20px 0; font-size: 1.2rem;">Nếu một ngày anh và code cùng rơi xuống nước, em sẽ làm gì?</p>
+            <div id="quiz-options">
+                <button class="magic-btn" style="background: #444;" onclick="wrongQuiz()">Cứu code (vì nó nuôi anh)</button>
+                <button class="magic-btn" onclick="nextQuiz()">Cứu anh (rồi anh viết code lại)</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="scene3" class="scene">
+        <h1>Chọn một lá bài định mệnh</h1>
+        <p>Đừng bấm vào, chỉ cần nhìn và chọn một lá trong đầu thôi...</p>
+        <div class="card-container">
+            <div class="card"></div> <div class="card"></div> <div class="card"></div> 
+            <div class="card"></div> <div class="card"></div>
+        </div>
+        <button class="magic-btn" onclick="magicReveal()">Anh đoán được rồi! Xem kết quả</button>
+    </div>
+
+    <div id="scene4" class="scene">
+        <div class="glass-card" style="border: 2px solid var(--rose)">
+            <h1 style="font-size: 2.5rem;">Happy Birthday, My Girl! 🎂</h1>
+            <p>19/03/2009 - 19/03/2026</p>
+            <div id="netflix-box" style="margin: 30px 0; padding: 20px; background: #000; border-radius: 10px; display:none;">
+                <p style="color: #e50914; font-weight: bold; letter-spacing: 2px;">NETFLIX PREMIUM 1 MONTH</p>
+                <h2 style="font-family: monospace; font-size: 1.5rem; margin-top: 10px;">LOVE-THUY-4K-2026</h2>
+            </div>
+            <p>Vì anh ở xa, nên hãy để những bộ phim này <br> ôm em thay anh mỗi tối nhé!</p>
+            <button class="magic-btn" onclick="createHearts()">Nhận thêm ngàn nụ hôn 💋</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        // 1. Hiệu ứng hạt nền (Dân IT nhìn là mê)
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.size > 0.2) this.size -= 0.001;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(255, 183, 3, 0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (particles.length < 100) particles.push(new Particle());
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].size <= 0.2) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        // 2. Logic chuyển cảnh
+        function goToScene(sceneNumber) {
+            document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+            document.getElementById('scene' + sceneNumber).classList.add('active');
+        }
+
+        // 3. Logic Quiz hài hước
+        function wrongQuiz() {
+            alert("Ơ kìa Thùy... Code không biết ôm em đâu, chọn lại đi! 😂");
+        }
+
+        function nextQuiz() {
+            alert("Đúng rồi! Anh sẽ cứu em, còn code thì... mình cùng nhau viết lại nhé ❤️");
+            goToScene(3);
+        }
+
+        // 4. Màn ảo thuật lộ diện
+        function magicReveal() {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ffb703', '#ffffff']
+            });
+            goToScene(4);
+            setTimeout(() => {
+                document.getElementById('netflix-box').style.display = 'block';
+                document.getElementById('netflix-box').classList.add('fade-in');
+            }, 1000);
+        }
+
+        // 5. Hiệu ứng tim bay
+        function createHearts() {
+            for(let i=0; i<20; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 4000);
+            }
+        }
+
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+        animate();
+    </script>
 </body>
 </html>
