@@ -91,3 +91,12 @@ heart.remove()
 }
 
 }
+let secretStars=[
+{ x:200, y:300, text:"Anh thích em lâu hơn em nghĩ đó." },
+{ x:600, y:200, text:"Nếu có 1000 vũ trụ anh vẫn tìm thấy em." },
+{ x:900, y:400, text:"Thùy là ngôi sao sáng nhất." },
+{ x:400, y:500, text:"Website này chỉ dành riêng cho em." },
+{ x:1100, y:250, text:"Happy Birthday ❤️" }
+]
+
+let foundStars=0
