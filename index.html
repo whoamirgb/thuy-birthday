@@ -297,6 +297,9 @@ let shootingStars=[]
 let secretStars=[]
 let foundStars=0
 
+let heartPoints=[]
+let heartMode=false
+    
 let mouseX=0
 let mouseY=0
 
@@ -622,6 +625,16 @@ document.getElementById("starMessage").style.display="flex"
 document.getElementById("starText").innerText=text
 
 foundStars++
+  
+if(foundStars===secretStars.length){
+
+setTimeout(()=>{
+
+activateHeartMode()
+
+},1500)
+
+}
 
 }
 
