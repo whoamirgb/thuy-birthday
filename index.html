@@ -619,7 +619,9 @@ let dy=my-star.y
 let dist=Math.sqrt(dx*dx+dy*dy)
 
 if(dist<10){
-if(star.found) return
+
+star.found=true
+
 showStarMessage(star.text)
 
 }
@@ -650,6 +652,10 @@ activateHeartMode()
 
 function closeStar(){
 
+document.getElementById("starMessage").style.display="none"
+
+}
+
 function activateHeartMode(){
 
 heartMode=true
@@ -664,17 +670,32 @@ document.getElementById("finalMessage").style.display="block"
 
 }
 
+function generateHeart(){
+
+heartPoints=[]
+
+let scale=15
+let offsetX=canvas.width/2
+let offsetY=canvas.height/2
+
+for(let t=0;t<Math.PI*2;t+=0.02){
+
+let x=16*Math.pow(Math.sin(t),3)
+let y=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))
+
+heartPoints.push({
+
+x:offsetX+x*scale,
+y:offsetY+y*scale
+
+})
+
+}
+
+}
 </script>
 
 <div id="starMessage">
-  
-<div id="finalMessage">
-
-<h1>Anh không cần cả vũ trụ</h1>
-
-<h2>Anh chỉ cần em</h2>
-
-</div>
   
 <div class="starBox">
 
@@ -685,6 +706,13 @@ document.getElementById("finalMessage").style.display="block"
 </div>
 
 </div>
-<script src="script.js"></script>
+
+<div id="finalMessage">
+
+<h1>Anh không cần cả vũ trụ</h1>
+<h2>Anh chỉ cần em</h2>
+
+</div>
+
 </body>
 </html>
