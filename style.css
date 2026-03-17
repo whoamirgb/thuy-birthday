@@ -144,3 +144,10 @@ transform:translateY(-200px);
 }
 
 }
+ .scene{
+z-index:10;
+}
+
+#lockScreen{
+z-index:99999;
+}
