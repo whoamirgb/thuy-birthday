@@ -282,10 +282,9 @@ document.getElementById("scene"+to).classList.add("active")
 
 }
 
-
-/* ===============================
+/* =====================================
 CINEMATIC UNIVERSE ENGINE
-=============================== */
+===================================== */
 
 const canvas = document.getElementById("universe")
 const ctx = canvas.getContext("2d")
@@ -293,36 +292,74 @@ const ctx = canvas.getContext("2d")
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
 
-let stars = []
-let shootingStars = []
+let stars=[]
+let shootingStars=[]
 
-let mouseX = 0
-let mouseY = 0
+let mouseX=0
+let mouseY=0
 
-/* ===============================
-CREATE STARS
-=============================== */
+/* =====================================
+STAR CLASS
+===================================== */
 
-for(let i=0;i<500;i++){
+class Star{
 
-stars.push({
+constructor(){
 
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
+this.x=Math.random()*canvas.width
+this.y=Math.random()*canvas.height
 
-size:Math.random()*2,
+this.size=Math.random()*2
 
-speed:Math.random()*0.5,
+this.speed=Math.random()*0.4
 
-depth:Math.random()*2
-
-})
+this.depth=Math.random()*3
 
 }
 
-/* ===============================
-SHOOTING STAR CLASS
-=============================== */
+update(){
+
+this.y+=this.speed
+
+if(this.y>canvas.height){
+
+this.y=0
+this.x=Math.random()*canvas.width
+
+}
+
+}
+
+draw(){
+
+let px=(mouseX-canvas.width/2)*0.0007*this.depth
+let py=(mouseY-canvas.height/2)*0.0007*this.depth
+
+ctx.beginPath()
+
+ctx.arc(this.x+px,this.y+py,this.size,0,Math.PI*2)
+
+ctx.fillStyle="white"
+
+ctx.fill()
+
+}
+
+}
+
+/* =====================================
+CREATE STARS
+===================================== */
+
+for(let i=0;i<600;i++){
+
+stars.push(new Star())
+
+}
+
+/* =====================================
+SHOOTING STAR
+===================================== */
 
 class ShootingStar{
 
@@ -335,13 +372,11 @@ this.reset()
 reset(){
 
 this.x=Math.random()*canvas.width
-this.y=Math.random()*canvas.height*0.5
+this.y=Math.random()*canvas.height*0.4
 
-this.len=Math.random()*80+10
+this.len=Math.random()*120+20
 
-this.speed=Math.random()*10+6
-
-this.size=Math.random()*1+0.1
+this.speed=Math.random()*12+6
 
 this.life=0
 
@@ -350,11 +385,11 @@ this.life=0
 update(){
 
 this.x+=this.speed
-this.y+=this.speed*0.3
+this.y+=this.speed*0.4
 
 this.life++
 
-if(this.life>60){
+if(this.life>80){
 
 this.reset()
 
@@ -368,11 +403,11 @@ ctx.beginPath()
 
 ctx.moveTo(this.x,this.y)
 
-ctx.lineTo(this.x-this.len,this.y-this.len*0.3)
+ctx.lineTo(this.x-this.len,this.y-this.len*0.4)
 
 ctx.strokeStyle="white"
 
-ctx.lineWidth=this.size
+ctx.lineWidth=2
 
 ctx.stroke()
 
@@ -380,19 +415,126 @@ ctx.stroke()
 
 }
 
-/* ===============================
-CREATE SHOOTING STARS
-=============================== */
-
 for(let i=0;i<3;i++){
 
 shootingStars.push(new ShootingStar())
 
 }
 
-/* ===============================
+/* =====================================
+SATURN PLANET
+===================================== */
+
+function drawSaturn(){
+
+let x=canvas.width*0.15
+let y=canvas.height*0.25
+
+ctx.save()
+
+ctx.translate(x,y)
+
+ctx.rotate(0.3)
+
+ctx.beginPath()
+ctx.ellipse(0,0,80,20,0,0,Math.PI*2)
+ctx.strokeStyle="rgba(200,200,200,0.4)"
+ctx.lineWidth=6
+ctx.stroke()
+
+ctx.beginPath()
+ctx.arc(0,0,35,0,Math.PI*2)
+ctx.fillStyle="#c9a66b"
+ctx.fill()
+
+ctx.restore()
+
+}
+
+/* =====================================
+MOON
+===================================== */
+
+function drawMoon(){
+
+let x=canvas.width*0.85
+let y=canvas.height*0.2
+
+let gradient=ctx.createRadialGradient(x,y,10,x,y,80)
+
+gradient.addColorStop(0,"#ffffff")
+gradient.addColorStop(1,"rgba(255,255,255,0.1)")
+
+ctx.beginPath()
+
+ctx.arc(x,y,40,0,Math.PI*2)
+
+ctx.fillStyle=gradient
+
+ctx.fill()
+
+}
+
+/* =====================================
+AURORA
+===================================== */
+
+let auroraOffset=0
+
+function drawAurora(){
+
+auroraOffset+=0.002
+
+for(let i=0;i<3;i++){
+
+ctx.beginPath()
+
+for(let x=0;x<canvas.width;x+=10){
+
+let y=Math.sin(x*0.002+auroraOffset+i)*20+100+i*40
+
+ctx.lineTo(x,y)
+
+}
+
+let gradient=ctx.createLinearGradient(0,0,canvas.width,0)
+
+gradient.addColorStop(0,"rgba(0,255,200,0.2)")
+gradient.addColorStop(1,"rgba(150,0,255,0.2)")
+
+ctx.strokeStyle=gradient
+ctx.lineWidth=20
+
+ctx.stroke()
+
+}
+
+}
+
+/* =====================================
+GALAXY GLOW
+===================================== */
+
+function drawGalaxy(){
+
+let x=canvas.width*0.5
+let y=canvas.height*0.5
+
+let gradient=ctx.createRadialGradient(x,y,0,x,y,500)
+
+gradient.addColorStop(0,"rgba(255,255,255,0.1)")
+gradient.addColorStop(1,"rgba(0,0,0,0)")
+
+ctx.beginPath()
+ctx.arc(x,y,500,0,Math.PI*2)
+ctx.fillStyle=gradient
+ctx.fill()
+
+}
+
+/* =====================================
 MOUSE PARALLAX
-=============================== */
+===================================== */
 
 window.addEventListener("mousemove",(e)=>{
 
@@ -401,77 +543,55 @@ mouseY=e.clientY
 
 })
 
-/* ===============================
-DRAW STARS
-=============================== */
+/* =====================================
+MAIN DRAW
+===================================== */
 
-function drawStars(){
+function drawUniverse(){
 
 ctx.clearRect(0,0,canvas.width,canvas.height)
 
+drawGalaxy()
+
+drawAurora()
+
 stars.forEach(star=>{
-
-let parallaxX=(mouseX-canvas.width/2)*0.0005*star.depth
-let parallaxY=(mouseY-canvas.height/2)*0.0005*star.depth
-
-let x=star.x+parallaxX
-let y=star.y+parallaxY
-
-ctx.beginPath()
-
-ctx.arc(x,y,star.size,0,Math.PI*2)
-
-ctx.fillStyle="white"
-
-ctx.fill()
-
-star.y+=star.speed
-
-if(star.y>canvas.height){
-
-star.y=0
-star.x=Math.random()*canvas.width
-
-}
-
-})
-
-}
-
-/* ===============================
-DRAW SHOOTING STARS
-=============================== */
-
-function drawShootingStars(){
-
-shootingStars.forEach(star=>{
 
 star.update()
 star.draw()
 
 })
 
-}
+shootingStars.forEach(s=>{
 
-/* ===============================
-MAIN LOOP
-=============================== */
+s.update()
+s.draw()
 
-function animateUniverse(){
+})
 
-drawStars()
+drawSaturn()
 
-drawShootingStars()
-
-requestAnimationFrame(animateUniverse)
+drawMoon()
 
 }
 
-animateUniverse()
+/* =====================================
+LOOP
+===================================== */
 
-/* ===============================
+function animate(){
+
+drawUniverse()
+
+requestAnimationFrame(animate)
+
+}
+
+animate()
+
+/* =====================================
 RESPONSIVE
-=============================== */
+===================================== */
 
 window.addEventListener("resize",()=>{
 
@@ -479,6 +599,7 @@ canvas.width=window.innerWidth
 canvas.height=window.innerHeight
 
 })
+  
 /* ===============================
 RESPONSIVE CANVAS
 =============================== */
