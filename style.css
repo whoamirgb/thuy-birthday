@@ -203,3 +203,35 @@ color:white;
 cursor:pointer;
 
 }
+#finalMessage{
+
+position:fixed;
+
+top:50%;
+left:50%;
+
+transform:translate(-50%,-50%);
+
+text-align:center;
+
+display:none;
+
+z-index:30;
+
+}
+
+#finalMessage h1{
+
+font-size:3rem;
+
+color:#ff4d6d;
+
+}
+
+#finalMessage h2{
+
+margin-top:10px;
+
+font-size:1.5rem;
+
+}
