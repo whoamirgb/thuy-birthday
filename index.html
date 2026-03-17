@@ -294,6 +294,8 @@ canvas.height = window.innerHeight
 
 let stars=[]
 let shootingStars=[]
+let secretStars=[]
+let foundStars=0
 
 let mouseX=0
 let mouseY=0
@@ -544,7 +546,29 @@ s.draw()
 })
 
 }
+for(let i=0;i<3;i++){
+shootingStars.push(new ShootingStar())
+}
 
+/* SECRET STARS */
+
+secretStars = [
+{
+x:200,
+y:300,
+text:"Anh thích em nhiều hơn em nghĩ đó ❤️"
+},
+{
+x:500,
+y:200,
+text:"Nếu em tìm được ngôi sao này... anh nợ em một cái ôm 🤍"
+},
+{
+x:900,
+y:400,
+text:"Thật ra anh làm web này chỉ để em cười thôi."
+}
+]
 /* =====================================
 LOOP
 ===================================== */
@@ -586,7 +610,7 @@ let dist=Math.sqrt(dx*dx+dy*dy)
 
 if(dist<10){
 
-alert(star.text)
+showStarMessage(star.text)
 
 }
 
@@ -609,7 +633,22 @@ function closeStar(){
 document.getElementById("starMessage").style.display="none"
 
 }
-  
+
+const correctPass="010203"
+
+document.getElementById("passInput").addEventListener("keyup",function(){
+
+if(this.value===correctPass){
+
+document.getElementById("lockScreen").style.display="none"
+
+}else{
+
+document.getElementById("errorText").style.display="block"
+
+}
+
+})
 </script>
 
   <script src="script.js"></script>
