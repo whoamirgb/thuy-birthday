@@ -599,14 +599,14 @@ let mx=e.clientX-rect.left
 let my=e.clientY-rect.top
 
 secretStars.forEach(star=>{
-
+if(star.found) return
 let dx=mx-star.x
 let dy=my-star.y
 
 let dist=Math.sqrt(dx*dx+dy*dy)
 
 if(dist<10){
-
+if(star.found) return
 showStarMessage(star.text)
 
 }
