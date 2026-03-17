@@ -284,46 +284,144 @@ document.getElementById("scene"+to).classList.add("active")
 
 
 /* ===============================
-STARFIELD ENGINE
+CINEMATIC UNIVERSE ENGINE
 =============================== */
 
-const canvas=document.getElementById("universe")
+const canvas = document.getElementById("universe")
+const ctx = canvas.getContext("2d")
 
-const ctx=canvas.getContext("2d")
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
 
-canvas.width=window.innerWidth
-canvas.height=window.innerHeight
+let stars = []
+let shootingStars = []
 
-let stars=[]
+let mouseX = 0
+let mouseY = 0
 
-for(let i=0;i<300;i++){
+/* ===============================
+CREATE STARS
+=============================== */
+
+for(let i=0;i<500;i++){
 
 stars.push({
 
 x:Math.random()*canvas.width,
-
 y:Math.random()*canvas.height,
 
 size:Math.random()*2,
 
-speed:Math.random()*0.2
+speed:Math.random()*0.5,
+
+depth:Math.random()*2
 
 })
 
 }
 
+/* ===============================
+SHOOTING STAR CLASS
+=============================== */
 
-function animateStars(){
+class ShootingStar{
 
-ctx.clearRect(0,0,canvas.width,canvas.height)
+constructor(){
 
-ctx.fillStyle="white"
+this.reset()
 
-stars.forEach(star=>{
+}
+
+reset(){
+
+this.x=Math.random()*canvas.width
+this.y=Math.random()*canvas.height*0.5
+
+this.len=Math.random()*80+10
+
+this.speed=Math.random()*10+6
+
+this.size=Math.random()*1+0.1
+
+this.life=0
+
+}
+
+update(){
+
+this.x+=this.speed
+this.y+=this.speed*0.3
+
+this.life++
+
+if(this.life>60){
+
+this.reset()
+
+}
+
+}
+
+draw(){
 
 ctx.beginPath()
 
-ctx.arc(star.x,star.y,star.size,0,Math.PI*2)
+ctx.moveTo(this.x,this.y)
+
+ctx.lineTo(this.x-this.len,this.y-this.len*0.3)
+
+ctx.strokeStyle="white"
+
+ctx.lineWidth=this.size
+
+ctx.stroke()
+
+}
+
+}
+
+/* ===============================
+CREATE SHOOTING STARS
+=============================== */
+
+for(let i=0;i<3;i++){
+
+shootingStars.push(new ShootingStar())
+
+}
+
+/* ===============================
+MOUSE PARALLAX
+=============================== */
+
+window.addEventListener("mousemove",(e)=>{
+
+mouseX=e.clientX
+mouseY=e.clientY
+
+})
+
+/* ===============================
+DRAW STARS
+=============================== */
+
+function drawStars(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+stars.forEach(star=>{
+
+let parallaxX=(mouseX-canvas.width/2)*0.0005*star.depth
+let parallaxY=(mouseY-canvas.height/2)*0.0005*star.depth
+
+let x=star.x+parallaxX
+let y=star.y+parallaxY
+
+ctx.beginPath()
+
+ctx.arc(x,y,star.size,0,Math.PI*2)
+
+ctx.fillStyle="white"
 
 ctx.fill()
 
@@ -332,18 +430,55 @@ star.y+=star.speed
 if(star.y>canvas.height){
 
 star.y=0
+star.x=Math.random()*canvas.width
 
 }
 
 })
 
-requestAnimationFrame(animateStars)
+}
+
+/* ===============================
+DRAW SHOOTING STARS
+=============================== */
+
+function drawShootingStars(){
+
+shootingStars.forEach(star=>{
+
+star.update()
+star.draw()
+
+})
 
 }
 
-animateStars()
+/* ===============================
+MAIN LOOP
+=============================== */
 
+function animateUniverse(){
 
+drawStars()
+
+drawShootingStars()
+
+requestAnimationFrame(animateUniverse)
+
+}
+
+animateUniverse()
+
+/* ===============================
+RESPONSIVE
+=============================== */
+
+window.addEventListener("resize",()=>{
+
+canvas.width=window.innerWidth
+canvas.height=window.innerHeight
+
+})
 /* ===============================
 RESPONSIVE CANVAS
 =============================== */
