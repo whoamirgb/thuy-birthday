@@ -521,9 +521,19 @@ ctx.globalCompositeOperation="source-over"
 
 /* stars */
 
-stars.forEach(star=>{
+stars.forEach((star,i)=>{
+
+if(heartMode && heartPoints[i]){
+
+star.x += (heartPoints[i].x - star.x)*0.02
+star.y += (heartPoints[i].y - star.y)*0.02
+
+}else{
 
 star.update()
+
+}
+
 star.draw()
 
 })
@@ -640,14 +650,30 @@ activateHeartMode()
 
 function closeStar(){
 
+function activateHeartMode(){
+
+heartMode=true
+
+generateHeart()
+
+}
+  
 document.getElementById("starMessage").style.display="none"
 
 }
 
 </script>
 
-  <div id="starMessage">
+<div id="starMessage">
+  
+<div id="finalMessage">
 
+<h1>Anh không cần cả vũ trụ</h1>
+
+<h2>Anh chỉ cần em</h2>
+
+</div>
+  
 <div class="starBox">
 
 <p id="starText"></p>
