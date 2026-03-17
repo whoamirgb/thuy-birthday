@@ -91,5 +91,3 @@ heart.remove()
 }
 
 }
-
-let foundStars=0
