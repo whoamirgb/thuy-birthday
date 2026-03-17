@@ -91,3 +91,6 @@ heart.remove()
 }
 
 }
+
+let heartPoints=[]
+let heartMode=false
