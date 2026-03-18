@@ -1,151 +1,277 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Thùy's Secret Universe | Eternal Magic 2026</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thùy's Universe - The 19th March Project</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=JetBrains+Mono:wght@300&family=Montserrat:wght@200;400;700&family=Pacifico&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=JetBrains+Mono:wght@300&family=Montserrat:wght@100;300;400;600;900&family=Pacifico&family=Playfair+Display:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        /* --- [SECTION 1: CORE ARCHITECTURE - CSS] --- */
+        :root {
+            --rose-primary: #ff4d6d;
+            --rose-dark: #c9184a;
+            --gold: #ffb703;
+            --bg-deep: #050508;
+            --glass: rgba(255, 255, 255, 0.05);
+            --font-main: 'Montserrat', sans-serif;
+            --font-hand: 'Dancing Script', cursive;
+            --font-it: 'JetBrains Mono', monospace;
+        }
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
 
-<style>
-:root {
-    --p: #ff4d6d; --p-l: #ff758f; --p-d: #c9184a;
-    --s: #00f2ff; --s-d: #00b4d8;
-    --bg: #030305; --paper: #fffef0;
-    --envelope: #f34664; --gold: #ffb703;
-    --f-hand: 'Dancing Script', cursive;
-    --f-main: 'Montserrat', sans-serif;
-    --f-code: 'JetBrains Mono', monospace;
-    --f-logo: 'Pacifico', cursive;
-    --f-serif: 'Playfair Display', serif;
-    --glass: rgba(255,255,255,0.03);
-    --glass-border: rgba(255,255,255,0.1);
-    --glow: 0 0 15px var(--p-d);
-}
+        body {
+            background-color: var(--bg-deep);
+            color: #fff;
+            font-family: var(--font-main);
+            overflow: hidden;
+            height: 100vh;
+        }
 
-*{margin:0;padding:0;box-sizing:border-box;cursor:none;}
-body{background:var(--bg);color:#fff;font-family:var(--f-main);overflow:hidden;height:100vh;width:100vw;user-select:none;}
-#bg-canvas,#fire-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;}
-#cursor{position:fixed;width:10px;height:10px;background:var(--p);border-radius:50%;pointer-events:none;z-index:10001;box-shadow:0 0 15px var(--p),0 0 30px var(--p-l);transition:transform 0.1s;}
-#cursor-follower{position:fixed;width:30px;height:30px;border:1px solid var(--p-l);border-radius:50%;pointer-events:none;z-index:10000;transition:transform 0.2s;opacity:0.4;}
+        /* 1. LOCK SCREEN - TRANG BẢO MẬT */
+        #lock-screen {
+            position: fixed; inset: 0; background: #000;
+            z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; transition: 1.5s ease-in-out;
+        }
 
-.glow-text{text-shadow:0 0 10px var(--p),0 0 20px var(--p-d);}
-.floating-anim{animation:floating 3s infinite ease-in-out;}
-@keyframes floating{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-15px) rotate(2deg);}}
-.btn-magic{position:relative;background:transparent;border:1px solid var(--p);color:var(--p);padding:15px 35px;border-radius:50px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;overflow:hidden;transition:.4s;}
-.btn-magic:hover{background:var(--p);color:#fff;box-shadow:0 0 30px var(--p-d);transform:scale(1.05);}
-.lock-card{position:relative;background:rgba(255,255,255,0.02);padding:70px 60px;border-radius:40px;backdrop-filter:blur(30px);border:1px solid var(--glass-border);text-align:center;box-shadow:0 50px 100px rgba(0,0,0,0.9),inset 0 0 30px rgba(255,77,109,0.05);transform:perspective(1200px) rotateX(5deg);max-width:480px;width:90%;animation:lockCardFloat 5s infinite ease-in-out;}
-@keyframes lockCardFloat{0%,100%{transform:perspective(1200px) rotateX(5deg) translateY(0);}50%{transform:perspective(1200px) rotateX(10deg) translateY(-20px);}}
-.lock-card h2{font-family:var(--f-code);font-size:0.8rem;letter-spacing:7px;color:var(--p);margin-bottom:15px;text-transform:uppercase;opacity:0.7;text-shadow:0 0 10px var(--p-d);}
-.digital-clock{font-family:var(--f-code);font-size:4rem;color:var(--s);text-shadow:0 0 25px var(--s-d);margin-bottom:40px;font-weight:100;letter-spacing:-2px;}
-.pass-input-container{position:relative;margin-bottom:30px;display:flex;flex-direction:column;align-items:center;}
-#pass-input{background:transparent;border:none;border-bottom:2px solid rgba(255,255,255,0.15);color:#fff;font-size:3rem;width:260px;text-align:center;letter-spacing:18px;outline:none;font-family:var(--f-code);transition:all 0.5s;padding-bottom:10px;}
-#pass-input:focus{border-bottom-color:var(--p);width:300px;filter:drop-shadow(0 0 15px var(--p));}
-#pass-input::placeholder{color:rgba(255,255,255,0.05);letter-spacing:5px;font-size:1.1rem;text-transform:uppercase;}
-#error-msg{color:var(--p);font-family:var(--f-code);font-size:0.7rem;margin-top:15px;display:none;text-transform:uppercase;letter-spacing:2px;}
-.shake-effect{animation:shakeInput 0.4s cubic-bezier(.36,.07,.19,.97) both;}
-@keyframes shakeInput{10%,90%{transform:translate3d(-1px,0,0);}20%,80%{transform:translate3d(2px,0,0);}30%,50%,70%{transform:translate3d(-4px,0,0);}40%,60%{transform:translate3d(4px,0,0);}}
-.scene{position:absolute;inset:0;display:none;opacity:0;flex-direction:column;align-items:center;justify-content:center;z-index:10;padding:50px;text-align:center;transition:all 1.2s cubic-bezier(0.4,0,0.2,1);perspective:2000px;}
-.scene.active{display:flex;opacity:1;animation:sceneEnter 1.5s forwards;}
-@keyframes sceneEnter{from{opacity:0;transform:scale(1.1) translateY(30px) rotateX(-5deg);filter:blur(15px);}to{opacity:1;transform:scale(1) translateY(0) rotateX(0);filter:blur(0);}}
-.card-stage{width:340px;height:500px;margin:40px auto;position:relative;z-index:100;filter:drop-shadow(0 20px 50px rgba(0,0,0,0.8));}
-.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 1.5s cubic-bezier(0.2,0.8,0.2,1);cursor:pointer;}
-.card-inner.is-flipped{transform:rotateY(180deg);}
-.card-side{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:25px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,0.08);overflow:hidden;}
-.card-front{background:linear-gradient(145deg,#1a1a1c 0%,#050505 100%);color:var(--s);box-shadow:inset 0 0 50px rgba(0,242,255,0.05);}
-.card-front::after{content:'♣︎';position:absolute;font-size:15rem;opacity:0.03;color:#fff;top:50%;left:50%;transform:translate(-50%,-50%);}
-.card-back{background:var(--paper);color:#111;transform:rotateY(180deg);padding:40px;background-image:radial-gradient(circle at 50% 50%, rgba(0,0,0,0.02) 0%, transparent 80%);border:8px solid #fff;box-shadow:inset 0 0 100px rgba(0,0,0,0.05);}
-.reveal-text-title{font-family:var(--f-hand);font-size:2.5rem;color:var(--p-d);margin-bottom:15px;}
-.reveal-text-desc{font-family:var(--f-main);font-size:1rem;line-height:1.6;font-weight:500;}
-.envelope-container{position:relative;width:420px;height:280px;background-color:var(--envelope);border-radius:0 0 15px 15px;box-shadow:0 40px 100px rgba(0,0,0,0.7);cursor:pointer;z-index:200;transition:all 0.6s;transform-style:preserve-3d;margin:60px auto;}
-.envelope-container:hover{transform:scale(1.03) translateY(-10px);}
-.envelope-flap{position:absolute;top:0;left:0;width:0;height:0;border-left:210px solid transparent;border-right:210px solid transparent;border-top:145px solid #d43d56;transform-origin:top;transition:transform 0.7s 0.3s,z-index 0.1s 0.5s;z-index:400;filter:drop-shadow(0 8px 10px rgba(0,0,0,0.3));}
-.envelope-front-fold{position:absolute;bottom:0;left:0;width:100%;height:100%;background-color:#e6405c;clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%);z-index:500;border-radius:0 0 15px 15px;box-shadow:inset 0 -10px 30px rgba(0,0,0,0.1);}
-.letter-paper-inner{position:absolute;bottom:20px;left:5%;width:90%;height:240px;background:var(--paper);border-radius:8px;padding:50px 40px;color:#2d3436;font-family:var(--f-hand);font-size:1.8rem;line-height:1.6;transition:all 1s;z-index:250;box-shadow:0 0 20px rgba(0,0,0,0.15);overflow:hidden;border:1px solid rgba(0,0,0,0.02);}
-.letter-paper-inner::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(transparent,transparent 34px,#ebebeb 34px,#ebebeb 35px);pointer-events:none;z-index:0;}
-.envelope-container.is-open .envelope-flap{transform:rotateX(180deg);z-index:150;}
-.envelope-container.is-open .letter-paper-inner{height:560px;bottom:140px;transform:scale(1.18) rotate(-1.5deg);z-index:600;box-shadow:0 40px 100px rgba(0,0,0,0.8);overflow-y:auto;padding-bottom:80px;}
-.letter-text-body{position:relative;z-index:10;opacity:0;transform:translateY(30px);transition:0.7s 1s ease-out;}
-.envelope-container.is-open .letter-text-body{opacity:1;transform:translateY(0);}
-.envelope-seal{position:absolute;top:0;left:50%;width:50px;height:50px;background:var(--p);border-radius:50%;transform:translate(-50%,-50%);z-index:600;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 5px 15px var(--p-d);transition:0.5s;}
-.envelope-container.is-open .envelope-seal{opacity:0;transform:translate(-50%,-50%) scale(0);}
-.heart-sparkle{position:absolute;color:var(--p);pointer-events:none;z-index:1000;font-size:1.2rem;animation:heartFloat 2s forwards;}
-@keyframes heartFloat{0%{transform:translateY(0) scale(1);opacity:1;}100%{transform:translateY(-100px) scale(1.5);opacity:0;}}
-</style>
+        .pass-box {
+            background: var(--glass); border: 1px solid var(--rose-primary);
+            padding: 40px; border-radius: 30px; backdrop-filter: blur(20px);
+            text-align: center; box-shadow: 0 0 30px var(--rose-dark);
+        }
+
+        .pass-box h2 { font-family: var(--font-it); font-size: 1rem; color: var(--rose-primary); margin-bottom: 20px; letter-spacing: 2px; }
+
+        #password-input {
+            background: transparent; border: none; border-bottom: 2px solid #fff;
+            color: #fff; font-size: 2rem; width: 200px; text-align: center;
+            letter-spacing: 10px; outline: none; transition: 0.3s;
+        }
+
+        #password-input:focus { border-bottom-color: var(--gold); }
+
+        /* 2. CANVAS LAYERS */
+        #star-canvas, #fireworks-canvas { position: fixed; inset: 0; }
+        #star-canvas { z-index: 1; }
+        #fireworks-canvas { z-index: 2; pointer-events: none; }
+
+        /* 3. SCENE MANAGEMENT */
+        .scene {
+            position: absolute; inset: 0; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 10; padding: 20px; text-align: center;
+        }
+        .scene.active { display: flex; animation: slideUp 1s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(100px) scale(0.8); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        /* 4. COMPONENTS - COMPONENTS */
+        .glass-card {
+            background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px); padding: 40px; border-radius: 20px;
+            max-width: 600px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .btn-magic {
+            background: linear-gradient(45deg, var(--rose-primary), var(--rose-dark));
+            border: none; padding: 15px 35px; color: white; border-radius: 50px;
+            font-weight: bold; cursor: pointer; margin-top: 25px;
+            box-shadow: 0 5px 15px var(--rose-dark); transition: 0.4s ease;
+        }
+        .btn-magic:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 30px var(--rose-dark); }
+
+        /* 5. TIKTOK STYLE LETTER */
+        .handwritten-letter {
+            background: #fffef0; color: #2d3436; padding: 50px;
+            border-radius: 2px; font-family: var(--font-hand); font-size: 1.6rem;
+            width: 90%; max-width: 550px; display: none;
+            box-shadow: 10px 10px 50px rgba(0,0,0,0.8);
+            transform: rotate(-2deg); position: relative; line-height: 1.5;
+        }
+        .handwritten-letter::after { content: '❤'; position: absolute; bottom: 20px; right: 30px; font-size: 2.5rem; color: var(--rose-primary); }
+
+        .netflix-tag {
+            background: #e50914; color: #fff; padding: 10px; border-radius: 4px;
+            font-family: var(--font-it); font-size: 1rem; margin-top: 20px; text-align: center;
+        }
+
+        /* 6. UTILITY */
+        .typing::after { content: '|'; animation: blink 0.7s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+    </style>
 </head>
 <body>
 
-<div id="cursor"></div>
-<div id="cursor-follower"></div>
-<canvas id="bg-canvas"></canvas>
-<canvas id="fire-canvas"></canvas>
+    <div id="lock-screen">
+        <div class="pass-box">
+            <h2>HỆ THỐNG ĐƯỢC MÃ HÓA</h2>
+            <p style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 10px;">Gợi ý: Ngày sinh nhật của em (DDMMYY)</p>
+            <input type="password" id="password-input" placeholder="••••••" maxlength="6">
+            <div id="error-msg" style="color: var(--rose-primary); margin-top: 10px; font-size: 0.8rem; display: none;">Mật khẩu sai rồi bé ơi!</div>
+        </div>
+    </div>
 
-<section id="lock-screen">
-<div class="lock-card">
-<h2>Hệ thống đã mã hóa</h2>
-<div class="digital-clock" id="clock">00:00:00</div>
-<div class="pass-input-container">
-<input type="password" id="pass-input" placeholder="MẬT MÃ" maxlength="6" autofocus autocomplete="off">
-<div id="error-msg">TRUY CẬP BỊ TỪ CHỐI - THỬ LẠI</div>
-</div>
-<div class="hint-text-box">
-<p>Gợi ý: <span style="color: var(--p);">Ngày Thùy sinh ra đời (DDMMYY)</span></p>
-<p style="font-size:0.6rem;margin-top:8px;opacity:0.5;">Hệ thống chỉ chấp nhận chủ nhân duy nhất của ngày 19/03/2009</p>
-</div>
-</div>
-</section>
+    <canvas id="star-canvas"></canvas>
+    <canvas id="fireworks-canvas"></canvas>
 
-<!-- SCENE 1 -->
-<section class="scene" id="scene-1">
-<h1 class="glow-text floating-anim" style="font-family: var(--f-logo);font-size:4.5rem;color:var(--p);margin-bottom:25px;">Hi Thùy!</h1>
-<div class="glass-card" style="border-left:4px solid var(--p);text-align:left;">
-<p id="typewriter-text" style="font-family: var(--f-main);font-size:1.25rem;line-height:2;color:#ececec;min-height:180px;"></p>
-<div style="margin-top:20px;font-family:var(--f-code);font-size:0.7rem;opacity:0.3;">
-CONNECTION_ID: #MARCH19_2009 | HEART_STATUS: STABLE
-</div>
-</div>
-<div id="btn-next-1-wrap" style="opacity:0;transform:translateY(20px);margin-top:40px;">
-<button class="btn-magic" onclick="changeScene(1,2)">Khám phá bí mật ✨</button>
-</div>
-</section>
+    <div id="s1" class="scene">
+        <h1 style="font-family: 'Pacifico'; font-size: 3.5rem; color: var(--rose-primary); margin-bottom: 20px;">Hi Thùy!</h1>
+        <div class="glass-card">
+            <p style="font-family: var(--font-it); margin-bottom: 15px;">// Analyzing distance... OK</p>
+            <p class="typing" id="text-1"></p>
+            <button class="btn-magic" onclick="next(1, 2)">Tiếp tục màn ảo thuật</button>
+        </div>
+    </div>
 
-<!-- SCENE 2 -->
-<section class="scene" id="scene-2">
-<h2 class="glow-text" style="font-family: var(--f-hand);font-size:3.5rem;margin-bottom:10px;">The Mind Reader</h2>
-<p style="margin-bottom:30px;opacity:0.8;font-size:0.9rem;letter-spacing:1px;">
-Chọn 1 lá bài, nhìn vào biểu tượng và nghĩ về một điều ước trong 5 giây...
-</p>
-<div class="card-stage">
-<div class="card-inner" id="magic-card-element" onclick="handleCardFlip()">
-<div class="card-side card-front">
-<div class="card-icon-main">🎩</div>
-<p style="font-family: var(--f-code);font-size:0.8rem;letter-spacing:5px;opacity:0.5;">CLICK TO REVEAL</p>
-</div>
-<div class="card-side card-back">
-<div class="card-back-decoration"></div>
-<h3 class="reveal-text-title">Bingo! ✨</h3>
-<p class="reveal-text-desc">Lá bài nói rằng: Điều ước của em sẽ thành hiện thực, vì hôm nay là ngày của em, và anh sẽ luôn ở đây để giúp em thực hiện nó!</p>
-<div style="font-size:3rem;margin-top:20px;">🃏</div>
-</div>
-</div>
-</div>
-<div id="btn-next-2-wrap" style="opacity:0;transform:translateY(20px);">
-<button class="btn-magic" onclick="changeScene(2,3)">Mở món quà cuối cùng ❤️</button>
-</div>
-</section>
+    <div id="s2" class="scene">
+        <div class="glass-card">
+            <h2 style="font-family: var(--font-hand); font-size: 2.5rem;">Câu hỏi định mệnh</h2>
+            <p style="margin: 20px 0;">Trong vũ trụ của anh, em là hành tinh duy nhất. Em có tin vào phép thuật của những dòng code không?</p>
+            <button class="btn-magic" style="width: 100%;" onclick="alert('Đúng rồi! Anh sẽ chứng minh ngay đây ❤️'); next(2, 3)">Tin tuyệt đối luôn!</button>
+            <button class="btn-magic" id="run-btn" style="width: 100%; background: #444;" onmouseover="runAway()">Không, em chỉ tin anh thôi</button>
+        </div>
+    </div>
 
-<!-- SCENE 3 -->
-<section class="scene" id="scene-3">
-<h2 class="glow-text" style="font-family: var(--f-logo);font-size:3rem;margin-bottom:50px;">My Universe for Thùy</h2>
-<div class="envelope-container" id="main-envelope" onclick="openLetterAction()">
-<div class="envelope-flap"></div>
-<div class="envelope-front-fold"></div>
-<div class="letter-paper-inner" id="actual-letter">
-<div class="letter-text-body">
-<h3 style="font-size:2.2rem;color:var(--p-d);margin-bottom:20px;">Gửi bé Thùy của anh,</h3>
-<p>Chúc mừng sinh nhật cô gái tuyệt vời nhất mà anh từng biết! 19/03/2009 - Một cột mốc thật đẹp.</p>
-<p style="margin-top:15px;">Dù anh là một sinh viên IT khô khan, suốt ngày chỉ biết bug với code, nhưng trái tim anh là một hằng số vĩnh cửu luôn hướng về phía em.</p>
-<p style="margin-top:15px;">Mỗi dòng code trong trang web này là một nỗ lực của anh để
+    <div id="s3" class="scene">
+        <h1 style="font-family: var(--font-hand); font-size: 3rem; margin-bottom: 30px;">Look at the sky...</h1>
+        <div class="handwritten-letter" id="final-letter">
+            <p>Bé Thùy thân mến,</p>
+            <p>Dù anh là một sinh viên IT năm nhất còn nhiều bài tập và phải ở xa em, nhưng anh đã cố gắng mang cả bầu trời pháo hoa này vào đây.</p>
+            <p>Chúc mừng sinh nhật cô gái 19/03/2009. Chúc em luôn rạng rỡ như những đóa hoa này!</p>
+            <div class="netflix-tag">NETFLIX: LOVE-THUY-4K-2026</div>
+            <p style="text-align: right; margin-top: 20px;">- Yêu em nhiều -</p>
+        </div>
+        <button class="btn-magic" id="fire-btn" onclick="startShow()">Bắt đầu buổi diễn pháo hoa 🎆</button>
+    </div>
+
+    <script>
+        /* --- [SECTION 2: LOGIC ENGINE - JAVASCRIPT] --- */
+
+        // 1. Password Verification
+        const passInput = document.getElementById('password-input');
+        passInput.addEventListener('input', () => {
+            if(passInput.value === '190309') {
+                gsap.to('#lock-screen', { duration: 1.5, y: '-100%', ease: "power4.inOut", onComplete: () => {
+                    document.getElementById('lock-screen').style.display = 'none';
+                    document.getElementById('s1').classList.add('active');
+                    startTyping();
+                }});
+            } else if(passInput.value.length === 6) {
+                document.getElementById('error-msg').style.display = 'block';
+                passInput.value = '';
+            }
+        });
+
+        // 2. Starfield System
+        const starCanvas = document.getElementById('star-canvas');
+        const sCtx = starCanvas.getContext('2d');
+        let stars = [];
+        function initStars() {
+            starCanvas.width = window.innerWidth;
+            starCanvas.height = window.innerHeight;
+            for(let i=0; i<400; i++) stars.push({ x: Math.random()*starCanvas.width, y: Math.random()*starCanvas.height, size: Math.random()*1.5, speed: Math.random()*0.05 });
+        }
+        function animateStars() {
+            sCtx.clearRect(0,0,starCanvas.width, starCanvas.height);
+            sCtx.fillStyle = "#fff";
+            stars.forEach(s => {
+                sCtx.beginPath(); sCtx.arc(s.x, s.y, s.size, 0, Math.PI*2); sCtx.fill();
+                s.y += s.speed; if(s.y > starCanvas.height) s.y = 0;
+            });
+            requestAnimationFrame(animateStars);
+        }
+        initStars(); animateStars();
+
+        // 3. Fireworks Engine
+        const fireCanvas = document.getElementById('fireworks-canvas');
+        const fCtx = fireCanvas.getContext('2d');
+        let particles = [];
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y; this.color = color;
+                this.radius = Math.random() * 2 + 1;
+                this.velocity = { x: (Math.random()-0.5)*8, y: (Math.random()-0.5)*8 };
+                this.opacity = 1; this.friction = 0.95; this.gravity = 0.15;
+            }
+            draw() {
+                fCtx.globalAlpha = this.opacity; fCtx.fillStyle = this.color;
+                fCtx.beginPath(); fCtx.arc(this.x, this.y, this.radius, 0, Math.PI*2); fCtx.fill();
+            }
+            update() {
+                this.velocity.x *= this.friction; this.velocity.y *= this.friction; this.velocity.y += this.gravity;
+                this.x += this.velocity.x; this.y += this.velocity.y; this.opacity -= 0.01;
+            }
+        }
+        function createFirework(x, y) {
+            const colors = ['#ff4d6d', '#ffb703', '#00f2ff', '#ffffff'];
+            const color = colors[Math.floor(Math.random()*colors.length)];
+            for(let i=0; i<80; i++) particles.push(new Particle(x, y, color));
+        }
+        function animateFireworks() {
+            fCtx.fillStyle = 'rgba(5, 5, 8, 0.2)';
+            fCtx.fillRect(0,0,fireCanvas.width, fireCanvas.height);
+            particles.forEach((p, i) => {
+                if(p.opacity <= 0) particles.splice(i, 1);
+                else { p.update(); p.draw(); }
+            });
+            requestAnimationFrame(animateFireworks);
+        }
+        animateFireworks();
+
+        // 4. Typing Effect
+        function startTyping() {
+            const txt = "Anh không thể ở đây cầm tay em thổi nến, nên anh đã bắt những dòng code này làm ảo thuật thay anh...";
+            let i = 0;
+            function type() {
+                if(i < txt.length) {
+                    document.getElementById('text-1').innerHTML += txt.charAt(i);
+                    i++; setTimeout(type, 70);
+                }
+            }
+            type();
+        }
+
+        // 5. Interaction
+        function next(f, t) {
+            document.getElementById('s'+f).classList.remove('active');
+            setTimeout(() => document.getElementById('s'+t).classList.add('active'), 600);
+        }
+
+        function runAway() {
+            const btn = document.getElementById('run-btn');
+            btn.style.position = 'absolute';
+            btn.style.left = Math.random()*80 + '%'; btn.style.top = Math.random()*80 + '%';
+            btn.innerText = "Bấm trượt rồi! 😜";
+        }
+
+        function startShow() {
+            document.getElementById('fire-btn').style.display = 'none';
+            const letter = document.getElementById('final-letter');
+            letter.style.display = 'block';
+            gsap.from(letter, { duration: 2, y: 300, opacity: 0, rotate: 20, ease: "elastic.out(1, 0.5)" });
+
+            // Fireworks Loop
+            let count = 0;
+            const timer = setInterval(() => {
+                createFirework(Math.random()*fireCanvas.width, Math.random()*fireCanvas.height*0.5);
+                count++;
+                if(count > 25) clearInterval(timer);
+            }, 500);
+
+            // Bắn thêm Confetti
+            confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+        }
+
+        // Click manually for more fun
+        window.addEventListener('click', (e) => {
+            if(document.getElementById('s3').classList.contains('active')) createFirework(e.clientX, e.clientY);
+        });
+
+    </script>
+</body>
+</html>
