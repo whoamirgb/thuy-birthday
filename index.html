@@ -271,31 +271,38 @@
         initParticles(); drawParticles();
 
         // 8. TIKTOK FINALE - Fireworks
-        function triggerFinalFireworks() {
-            const end = Date.now() + 15 * 1000;
-            const colors = ['#ff4d6d', '#ffffff', '#ffb703'];
+        // 8. TIKTOK FINALE - Fireworks nhẹ và nhanh
+function triggerFinalFireworks() {
+    const colors = ['#ff4d6d', '#ffffff', '#ffb703'];
+    let count = 0;
+    const maxCount = 50; // Tổng số "đợt" pháo hoa ít hơn
+    const interval = setInterval(() => {
+        // Random vị trí, tránh khu vực giữa thư
+        const xLeft = Math.random() * 0.35;   // bên trái
+        const xRight = 0.65 + Math.random() * 0.35; // bên phải
 
-            (function frame() {
-                confetti({
-                    particleCount: 3,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0 },
-                    colors: colors
-                });
-                confetti({
-                    particleCount: 3,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1 },
-                    colors: colors
-                });
+        confetti({
+            particleCount: 8, // ít hơn
+            angle: 60,
+            spread: 40,
+            origin: { x: xLeft, y: 0.7 },
+            colors: colors,
+            gravity: 0.6
+        });
 
-                if (Date.now() < end) {
-                    requestAnimationFrame(frame);
-                }
-            }());
-        }
+        confetti({
+            particleCount: 8,
+            angle: 120,
+            spread: 40,
+            origin: { x: xRight, y: 0.7 },
+            colors: colors,
+            gravity: 0.6
+        });
+
+        count++;
+        if (count >= maxCount) clearInterval(interval);
+    }, 120); // bắn nhanh hơn, 120ms mỗi lần
+}
 
         // Lắng nghe khi vào scene cuối để bắn pháo hoa
         const observer = new MutationObserver((mutations) => {
