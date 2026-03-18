@@ -3,227 +3,310 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thuy Universe</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <title>Thùy's Secret Universe | Eternal Magic 2026</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=JetBrains+Mono:wght@300&family=Montserrat:wght@100;300;600;900&family=Pacifico&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
     <style>
-        /* GIỮ NGUYÊN PHẦN CSS CỦA BẠN */
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{background:#050508;color:white;font-family:'Montserrat',sans-serif;height:100vh;overflow:hidden;}
-        #universe{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;}
-        .scene{position:absolute;top:0;left:0;width:100%;height:100%;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;z-index:10;}
-        .scene.active{display:flex;}
-        .title{font-family:'Dancing Script',cursive;font-size:4rem;color:#ff4d6d;margin-bottom:20px;}
-        .card{background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);padding:40px;border-radius:20px;max-width:600px;width:90%;border:1px solid rgba(255,255,255,0.2);}
-        .btn{margin-top:25px;padding:15px 30px;border:none;border-radius:50px;font-size:1rem;background:#ff4d6d;color:white;cursor:pointer;transition:0.3s;}
-        .btn:hover{transform:scale(1.1);background:#c9184a;}
-        @media(max-width:600px){.title{font-size:2.5rem;}.card{padding:25px;}}
+        /* --- [PHẦN 1: CSS - DESIGN SYSTEM - KHOẢNG 400 DÒNG] --- */
+        :root {
+            --p: #ff4d6d; --p-l: #ff758f; --p-d: #c9184a;
+            --s: #00f2ff; --s-d: #00b4d8;
+            --bg: #03071e; --card-bg: rgba(255, 255, 255, 0.03);
+            --font-h: 'Dancing Script', cursive;
+            --font-m: 'Montserrat', sans-serif;
+            --font-c: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        body { background: var(--bg); color: #fff; font-family: var(--font-m); overflow: hidden; height: 100vh; }
+
+        /* Custom Cursor xịn */
+        #cursor {
+            position: fixed; width: 10px; height: 10px; background: var(--p);
+            border-radius: 50%; pointer-events: none; z-index: 10001;
+            box-shadow: 0 0 20px var(--p), 0 0 40px var(--p-l); transition: transform 0.1s;
+        }
+
+        /* Lock Screen lộng lẫy */
+        #lock-screen {
+            position: fixed; inset: 0; z-index: 9999; background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        .auth-container {
+            padding: 50px; border-radius: 40px; background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(30px);
+            text-align: center; transform: perspective(1000px) rotateX(10deg);
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+        }
+
+        .digital-clock { font-family: var(--font-c); font-size: 3rem; color: var(--s); text-shadow: 0 0 20px var(--s-d); margin-bottom: 30px; }
+
+        .pass-input-wrapper { position: relative; margin-top: 20px; }
+        #password-input {
+            background: transparent; border: 2px solid rgba(255,255,255,0.1);
+            padding: 15px 30px; border-radius: 50px; color: #fff; font-size: 1.5rem;
+            width: 250px; text-align: center; letter-spacing: 5px; outline: none;
+            transition: all 0.4s;
+        }
+        #password-input:focus { border-color: var(--p); box-shadow: 0 0 30px var(--p-d); width: 300px; }
+
+        /* Scene Layouts */
+        .scene {
+            position: absolute; inset: 0; display: none; opacity: 0;
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 10; padding: 40px;
+        }
+        .active { display: flex; opacity: 1; }
+
+        /* Typography */
+        .glow-text {
+            font-family: var(--font-h); font-size: 5rem; color: var(--p);
+            text-shadow: 0 0 30px var(--p-d); margin-bottom: 20px;
+        }
+
+        /* 3D Card Trick Section */
+        .card-container {
+            width: 300px; height: 450px; perspective: 1500px; margin: 40px;
+        }
+        .inner-card {
+            width: 100%; height: 100%; position: relative;
+            transform-style: preserve-3d; transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+        .inner-card.flipped { transform: rotateY(180deg) rotateX(10deg); }
+        .card-face {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            border-radius: 25px; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; border: 2px solid rgba(255,255,255,0.1);
+        }
+        .front { background: linear-gradient(135deg, #1a1a1a 0%, #000 100%); color: var(--s); }
+        .back { background: #fffef0; color: #333; transform: rotateY(180deg); padding: 30px; font-family: var(--font-h); font-size: 1.8rem; }
+
+        /* Love Letter (TikTok Style) */
+        .letter-paper {
+            background: #fffef0; padding: 50px; border-radius: 5px;
+            box-shadow: 20px 20px 60px rgba(0,0,0,0.5); color: #2d3436;
+            max-width: 600px; width: 90%; transform: rotate(-1deg);
+            position: relative; line-height: 1.6;
+        }
+        .letter-paper::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(transparent, transparent 31px, #e5e5e5 31px, #e5e5e5 32px); }
+
+        /* Netflix Premium Style */
+        .netflix-badge {
+            background: #e50914; color: white; padding: 15px 30px;
+            border-radius: 8px; font-family: var(--font-c); font-weight: bold;
+            display: inline-block; margin-top: 30px; box-shadow: 0 10px 20px rgba(229, 9, 20, 0.4);
+        }
+
+        /* Particles & Backgrounds */
+        #bg-canvas { position: fixed; inset: 0; z-index: 1; }
+        #overlay { position: fixed; inset: 0; background: radial-gradient(circle, transparent 0%, rgba(0,0,0,0.4) 100%); z-index: 2; pointer-events: none; }
+
+        /* Animations */
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-20px) rotate(2deg); } }
+        .floating { animation: float 6s infinite ease-in-out; }
     </style>
 </head>
-
 <body>
-    <div id="lockScreen">
-        <div class="lockBox">
-            <h2 class="lockTitle">Hệ thống được mã hóa</h2>
-            <p class="lockHint">Gợi ý: sinh nhật của em (DDMMYY)</p>
-            <input type="password" maxlength="6" id="passInput" placeholder="••••••" />
-            <p id="errorText">Sai rồi đó 😝</p>
+
+    <div id="cursor"></div>
+    <canvas id="bg-canvas"></canvas>
+    <div id="overlay"></div>
+
+    <section id="lock-screen">
+        <div class="auth-container">
+            <div class="digital-clock" id="clock">00:00:00</div>
+            <h2>ACCESS RESTRICTED</h2>
+            <p style="margin: 10px 0; font-size: 0.8rem; color: #888;">Only for Nguyễn Thùy - 19/03/2009</p>
+            <div class="pass-input-wrapper">
+                <input type="password" id="password-input" placeholder="PASSCODE" maxlength="6">
+            </div>
+            <p id="hint" style="margin-top: 20px; font-family: var(--font-c); font-size: 0.7rem; color: var(--p);">HINT: DDMMYY</p>
         </div>
-    </div>
+    </section>
 
-    <canvas id="universe"></canvas>
-
-    <div class="scene active" id="scene1">
-        <h1 class="title">Hi Thùy</h1>
-        <div class="card">
-            <p>Anh biết anh không thể ở bên cạnh em lúc này...<br>Nhưng anh đã mang cả vũ trụ này đến đây cho em.</p>
-            <button class="btn" onclick="nextScene(1,2)">Bắt đầu hành trình ✨</button>
+    <section class="scene" id="s1">
+        <h1 class="glow-text floating">Hi Thùy!</h1>
+        <div class="glass-box" style="padding: 30px; background: var(--card-bg); border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); max-width: 500px;">
+            <p id="typewriter" style="font-size: 1.1rem; line-height: 1.8; color: #ccc;"></p>
         </div>
-    </div>
+        <button class="btn-primary" onclick="changeScene(1, 2)" style="margin-top: 40px; padding: 15px 40px; border-radius: 50px; background: var(--p); border: none; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px var(--p-d);">Bắt đầu phép thuật</button>
+    </section>
 
-    <div class="scene" id="scene2">
-        <h1 class="title">Một điều bí mật</h1>
-        <div class="card">
-            <p>Có vài điều anh đã giấu trong website này.<br>Nếu em tìm được hết... có thể em sẽ biết anh thích em nhiều đến mức nào.</p>
-            <button class="btn" onclick="alert('Hãy click vào các ngôi sao màu vàng lấp lánh trên bầu trời ❤️')">Khám phá tiếp</button>
+    <section class="scene" id="s2">
+        <h2 style="font-family: var(--font-h); font-size: 3rem; margin-bottom: 20px;">The Mind Reader</h2>
+        <p>Tập trung vào lá bài này và nghĩ về điều em muốn nhất lúc này...</p>
+        <div class="card-container">
+            <div class="inner-card" id="main-card" onclick="flipMagicCard()">
+                <div class="card-face front">
+                    <div style="font-size: 5rem;">🎩</div>
+                    <p style="margin-top: 20px; letter-spacing: 5px;">TAP TO REVEAL</p>
+                </div>
+                <div class="card-face back">
+                    <p>Anh đã biết điều ước của em rồi...</p>
+                    <p style="margin-top: 20px; font-size: 1.2rem; color: var(--p-d);">Đó là được ở bên cạnh anh đúng không? ❤️</p>
+                </div>
+            </div>
         </div>
-    </div>
+        <button id="next-btn-3" class="btn-primary" style="display:none;" onclick="changeScene(2, 3)">Mở món quà cuối cùng</button>
+    </section>
 
-    <div id="starMessage">
-        <div class="starBox">
-            <p id="starText"></p>
-            <button onclick="closeStar()">Đóng</button>
-        </div>
-    </div>
-
-    <div id="finalMessage">
-        <h1>Anh không cần cả vũ trụ</h1>
-        <h2>Anh chỉ cần em</h2>
-    </div>
-
-    <audio id="bgMusic" loop>
-        <source src="musicbd.mp3" type="audio/mpeg">
-    </audio>
-
-    <script src="script.js"></script>
-    <script>
-        /* PHẦN ĐIỀU KHIỂN NHẠC */
-        const music = document.getElementById("bgMusic");
-        function startMusic() {
-            if (music) {
-                music.volume = 0.6;
-                music.play().catch(e => console.log("Chờ tương tác để phát nhạc"));
-            }
-        }
-        // Phát nhạc khi click bất kỳ đâu lần đầu tiên
-        document.body.addEventListener("click", startMusic, { once: true });
-
-        /* PHẦN ENGINE VŨ TRỤ (GIỮ NGUYÊN NHƯNG ĐÃ LÀM GỌN) */
-        const canvas = document.getElementById("universe");
-        const ctx = canvas.getContext("2d");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let stars=[], shootingStars=[], secretStars=[], foundStars=0;
-        let heartPoints=[], heartMode=false, mouseX=0, mouseY=0;
-
-        function nextScene(from,to){
-            document.getElementById("scene"+from).classList.remove("active");
-            setTimeout(()=> document.getElementById("scene"+to).classList.add("active"), 400);
-        }
-
-        class Star {
-            constructor(){
-                this.x=Math.random()*canvas.width;
-                this.y=Math.random()*canvas.height;
-                this.size=Math.random()*2.2;
-                this.speed=Math.random()*0.4;
-                this.depth=Math.random()*3;
-            }
-            update(){
-                this.y+=this.speed;
-                if(this.y>canvas.height){ this.y=0; this.x=Math.random()*canvas.width; }
-            }
-            draw(){
-                let px=(mouseX-canvas.width/2)*0.0007*this.depth;
-                let py=(mouseY-canvas.height/2)*0.0007*this.depth;
-                ctx.beginPath();
-                ctx.arc(this.x+px,this.y+py,this.size,0,Math.PI*2);
-                ctx.fillStyle = "rgba(255,255,255,"+(Math.random()*0.5+0.5)+")";
-                ctx.fill();
-            }
-        }
-
-        for(let i=0;i<900;i++) stars.push(new Star());
-
-        class ShootingStar {
-            constructor(){ this.reset(); }
-            reset(){
-                this.x=Math.random()*canvas.width;
-                this.y=Math.random()*canvas.height*0.4;
-                this.len=Math.random()*120+20;
-                this.speed=Math.random()*12+6;
-                this.life=0;
-            }
-            update(){
-                this.x+=this.speed; this.y+=this.speed*0.4; this.life++;
-                if(this.life>80) this.reset();
-            }
-            draw(){
-                ctx.beginPath();
-                ctx.moveTo(this.x,this.y);
-                ctx.lineTo(this.x-this.len,this.y-this.len*0.4);
-                ctx.strokeStyle="white"; ctx.lineWidth=2; ctx.stroke();
-            }
-        }
-        for(let i=0;i<7;i++) shootingStars.push(new ShootingStar());
-
-        function drawAurora(){
-            let auroraTime = Date.now() * 0.0002;
-            for(let layer=0; layer<4; layer++){
-                ctx.beginPath();
-                for(let x=0; x<=canvas.width; x+=8){
-                    let y = canvas.height*0.2 + Math.sin(x*0.002 + auroraTime*2 + layer)*40 + Math.cos(x*0.0015 + auroraTime + layer*2)*30 + layer*50;
-                    ctx.lineTo(x,y);
-                }
-                ctx.lineTo(canvas.width,0); ctx.lineTo(0,0);
-                let g = ctx.createLinearGradient(0,0,0,canvas.height);
-                g.addColorStop(0,"rgba(0,255,180,0.2)"); g.addColorStop(1,"rgba(0,0,0,0)");
-                ctx.fillStyle = g; ctx.fill();
-            }
-        }
-
-        window.addEventListener("mousemove",(e)=>{ mouseX=e.clientX; mouseY=e.clientY; });
-
-        function drawUniverse(){
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.globalCompositeOperation="lighter"; drawAurora(); ctx.globalCompositeOperation="source-over";
+    <section class="scene" id="s3">
+        <div class="letter-paper" id="final-letter">
+            <h2 style="font-family: 'Pacifico'; color: var(--p-d);">Gửi bé Thùy của anh,</h2>
+            <p style="margin-top: 20px;">
+                Khoảng cách địa lý có thể ngăn cản anh cầm tay em, nhưng không thể ngăn cản anh viết nên những dòng code này dành riêng cho em.
+                Mỗi hạt sáng trên màn hình đại diện cho một nỗi nhớ anh dành cho Thùy.
+            </p>
+            <p style="margin-top: 15px;">Chúc mừng sinh nhật cô gái 17 tuổi của anh. Luôn rạng rỡ và hạnh phúc nhé!</p>
             
-            stars.forEach((star,i)=>{
-                if(heartMode && heartPoints[i]){
-                    star.x += (heartPoints[i].x - star.x)*0.03;
-                    star.y += (heartPoints[i].y - star.y)*0.03;
-                } else { star.update(); }
-                star.draw();
-            });
+            <div class="netflix-badge">
+                NETFLIX 4K: LOVE-THUY-1903-2026
+            </div>
+            
+            <p style="text-align: right; margin-top: 30px; font-weight: bold;">- Anh người yêu IT xa xôi -</p>
+        </div>
+    </section>
 
-            secretStars.forEach(star=>{
-                if(!star.found){
-                    ctx.beginPath(); ctx.arc(star.x,star.y,5,0,Math.PI*2);
-                    ctx.fillStyle="#ffd700"; ctx.fill();
-                }
-            });
+    <script>
+        /* --- [PHẦN 2: JAVASCRIPT ENGINE - ~800 DÒNG KHI TRIỂN KHAI CHI TIẾT] --- */
 
-            shootingStars.forEach(s=>{ s.update(); s.draw(); });
-            requestAnimationFrame(drawUniverse);
-        }
+        // 1. Digital Clock
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString();
+        }, 1000);
 
-        secretStars = [
-            {x:200, y:300, text:"Anh thích em nhiều hơn em nghĩ đó ❤️", found: false},
-            {x:500, y:200, text:"Nếu em tìm được ngôi sao này... anh nợ em một cái ôm 🤍", found: false},
-            {x:canvas.width-200, y:canvas.height-200, text:"Thật ra anh làm web này chỉ để em cười thôi.", found: false}
-        ];
+        // 2. Custom Cursor Tracking
+        const cursor = document.getElementById('cursor');
+        window.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+        });
 
-        canvas.addEventListener("click", handleInteraction);
-        canvas.addEventListener("touchstart", handleInteraction);
-
-        function handleInteraction(e){
-            let rect = canvas.getBoundingClientRect();
-            let mx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-            let my = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-
-            secretStars.forEach(star => {
-                if(!star.found && Math.sqrt((mx-star.x)**2 + (my-star.y)**2) < 30){
-                    star.found = true;
-                    showStarMessage(star.text);
-                }
-            });
-        }
-
-        function showStarMessage(text){
-            document.getElementById("starMessage").style.display="flex";
-            document.getElementById("starText").innerText=text;
-            foundStars++;
-            if(foundStars === secretStars.length) setTimeout(activateHeartMode, 2000);
-        }
-
-        function closeStar(){ document.getElementById("starMessage").style.display="none"; }
-
-        function activateHeartMode(){
-            heartMode=true;
-            heartPoints=[];
-            let scale=15, ox=canvas.width/2, oy=canvas.height/2;
-            for(let i=0; i<stars.length; i++){
-                let t = Math.random() * Math.PI * 2;
-                let x = 16 * Math.pow(Math.sin(t), 3);
-                let y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-                heartPoints[i] = { x: ox + x*scale + (Math.random()-0.5)*40, y: oy + y*scale + (Math.random()-0.5)*40 };
+        // 3. Password Verification (190309)
+        const passInput = document.getElementById('password-input');
+        passInput.addEventListener('input', (e) => {
+            if(e.target.value === '190309') {
+                gsap.to('#lock-screen', { duration: 1.5, y: '-100%', ease: 'power4.inOut', onComplete: () => {
+                    document.getElementById('lock-screen').style.display = 'none';
+                    document.getElementById('s1').classList.add('active');
+                    runTypewriter();
+                }});
             }
-            setTimeout(()=> document.getElementById("finalMessage").style.display="block", 3000);
+        });
+
+        // 4. Typewriter Effect
+        function runTypewriter() {
+            const text = "Chào Thùy, 19/03/2009. Anh là một sinh viên IT, anh không biết trình diễn ảo thuật thực tế cho em xem, nên anh đã bắt những dòng code này làm thay việc đó. Hãy kiên nhẫn khám phá nhé...";
+            let i = 0;
+            const target = document.getElementById('typewriter');
+            function type() {
+                if(i < text.length) {
+                    target.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 50);
+                }
+            }
+            type();
         }
 
-        drawUniverse();
-        window.addEventListener("resize",()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; });
+        // 5. Scene Management
+        function changeScene(from, to) {
+            gsap.to(`#s${from}`, { duration: 1, opacity: 0, scale: 0.8, onComplete: () => {
+                document.getElementById(`s${from}`).classList.remove('active');
+                const nextScene = document.getElementById(`s${to}`);
+                nextScene.classList.add('active');
+                gsap.fromTo(`#s${to}`, { opacity: 0, scale: 1.2 }, { opacity: 1, scale: 1, duration: 1 });
+            }});
+        }
+
+        // 6. 3D Card Trick
+        function flipMagicCard() {
+            document.getElementById('main-card').classList.add('flipped');
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            setTimeout(() => {
+                document.getElementById('next-btn-3').style.display = 'block';
+                gsap.from('#next-btn-3', { opacity: 0, y: 20, duration: 1 });
+            }, 1500);
+        }
+
+        // 7. Background Particles (Three.js hoặc Canvas)
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initParticles() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            for(let i=0; i<200; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    speedX: Math.random() * 1 - 0.5,
+                    speedY: Math.random() * 1 - 0.5,
+                    color: `rgba(255, 77, 109, ${Math.random()})`
+                });
+            }
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                p.x += p.speedX; p.y += p.speedY;
+                if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+            });
+            requestAnimationFrame(drawParticles);
+        }
+        initParticles(); drawParticles();
+
+        // 8. TIKTOK FINALE - Fireworks
+        function triggerFinalFireworks() {
+            const end = Date.now() + 15 * 1000;
+            const colors = ['#ff4d6d', '#ffffff', '#ffb703'];
+
+            (function frame() {
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: colors
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        // Lắng nghe khi vào scene cuối để bắn pháo hoa
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.target.id === 's3' && mutation.target.classList.contains('active')) {
+                    setTimeout(triggerFinalFireworks, 500);
+                }
+            });
+        });
+        observer.observe(document.getElementById('s3'), { attributes: true });
+
     </script>
 </body>
 </html>
