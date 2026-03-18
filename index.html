@@ -604,7 +604,7 @@ canvas.height=window.innerHeight
 
 })
 
-  canvas.addEventListener("click",function(e){
+canvas.addEventListener("click",function(e){
 
 let rect=canvas.getBoundingClientRect()
 
@@ -618,7 +618,7 @@ let dy=my-star.y
 
 let dist=Math.sqrt(dx*dx+dy*dy)
 
-if(dist<10){
+if(dist<20){
 
 star.found=true
 
@@ -713,6 +713,8 @@ y:offsetY+y*scale
 <h2>Anh chỉ cần em</h2>
 
 </div>
-
+  
+<script src="script.js"></script>
+  
 </body>
 </html>
