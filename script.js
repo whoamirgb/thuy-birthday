@@ -58,20 +58,6 @@ lockScreen.style.display="none"
 
 }
 
-createHeartExplosion()
-
-lockScreen.style.opacity="0"
-
-setTimeout(()=>{
-
-lockScreen.style.display="none"
-
-},1000)
-
-}
-
-
-
 /* ===============================
 HEART EFFECT
 =============================== */
