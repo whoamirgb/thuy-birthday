@@ -48,7 +48,9 @@ function unlockUniverse(){
 
 createHeartExplosion()
 
-document.getElementById("bgMusic").play()
+let music=document.getElementById("bgMusic")
+music.volume=0.6
+music.play().catch(()=>{})
 
 lockScreen.style.opacity="0"
 
