@@ -4,14 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thùy's Secret Universe | Eternal Magic 2026</title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=JetBrains+Mono:wght@300&family=Montserrat:wght@100;300;600;900&family=Pacifico&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* --- [PHẦN 1: CSS - DESIGN SYSTEM - KHOẢNG 400 DÒNG] --- */
         :root {
             --p: #ff4d6d; --p-l: #ff758f; --p-d: #c9184a;
             --s: #00f2ff; --s-d: #00b4d8;
@@ -24,16 +21,17 @@
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
         body { background: var(--bg); color: #fff; font-family: var(--font-m); overflow: hidden; height: 100vh; }
 
-        /* Custom Cursor xịn */
+        /* Custom Cursor */
         #cursor {
             position: fixed; width: 10px; height: 10px; background: var(--p);
             border-radius: 50%; pointer-events: none; z-index: 10001;
             box-shadow: 0 0 20px var(--p), 0 0 40px var(--p-l); transition: transform 0.1s;
         }
 
-        /* Lock Screen lộng lẫy */
+        /* Lock Screen */
         #lock-screen {
-            position: fixed; inset: 0; z-index: 9999; background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            position: fixed; inset: 0; z-index: 9999;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
 
@@ -55,7 +53,7 @@
         }
         #password-input:focus { border-color: var(--p); box-shadow: 0 0 30px var(--p-d); width: 300px; }
 
-        /* Scene Layouts */
+        /* Scenes */
         .scene {
             position: absolute; inset: 0; display: none; opacity: 0;
             flex-direction: column; align-items: center; justify-content: center;
@@ -69,7 +67,7 @@
             text-shadow: 0 0 30px var(--p-d); margin-bottom: 20px;
         }
 
-        /* 3D Card Trick Section */
+        /* 3D Card */
         .card-container {
             width: 300px; height: 450px; perspective: 1500px; margin: 40px;
         }
@@ -87,29 +85,39 @@
         .front { background: linear-gradient(135deg, #1a1a1a 0%, #000 100%); color: var(--s); }
         .back { background: #fffef0; color: #333; transform: rotateY(180deg); padding: 30px; font-family: var(--font-h); font-size: 1.8rem; }
 
-        /* Love Letter (TikTok Style) */
+        /* Letter */
         .letter-paper {
             background: #fffef0; padding: 50px; border-radius: 5px;
             box-shadow: 20px 20px 60px rgba(0,0,0,0.5); color: #2d3436;
             max-width: 600px; width: 90%; transform: rotate(-1deg);
             position: relative; line-height: 1.6;
         }
-        .letter-paper::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(transparent, transparent 31px, #e5e5e5 31px, #e5e5e5 32px); }
+        .letter-paper::before {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(transparent, transparent 31px, #e5e5e5 31px, #e5e5e5 32px);
+        }
 
-        /* Netflix Premium Style */
         .netflix-badge {
             background: #e50914; color: white; padding: 15px 30px;
             border-radius: 8px; font-family: var(--font-c); font-weight: bold;
             display: inline-block; margin-top: 30px; box-shadow: 0 10px 20px rgba(229, 9, 20, 0.4);
         }
 
-        /* Particles & Backgrounds */
+        /* Background Canvas */
         #bg-canvas { position: fixed; inset: 0; z-index: 1; }
         #overlay { position: fixed; inset: 0; background: radial-gradient(circle, transparent 0%, rgba(0,0,0,0.4) 100%); z-index: 2; pointer-events: none; }
 
         /* Animations */
-        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-20px) rotate(2deg); } }
+        @keyframes float { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-20px) rotate(2deg); } }
         .floating { animation: float 6s infinite ease-in-out; }
+
+        /* Button */
+        .btn-primary {
+            margin-top: 40px; padding: 15px 40px; border-radius: 50px;
+            background: var(--p); border: none; color: white; font-weight: bold;
+            cursor: pointer; box-shadow: 0 10px 20px var(--p-d);
+        }
     </style>
 </head>
 <body>
@@ -118,6 +126,7 @@
     <canvas id="bg-canvas"></canvas>
     <div id="overlay"></div>
 
+    <!-- LOCK SCREEN -->
     <section id="lock-screen">
         <div class="auth-container">
             <div class="digital-clock" id="clock">00:00:00</div>
@@ -130,14 +139,16 @@
         </div>
     </section>
 
+    <!-- SCENE 1 -->
     <section class="scene" id="s1">
         <h1 class="glow-text floating">Hi Thùy!</h1>
         <div class="glass-box" style="padding: 30px; background: var(--card-bg); border-radius: 20px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); max-width: 500px;">
             <p id="typewriter" style="font-size: 1.1rem; line-height: 1.8; color: #ccc;"></p>
         </div>
-        <button class="btn-primary" onclick="changeScene(1, 2)" style="margin-top: 40px; padding: 15px 40px; border-radius: 50px; background: var(--p); border: none; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px var(--p-d);">Bắt đầu phép thuật</button>
+        <button class="btn-primary" onclick="changeScene(1,2)">Bắt đầu phép thuật</button>
     </section>
 
+    <!-- SCENE 2 -->
     <section class="scene" id="s2">
         <h2 style="font-family: var(--font-h); font-size: 3rem; margin-bottom: 20px;">The Mind Reader</h2>
         <p>Tập trung vào lá bài này và nghĩ về điều em muốn nhất lúc này...</p>
@@ -153,9 +164,10 @@
                 </div>
             </div>
         </div>
-        <button id="next-btn-3" class="btn-primary" style="display:none;" onclick="changeScene(2, 3)">Mở món quà cuối cùng</button>
+        <button id="next-btn-3" class="btn-primary" style="display:none;" onclick="changeScene(2,3)">Mở món quà cuối cùng</button>
     </section>
 
+    <!-- SCENE 3 -->
     <section class="scene" id="s3">
         <div class="letter-paper" id="final-letter">
             <h2 style="font-family: 'Pacifico'; color: var(--p-d);">Gửi bé Thùy của anh,</h2>
@@ -164,31 +176,27 @@
                 Mỗi hạt sáng trên màn hình đại diện cho một nỗi nhớ anh dành cho Thùy.
             </p>
             <p style="margin-top: 15px;">Chúc mừng sinh nhật cô gái 17 tuổi của anh. Luôn rạng rỡ và hạnh phúc nhé!</p>
-            
             <div class="netflix-badge">
                 NETFLIX 4K: LOVE-THUY-1903-2026
             </div>
-            
             <p style="text-align: right; margin-top: 30px; font-weight: bold;">- Anh người yêu IT xa xôi -</p>
         </div>
     </section>
 
     <script>
-        /* --- [PHẦN 2: JAVASCRIPT ENGINE - ~800 DÒNG KHI TRIỂN KHAI CHI TIẾT] --- */
-
-        // 1. Digital Clock
+        // --- DIGITAL CLOCK ---
         setInterval(() => {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString();
         }, 1000);
 
-        // 2. Custom Cursor Tracking
+        // --- CUSTOM CURSOR ---
         const cursor = document.getElementById('cursor');
         window.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to(cursor, { x:e.clientX, y:e.clientY, duration:0.1 });
         });
 
-        // 3. Password Verification (190309)
+        // --- PASSWORD ---
         const passInput = document.getElementById('password-input');
         passInput.addEventListener('input', (e) => {
             if(e.target.value === '190309') {
@@ -200,7 +208,7 @@
             }
         });
 
-        // 4. Typewriter Effect
+        // --- TYPEWRITER ---
         function runTypewriter() {
             const text = "Chào Thùy, 19/03/2009. Anh là một sinh viên IT, anh không biết trình diễn ảo thuật thực tế cho em xem, nên anh đã bắt những dòng code này làm thay việc đó. Hãy kiên nhẫn khám phá nhé...";
             let i = 0;
@@ -215,143 +223,109 @@
             type();
         }
 
-        // 5. Scene Management
-        function changeScene(from, to) {
-            gsap.to(`#s${from}`, { duration: 1, opacity: 0, scale: 0.8, onComplete: () => {
+        // --- SCENE MANAGEMENT ---
+        function changeScene(from,to) {
+            gsap.to(`#s${from}`, { duration:1, opacity:0, scale:0.8, onComplete:() => {
                 document.getElementById(`s${from}`).classList.remove('active');
                 const nextScene = document.getElementById(`s${to}`);
                 nextScene.classList.add('active');
-                gsap.fromTo(`#s${to}`, { opacity: 0, scale: 1.2 }, { opacity: 1, scale: 1, duration: 1 });
+                gsap.fromTo(`#s${to}`, { opacity:0, scale:1.2 }, { opacity:1, scale:1, duration:1 });
             }});
         }
 
-        // 6. 3D Card Trick
+        // --- 3D CARD ---
         function flipMagicCard() {
             document.getElementById('main-card').classList.add('flipped');
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            // Không bắn confetti nữa
             setTimeout(() => {
                 document.getElementById('next-btn-3').style.display = 'block';
-                gsap.from('#next-btn-3', { opacity: 0, y: 20, duration: 1 });
+                gsap.from('#next-btn-3', { opacity:0, y:20, duration:1 });
             }, 1500);
         }
 
-        // 7. Background Particles (Three.js hoặc Canvas)
+        // --- CANVAS PARTICLES & HEARTS ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
         let particles = [];
+        let hearts = [];
 
-        function initParticles() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            for(let i=0; i<200; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 2,
-                    speedX: Math.random() * 1 - 0.5,
-                    speedY: Math.random() * 1 - 0.5,
-                    color: `rgba(255, 77, 109, ${Math.random()})`
-                });
-            }
+        function random(min,max){ return Math.random()*(max-min)+min; }
+
+        // Init particles
+        for(let i=0;i<200;i++){
+            particles.push({
+                x: random(0,canvas.width),
+                y: random(0,canvas.height),
+                size: random(1,2),
+                speedX: random(-0.5,0.5),
+                speedY: random(-0.5,0.5),
+                color:`rgba(255,77,109,${Math.random()})`
+            });
         }
 
-        function drawParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                ctx.fillStyle = p.color;
+        function createHeart(){
+            hearts.push({
+                x: random(0,canvas.width),
+                y: canvas.height + 10,
+                size: random(10,25),
+                speedY: random(1,2),
+                speedX: random(-0.5,0.5),
+                opacity: random(0.6,1)
+            });
+        }
+
+        function drawHeart(x,y,size,opacity){
+            ctx.save();
+            ctx.globalAlpha = opacity;
+            ctx.fillStyle = '#ff4d6d';
+            ctx.beginPath();
+            const topCurve = size*0.3;
+            ctx.moveTo(x,y+topCurve);
+            ctx.bezierCurveTo(x,y,x-size/2,y,x-size/2,y+topCurve);
+            ctx.bezierCurveTo(x-size/2,y+(size+topCurve)/2,x,y+(size+topCurve)/2,x,y+size);
+            ctx.bezierCurveTo(x,y+(size+topCurve)/2,x+size/2,y+(size+topCurve)/2,x+size/2,y+topCurve);
+            ctx.bezierCurveTo(x+size/2,y,x,y,x,y+topCurve);
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function animate(){
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+
+            // Particles
+            particles.forEach(p=>{
+                ctx.fillStyle=p.color;
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
                 ctx.fill();
-                p.x += p.speedX; p.y += p.speedY;
-                if(p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-                if(p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                p.x+=p.speedX; p.y+=p.speedY;
+                if(p.x<0||p.x>canvas.width)p.speedX*=-1;
+                if(p.y<0||p.y>canvas.height)p.speedY*=-1;
             });
-            requestAnimationFrame(drawParticles);
+
+            // Hearts
+            if(hearts.length<50 && Math.random()<0.05) createHeart();
+            hearts.forEach((h,i)=>{
+                h.y-=h.speedY;
+                h.x+=h.speedX;
+                h.opacity-=0.002;
+                drawHeart(h.x,h.y,h.size,h.opacity);
+                if(h.opacity<=0 || h.y+h.size<0) hearts.splice(i,1);
+            });
+
+            requestAnimationFrame(animate);
         }
-        initParticles(); drawParticles();
 
-     // Canvas cho trái tim
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+        animate();
 
-let hearts = [];
-
-function random(min, max) { return Math.random() * (max - min) + min; }
-
-// Tạo trái tim
-function createHeart() {
-    hearts.push({
-        x: random(0, canvas.width),
-        y: canvas.height + 10,
-        size: random(10, 25),
-        speedY: random(1, 2),
-        speedX: random(-0.5, 0.5),
-        opacity: random(0.6, 1)
-    });
-}
-
-// Vẽ trái tim
-function drawHeart(x, y, size, opacity) {
-    ctx.save();
-    ctx.globalAlpha = opacity;
-    ctx.fillStyle = '#ff4d6d';
-    ctx.beginPath();
-    const topCurveHeight = size * 0.3;
-    ctx.moveTo(x, y + topCurveHeight);
-    ctx.bezierCurveTo(
-        x, y,
-        x - size / 2, y,
-        x - size / 2, y + topCurveHeight
-    );
-    ctx.bezierCurveTo(
-        x - size / 2, y + (size + topCurveHeight) / 2,
-        x, y + (size + topCurveHeight) / 2,
-        x, y + size
-    );
-    ctx.bezierCurveTo(
-        x, y + (size + topCurveHeight) / 2,
-        x + size / 2, y + (size + topCurveHeight) / 2,
-        x + size / 2, y + topCurveHeight
-    );
-    ctx.bezierCurveTo(
-        x + size / 2, y,
-        x, y,
-        x, y + topCurveHeight
-    );
-    ctx.fill();
-    ctx.restore();
-}
-
-// Animation
-function animateHearts() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if(hearts.length < 50 && Math.random() < 0.05) createHeart();
-
-    hearts.forEach((h, i) => {
-        h.y -= h.speedY;
-        h.x += h.speedX;
-        h.opacity -= 0.002;
-        drawHeart(h.x, h.y, h.size, h.opacity);
-        if(h.opacity <= 0 || h.y + h.size < 0) hearts.splice(i, 1);
-    });
-
-    requestAnimationFrame(animateHearts);
-}
-
-animateHearts();
-
-        // Lắng nghe khi vào scene cuối để bắn pháo hoa
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.target.id === 's3' && mutation.target.classList.contains('active')) {
-                    setTimeout(triggerFinalFireworks, 500);
-                }
-            });
+        // Resize canvas
+        window.addEventListener('resize',()=>{
+            canvas.width=window.innerWidth;
+            canvas.height=window.innerHeight;
         });
-        observer.observe(document.getElementById('s3'), { attributes: true });
 
     </script>
 </body>
