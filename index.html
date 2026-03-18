@@ -727,6 +727,22 @@ y:offsetY+y*scale
 <audio id="bgMusic" loop>
 <source src="musicbd.mp3" type="audio/mpeg">
 </audio>
-  
+
+<script>
+
+const music = document.getElementById("bgMusic")
+
+function startMusic(){
+
+music.volume = 0.6
+music.currentTime = 0
+
+music.play().catch(()=>{})
+
+}
+
+document.body.addEventListener("click",startMusic,{once:true})
+
+</script>
 </body>
 </html>
