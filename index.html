@@ -606,14 +606,18 @@ canvas.height=window.innerHeight
 
 canvas.addEventListener("click",handleStarClick)
 canvas.addEventListener("touchstart",handleStarClick)
+
 function handleStarClick(e){
+
 let rect=canvas.getBoundingClientRect()
 
 let mx=(e.touches?e.touches[0].clientX:e.clientX)-rect.left
 let my=(e.touches?e.touches[0].clientY:e.clientY)-rect.top
 
 secretStars.forEach(star=>{
+
 if(star.found) return
+
 let dx=mx-star.x
 let dy=my-star.y
 
@@ -629,8 +633,7 @@ showStarMessage(star.text)
 
 })
 
-})
-
+}
 function showStarMessage(text){
 
 document.getElementById("starMessage").style.display="flex"
