@@ -270,37 +270,78 @@
         }
         initParticles(); drawParticles();
 
-     function triggerFinalFireworks() {
-    const colors = ['#ff4d6d', '#ffffff', '#ffb703'];
-    let count = 0;
-    const maxCount = 20; // ít đợt pháo hơn
-    const interval = setInterval(() => {
-        // Random vị trí, tránh khu vực giữa thư
-        const xLeft = Math.random() * 0.35;   
-        const xRight = 0.65 + Math.random() * 0.35; 
+     // Canvas cho trái tim
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-        confetti({
-            particleCount: 5, // ít hơn
-            angle: 60,
-            spread: 40,
-            origin: { x: xLeft, y: 0.7 },
-            colors: colors,
-            gravity: 0.6
-        });
+let hearts = [];
 
-        confetti({
-            particleCount: 5,
-            angle: 120,
-            spread: 40,
-            origin: { x: xRight, y: 0.7 },
-            colors: colors,
-            gravity: 0.6
-        });
+function random(min, max) { return Math.random() * (max - min) + min; }
 
-        count++;
-        if (count >= maxCount) clearInterval(interval);
-    }, 200); // bắn chậm hơn, 200ms mỗi lần
+// Tạo trái tim
+function createHeart() {
+    hearts.push({
+        x: random(0, canvas.width),
+        y: canvas.height + 10,
+        size: random(10, 25),
+        speedY: random(1, 2),
+        speedX: random(-0.5, 0.5),
+        opacity: random(0.6, 1)
+    });
 }
+
+// Vẽ trái tim
+function drawHeart(x, y, size, opacity) {
+    ctx.save();
+    ctx.globalAlpha = opacity;
+    ctx.fillStyle = '#ff4d6d';
+    ctx.beginPath();
+    const topCurveHeight = size * 0.3;
+    ctx.moveTo(x, y + topCurveHeight);
+    ctx.bezierCurveTo(
+        x, y,
+        x - size / 2, y,
+        x - size / 2, y + topCurveHeight
+    );
+    ctx.bezierCurveTo(
+        x - size / 2, y + (size + topCurveHeight) / 2,
+        x, y + (size + topCurveHeight) / 2,
+        x, y + size
+    );
+    ctx.bezierCurveTo(
+        x, y + (size + topCurveHeight) / 2,
+        x + size / 2, y + (size + topCurveHeight) / 2,
+        x + size / 2, y + topCurveHeight
+    );
+    ctx.bezierCurveTo(
+        x + size / 2, y,
+        x, y,
+        x, y + topCurveHeight
+    );
+    ctx.fill();
+    ctx.restore();
+}
+
+// Animation
+function animateHearts() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if(hearts.length < 50 && Math.random() < 0.05) createHeart();
+
+    hearts.forEach((h, i) => {
+        h.y -= h.speedY;
+        h.x += h.speedX;
+        h.opacity -= 0.002;
+        drawHeart(h.x, h.y, h.size, h.opacity);
+        if(h.opacity <= 0 || h.y + h.size < 0) hearts.splice(i, 1);
+    });
+
+    requestAnimationFrame(animateHearts);
+}
+
+animateHearts();
 
         // Lắng nghe khi vào scene cuối để bắn pháo hoa
         const observer = new MutationObserver((mutations) => {
