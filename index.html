@@ -609,6 +609,10 @@ canvas.addEventListener("touchstart",handleStarClick)
 
 function handleStarClick(e){
 
+if(e.touches){
+e.preventDefault()
+}
+
 let rect=canvas.getBoundingClientRect()
 
 let mx=(e.touches?e.touches[0].clientX:e.clientX)-rect.left
@@ -626,7 +630,6 @@ let dist=Math.sqrt(dx*dx+dy*dy)
 if(dist<20){
 
 star.found=true
-
 showStarMessage(star.text)
 
 }
@@ -634,6 +637,7 @@ showStarMessage(star.text)
 })
 
 }
+  
 function showStarMessage(text){
 
 document.getElementById("starMessage").style.display="flex"
