@@ -14,18 +14,15 @@
         * { margin:0; padding:0; box-sizing:border-box; cursor:none; }
         body { background:var(--bg); color:#fff; font-family:'Montserrat', sans-serif; overflow:hidden; height:100vh; }
 
-        /* Background Canvases */
         #heart-canvas, #bubble-canvas { position:fixed; inset:0; z-index:1; pointer-events:none; }
         #bubble-canvas { z-index: 20; pointer-events: auto; display: none; }
 
-        /* Cursor */
         #cursor {
             position:fixed; width:12px; height:12px; background:var(--p);
             border-radius:50%; pointer-events:none; z-index:10001;
             box-shadow:0 0 15px var(--p);
         }
 
-        /* Lock Screen */
         #lock-screen {
             position:fixed; inset:0; z-index:9999;
             background:radial-gradient(circle at center,#1a1a1a 0%,#000 100%);
@@ -41,14 +38,12 @@
             text-align:center; letter-spacing:5px; outline:none; margin: 20px 0;
         }
 
-        /* Scenes */
         .scene {
             position:absolute; inset:0; display:none; opacity:0;
             flex-direction:column; align-items:center; justify-content:center; z-index:10;
         }
         .active { display:flex; opacity:1; }
 
-        /* 3D Card */
         .card-container { width:280px; height:400px; perspective:1000px; margin:30px; }
         .inner-card {
             width:100%; height:100%; position:relative; transform-style:preserve-3d;
@@ -63,7 +58,6 @@
         .front { background:#111; color:var(--p-l); }
         .back { background:#fffef0; color:#333; transform:rotateY(180deg); padding:20px; text-align:center; font-family:'Dancing Script'; font-size:1.5rem;}
 
-        /* Letter */
         #final-letter {
             background:#fffef0; padding:40px; border-radius:10px; color:#222;
             max-width:500px; width:90%; position:relative; z-index: 30;
@@ -79,28 +73,39 @@
 </head>
 <body>
 
+<audio id="bg-music" loop>
+    <source src="musicbd.mp3" type="audio/mpeg">
+</audio>
+
 <div id="cursor"></div>
 <canvas id="heart-canvas"></canvas>
 <canvas id="bubble-canvas"></canvas>
 
 <section id="lock-screen">
     <div class="auth-container">
-        <h2 style="font-size:0.9rem; color:var(--p-l);">ENTER PASSCODE</h2>
+        <h2 style="font-size:0.9rem; color:var(--p-l); letter-spacing: 2px;">ENTER PASSCODE</h2>
         <input type="password" id="password-input" maxlength="6" readonly>
         <div id="numpad">
-            <script>
-                for(let i=1;i<=9;i++) document.write(`<button class="num-btn" onclick="press('${i}')">${i}</button>`);
-            </script>
+            <button class="num-btn" onclick="press('1')">1</button>
+            <button class="num-btn" onclick="press('2')">2</button>
+            <button class="num-btn" onclick="press('3')">3</button>
+            <button class="num-btn" onclick="press('4')">4</button>
+            <button class="num-btn" onclick="press('5')">5</button>
+            <button class="num-btn" onclick="press('6')">6</button>
+            <button class="num-btn" onclick="press('7')">7</button>
+            <button class="num-btn" onclick="press('8')">8</button>
+            <button class="num-btn" onclick="press('9')">9</button>
             <button class="num-btn" onclick="document.getElementById('password-input').value=''">C</button>
             <button class="num-btn" onclick="press('0')">0</button>
         </div>
+        <p style="margin-top: 15px; font-size: 0.7rem; color: #555;">Gợi ý: Ngày sinh của Thùy (190309)</p>
     </div>
 </section>
 
 <section class="scene" id="s1">
     <h1 style="font-family:'Dancing Script'; font-size:4rem; color:var(--p);">Hi Thùy!</h1>
     <p id="typewriter" style="max-width:400px; text-align:center; line-height:1.6; margin:20px; color:#ccc;"></p>
-    <button class="btn-primary" onclick="changeScene(1,2)">Tiếp tục</button>
+    <button class="btn-primary" onclick="changeScene(1,2)">Tiếp tục khám phá</button>
 </section>
 
 <section class="scene" id="s2">
@@ -112,33 +117,33 @@
                 <p style="margin-top:15px; font-size:0.8rem;">CHẠM ĐỂ XEM ANH NGHĨ GÌ</p>
             </div>
             <div class="card-face back">
-                <p>Anh biết em đang cười...</p>
-                <p style="color:var(--p-d); margin-top:10px;">Vì em là điều tuyệt vời nhất của anh! ❤️</p>
+                <p>Anh biết em đang mỉm cười...</p>
+                <p style="color:var(--p-d); margin-top:10px;">Vì em là món quà quý giá nhất đời anh! ❤️</p>
             </div>
         </div>
     </div>
-    <button id="next-btn-2" class="btn-primary" style="display:none;" onclick="changeScene(2,3)">Nhận quà thôi!</button>
+    <button id="next-btn-2" class="btn-primary" style="display:none;" onclick="changeScene(2,3)">Nhận quà thôi nào!</button>
 </section>
 
 <section class="scene" id="s3">
     <div id="game-instruction" style="text-align:center; margin-bottom:20px;">
-        <h2 style="font-family:'Dancing Script'; font-size:2.5rem; color:var(--p-l);">Đập bóng bay tìm điều ước!</h2>
-        <p>Hãy đập hết 10 quả bóng để mở món quà cuối cùng</p>
+        <h2 style="font-family:'Dancing Script'; font-size:2.5rem; color:var(--p-l);">Đập bóng bay tìm lời chúc!</h2>
+        <p>Đập hết 10 quả bóng để mở bức thư bí mật nhé</p>
         <p id="counter" style="font-weight:bold; color:var(--p); font-size:1.5rem; margin-top:10px;">0/10</p>
     </div>
 
     <div id="final-letter">
-        <h2 style="font-family:'Pacifico'; color:var(--p-d);">Gửi bé Thùy,</h2>
-        <p style="margin-top:20px; line-height:1.6;">Chúc mừng sinh nhật cô gái 17 tuổi của anh! Mong em luôn rạng rỡ như những đóa hoa, mạnh mẽ như những dòng code và luôn hạnh phúc bên anh nhé.</p>
+        <h2 style="font-family:'Pacifico'; color:var(--p-d);">Gửi bé Thùy của anh,</h2>
+        <p style="margin-top:20px; line-height:1.6;">Chúc mừng sinh nhật cô gái 17 tuổi! Hy vọng vũ trụ nhỏ này khiến em vui. Chúc em luôn rạng rỡ, xinh đẹp và mãi là công chúa của anh nhé. Yêu em rất nhiều!</p>
         <div style="background:#e50914; color:white; padding:10px; border-radius:5px; display:inline-block; margin-top:20px; font-size:0.8rem;">
-            NETFLIX GIFT: LOVE-THUY-2026
+            GIFT: LOVE-THUY-1903
         </div>
-        <p style="text-align:right; margin-top:30px; font-family:'Dancing Script'; font-weight:bold;">- Anh người yêu IT -</p>
+        <p style="text-align:right; margin-top:30px; font-family:'Dancing Script'; font-weight:bold; font-size: 1.5rem;">- Anh người yêu IT -</p>
     </div>
 </section>
 
 <script>
-/* 1. HEART BACKGROUND */
+/* 1. TRÁI TIM LƠ LỬNG (BACKGROUND) */
 const hCanvas = document.getElementById('heart-canvas');
 const hCtx = hCanvas.getContext('2d');
 hCanvas.width = window.innerWidth;
@@ -150,8 +155,8 @@ function createHeart() {
         x: Math.random() * hCanvas.width,
         y: hCanvas.height + 20,
         size: Math.random() * 15 + 10,
-        speed: Math.random() * 2 + 1,
-        opacity: Math.random() * 0.5 + 0.2
+        speed: Math.random() * 2 + 0.5,
+        opacity: Math.random() * 0.4 + 0.1
     };
 }
 for(let i=0; i<40; i++) hearts.push(createHeart());
@@ -160,7 +165,7 @@ function drawHearts() {
     hCtx.clearRect(0,0,hCanvas.width, hCanvas.height);
     hearts.forEach(h => {
         h.y -= h.speed;
-        if(h.y < -20) h.y = hCanvas.height + 20;
+        if(h.y < -30) h.y = hCanvas.height + 30;
         hCtx.globalAlpha = h.opacity;
         hCtx.fillStyle = '#ff4d6d';
         hCtx.font = `${h.size}px serif`;
@@ -170,8 +175,11 @@ function drawHearts() {
 }
 drawHearts();
 
-/* 2. CURSOR & PASS */
+/* 2. CURSOR & PASSCODE & MUSIC */
 const cursor = document.getElementById('cursor');
+const music = document.getElementById('bg-music');
+music.volume = 0.6; // Âm lượng 60%
+
 window.addEventListener('mousemove', e => {
     gsap.to(cursor, {x: e.clientX-6, y: e.clientY-6, duration:0.1});
 });
@@ -180,7 +188,11 @@ function press(num) {
     const input = document.getElementById('password-input');
     if(input.value.length < 6) input.value += num;
     if(input.value === '190309') {
-        gsap.to('#lock-screen', {y: '-100%', duration: 1, ease:'power4.inOut', onComplete: () => {
+        // BẬT NHẠC NGAY KHI ĐÚNG PASS
+        music.play().catch(() => console.log("Chờ tương tác để bật nhạc"));
+        
+        gsap.to('#lock-screen', {y: '-100%', duration: 1.2, ease:'power4.inOut', onComplete: () => {
+            document.getElementById('lock-screen').style.display = 'none';
             document.getElementById('s1').classList.add('active');
             runTypewriter();
         }});
@@ -189,38 +201,44 @@ function press(num) {
 
 /* 3. TYPEWRITER */
 function runTypewriter() {
-    const text = "Chào Thùy, đây là không gian bí mật anh dành tặng riêng cho em. Hãy cùng khám phá những bất ngờ nhé...";
+    const text = "Chào Thùy, cảm ơn em vì đã xuất hiện. Anh đã xây dựng không gian này chỉ dành riêng cho em. Hãy cùng khám phá nhé...";
     let i = 0;
+    const target = document.getElementById('typewriter');
+    target.innerHTML = "";
     function type() {
         if(i < text.length) {
-            document.getElementById('typewriter').innerHTML += text.charAt(i);
+            target.innerHTML += text.charAt(i);
             i++; setTimeout(type, 50);
         }
     }
     type();
 }
 
-/* 4. SCENE & GAME */
+/* 4. CHUYỂN CẢNH */
 function changeScene(f, t) {
-    gsap.to(`#s${f}`, {opacity:0, duration:0.5, onComplete: () => {
+    // Kích hoạt lại nhạc phòng hờ trình duyệt chặn ở bước trước
+    music.play();
+
+    gsap.to(`#s${f}`, {opacity:0, scale: 0.9, duration:0.5, onComplete: () => {
         document.getElementById(`s${f}`).style.display = 'none';
         const next = document.getElementById(`s${t}`);
         next.style.display = 'flex';
-        gsap.to(next, {opacity:1, duration:0.5});
+        gsap.fromTo(next, {opacity:0, scale: 1.1}, {opacity:1, scale:1, duration:0.5});
         if(t === 3) startBubbleGame();
     }});
 }
 
 function showNextBtn() {
     setTimeout(() => {
-        document.getElementById('next-btn-2').style.display = 'block';
-        gsap.from('#next-btn-2', {y: 20, opacity:0});
-    }, 1000);
+        const btn = document.getElementById('next-btn-2');
+        btn.style.display = 'block';
+        gsap.from(btn, {y: 20, opacity:0});
+    }, 800);
 }
 
-/* 5. BUBBLE GAME */
+/* 5. TRÒ CHƠI ĐẬP BÓNG */
 let poppedCount = 0;
-const wishes = ["Xinh đẹp", "Bình an", "Hạnh phúc", "Luôn cười", "Thành công", "Mạnh mẽ", "May mắn", "Rạng rỡ", "Vạn sự như ý", "Yêu anh hơn"];
+const wishes = ["Xinh đẹp ❤️", "Bình an 🍀", "Hạnh phúc 😊", "Luôn cười 😄", "Thành công ✨", "Mạnh mẽ 💪", "May mắn 🌈", "Rạng rỡ 🌟", "Yêu đời 🌸", "Yêu anh hơn ❤️"];
 
 function startBubbleGame() {
     const bCanvas = document.getElementById('bubble-canvas');
@@ -231,11 +249,11 @@ function startBubbleGame() {
 
     let bubbles = wishes.map((txt, index) => ({
         x: Math.random() * (window.innerWidth - 100) + 50,
-        y: window.innerHeight + (index * 150),
+        y: window.innerHeight + (index * 120) + 100,
         r: 45,
         text: txt,
         popped: false,
-        speed: 2 + Math.random() * 2
+        speed: 1.5 + Math.random() * 1.5
     }));
 
     function animateBubbles() {
@@ -243,15 +261,20 @@ function startBubbleGame() {
         bubbles.forEach(b => {
             if(!b.popped) {
                 b.y -= b.speed;
-                if(b.y < -50) b.y = bCanvas.height + 50;
+                b.x += Math.sin(b.y/40) * 0.5; // Lắc lư nhẹ
+                if(b.y < -60) b.y = bCanvas.height + 60;
+                
                 bCtx.beginPath();
                 bCtx.arc(b.x, b.y, b.r, 0, Math.PI*2);
-                bCtx.fillStyle = 'rgba(255, 77, 109, 0.6)';
+                bCtx.fillStyle = 'rgba(255, 77, 109, 0.5)';
                 bCtx.fill();
+                bCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                bCtx.stroke();
+                
                 bCtx.fillStyle = '#fff';
-                bCtx.font = '14px Montserrat';
+                bCtx.font = '35px Arial';
                 bCtx.textAlign = 'center';
-                bCtx.fillText('🎈', b.x, b.y + 5);
+                bCtx.fillText('🎈', b.x, b.y + 12);
             }
         });
         if(poppedCount < 10) requestAnimationFrame(animateBubbles);
@@ -281,16 +304,17 @@ function showFloatingText(txt, x, y) {
     el.style.color = '#ff4d6d'; el.style.fontWeight = 'bold';
     el.style.fontSize = '2rem'; el.style.pointerEvents = 'none';
     el.style.fontFamily = 'Dancing Script'; el.style.zIndex = '100';
+    el.style.textShadow = '0 0 10px white';
     document.body.appendChild(el);
-    gsap.to(el, {y: y - 100, opacity:0, duration: 1.5, onComplete: () => el.remove()});
+    gsap.to(el, {y: y - 120, opacity:0, duration: 2, onComplete: () => el.remove()});
 }
 
 function finishGame() {
-    gsap.to('#game-instruction', {opacity:0, y: -50, duration: 1, onComplete: () => {
+    gsap.to('#game-instruction', {opacity:0, y: -30, duration: 1, onComplete: () => {
         document.getElementById('game-instruction').style.display = 'none';
         const letter = document.getElementById('final-letter');
         letter.style.display = 'block';
-        gsap.to(letter, {opacity:1, scale:1.1, duration: 1.5, ease: 'back.out'});
+        gsap.to(letter, {opacity:1, scale:1, duration: 1.5, ease: 'elastic.out(1, 0.5)'});
     }});
 }
 </script>
