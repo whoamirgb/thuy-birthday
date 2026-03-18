@@ -17,6 +17,15 @@
         #heart-canvas, #bubble-canvas { position:fixed; inset:0; z-index:1; pointer-events:none; }
         #bubble-canvas { z-index: 20; pointer-events: auto; display: none; }
 
+        /* CSS MỚI CHO MATRIX VÀ CHỮ CHẠY */
+        #matrix-canvas { position: fixed; inset: 0; z-index: 25; display: none; }
+        #scrolling-text { 
+            position: fixed; top: 50%; transform: translateY(-50%);
+            white-space: nowrap; font-size: 5rem; font-family: 'Pacifico', cursive;
+            color: #ff758f; text-shadow: 0 0 20px var(--p);
+            z-index: 100; display: none; pointer-events: none;
+        }
+
         #cursor {
             position:fixed; width:12px; height:12px; background:var(--p);
             border-radius:50%; pointer-events:none; z-index:10001;
@@ -80,6 +89,8 @@
 <div id="cursor"></div>
 <canvas id="heart-canvas"></canvas>
 <canvas id="bubble-canvas"></canvas>
+<canvas id="matrix-canvas"></canvas>
+<div id="scrolling-text">CHÚC MỪNG SINH NHẬT EM BÉ CỦA ANH <3</div>
 
 <section id="lock-screen">
     <div class="auth-container">
@@ -188,7 +199,6 @@ function press(num) {
     const input = document.getElementById('password-input');
     if(input.value.length < 6) input.value += num;
     if(input.value === '190309') {
-        // BẬT NHẠC NGAY KHI ĐÚNG PASS
         music.play().catch(() => console.log("Chờ tương tác để bật nhạc"));
         
         gsap.to('#lock-screen', {y: '-100%', duration: 1.2, ease:'power4.inOut', onComplete: () => {
@@ -216,9 +226,7 @@ function runTypewriter() {
 
 /* 4. CHUYỂN CẢNH */
 function changeScene(f, t) {
-    // Kích hoạt lại nhạc phòng hờ trình duyệt chặn ở bước trước
     music.play();
-
     gsap.to(`#s${f}`, {opacity:0, scale: 0.9, duration:0.5, onComplete: () => {
         document.getElementById(`s${f}`).style.display = 'none';
         const next = document.getElementById(`s${t}`);
@@ -261,7 +269,7 @@ function startBubbleGame() {
         bubbles.forEach(b => {
             if(!b.popped) {
                 b.y -= b.speed;
-                b.x += Math.sin(b.y/40) * 0.5; // Lắc lư nhẹ
+                b.x += Math.sin(b.y/40) * 0.5;
                 if(b.y < -60) b.y = bCanvas.height + 60;
                 
                 bCtx.beginPath();
@@ -309,12 +317,74 @@ function showFloatingText(txt, x, y) {
     gsap.to(el, {y: y - 120, opacity:0, duration: 2, onComplete: () => el.remove()});
 }
 
+/* 6. MATRIX RAIN & CHỮ CHẠY MỚI THÊM */
+const mCanvas = document.getElementById('matrix-canvas');
+const mCtx = mCanvas.getContext('2d');
+const messages = ["Anh yêu em", "I love you", "Yêu em nhiều", "HPBD <3", "Mãi yêu", "Bé iu"];
+
+let matrixInterval;
+
+function startMatrixRain() {
+    mCanvas.style.display = 'block';
+    mCanvas.width = window.innerWidth;
+    mCanvas.height = window.innerHeight;
+
+    const fontSize = 20;
+    const columns = mCanvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawMatrix() {
+        mCtx.fillStyle = 'rgba(3, 7, 30, 0.1)'; 
+        mCtx.fillRect(0, 0, mCanvas.width, mCanvas.height);
+
+        mCtx.fillStyle = '#ff758f'; 
+        mCtx.font = fontSize + 'px "Montserrat"';
+
+        for (let i = 0; i < drops.length; i++) {
+            const text = messages[Math.floor(Math.random() * messages.length)];
+            mCtx.fillText(text, i * fontSize * 5, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > mCanvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+    matrixInterval = setInterval(drawMatrix, 50);
+
+    setTimeout(() => {
+        clearInterval(matrixInterval);
+        gsap.to(mCanvas, {opacity: 0, duration: 2, onComplete: () => {
+            mCanvas.style.display = 'none';
+            runScrollingText();
+        }});
+    }, 10000);
+}
+
+function runScrollingText() {
+    const scrollEl = document.getElementById('scrolling-text');
+    scrollEl.style.display = 'block';
+    
+    gsap.fromTo(scrollEl, 
+        { x: window.innerWidth }, 
+        { x: -scrollEl.offsetWidth - 500, duration: 6, ease: "none", onComplete: () => {
+            scrollEl.style.display = 'none';
+            showFinalLetter();
+        }}
+    );
+}
+
+function showFinalLetter() {
+    const letter = document.getElementById('final-letter');
+    letter.style.display = 'block';
+    gsap.to(letter, {opacity: 1, scale: 1, duration: 1.5, ease: 'elastic.out(1, 0.5)'});
+}
+
+// Sửa lại hàm finishGame để điều hướng qua Matrix Rain
 function finishGame() {
     gsap.to('#game-instruction', {opacity:0, y: -30, duration: 1, onComplete: () => {
         document.getElementById('game-instruction').style.display = 'none';
-        const letter = document.getElementById('final-letter');
-        letter.style.display = 'block';
-        gsap.to(letter, {opacity:1, scale:1, duration: 1.5, ease: 'elastic.out(1, 0.5)'});
+        startMatrixRain();
     }});
 }
 </script>
