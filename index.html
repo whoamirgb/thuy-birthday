@@ -118,7 +118,6 @@ body{background:var(--bg);color:#fff;font-family:var(--font-m);overflow:hidden;h
 
 /* Canvas */
 #bg-canvas{position:fixed;inset:0;z-index:1;}
-#overlay{position:fixed;inset:0;background:radial-gradient(circle,transparent 0%,rgba(0,0,0,0.4) 100%);z-index:2;pointer-events:none;}
 
 /* Button */
 .btn-primary{
@@ -136,7 +135,6 @@ body{background:var(--bg);color:#fff;font-family:var(--font-m);overflow:hidden;h
 
 <div id="cursor"></div>
 <canvas id="bg-canvas"></canvas>
-<div id="overlay"></div>
 
 <!-- LOCK SCREEN -->
 <section id="lock-screen">
@@ -201,7 +199,6 @@ body{background:var(--bg);color:#fff;font-family:var(--font-m);overflow:hidden;h
     <h2 style="font-family:'Pacifico';color:var(--p-d);">Gửi bé Thùy của anh,</h2>
     <p style="margin-top:20px;">
       Khoảng cách địa lý có thể ngăn cản anh cầm tay em, nhưng không thể ngăn cản anh viết nên những dòng code này dành riêng cho em.
-      Mỗi hạt sáng trên màn hình đại diện cho một nỗi nhớ anh dành cho Thùy.
     </p>
     <p style="margin-top:15px;">Chúc mừng sinh nhật cô gái 17 tuổi của anh. Luôn rạng rỡ và hạnh phúc nhé!</p>
     <div class="netflix-badge">
@@ -211,20 +208,23 @@ body{background:var(--bg);color:#fff;font-family:var(--font-m);overflow:hidden;h
   </div>
 </section>
 
+<!-- CANVAS BONG BÓNG + LỜI CHÚC -->
+<canvas id="bubble-canvas" style="position:fixed;inset:0;z-index:5;"></canvas>
+
 <script>
-/* --- DIGITAL CLOCK --- */
+/* DIGITAL CLOCK */
 setInterval(()=>{
   const now = new Date();
   document.getElementById('clock').innerText = now.toLocaleTimeString();
 },1000);
 
-/* --- CUSTOM CURSOR --- */
+/* CUSTOM CURSOR */
 const cursor=document.getElementById('cursor');
 window.addEventListener('mousemove',e=>{
   gsap.to(cursor,{x:e.clientX,y:e.clientY,duration:0.1});
 });
 
-/* --- PASSWORD NUMPAD --- */
+/* PASSWORD NUMPAD */
 const passInput = document.getElementById('password-input');
 const correctPass = '190309';
 document.querySelectorAll('.num-btn').forEach(btn=>{
@@ -243,7 +243,7 @@ document.querySelectorAll('.num-btn').forEach(btn=>{
   });
 });
 
-/* --- TYPEWRITER --- */
+/* TYPEWRITER */
 function runTypewriter(){
   const text="Chào Thùy, anh đã tạo thế giới này chỉ dành cho em. Hãy kiên nhẫn khám phá nhé...";
   let i=0;
@@ -254,7 +254,7 @@ function runTypewriter(){
   type();
 }
 
-/* --- SCENE MANAGEMENT --- */
+/* SCENE MANAGEMENT */
 function changeScene(from,to){
   gsap.to(`#s${from}`,{duration:1,opacity:0,scale:0.8,onComplete:()=>{
     document.getElementById(`s${from}`).classList.remove('active');
@@ -264,7 +264,7 @@ function changeScene(from,to){
   }});
 }
 
-/* --- 3D CARD --- */
+/* 3D CARD */
 function flipMagicCard(){
   document.getElementById('main-card').classList.add('flipped');
   setTimeout(()=>{
@@ -273,8 +273,87 @@ function flipMagicCard(){
   },1500);
 }
 
-/* --- PARTICLES + HEARTS + BALLOONS --- */
-// ... phần này và bong bóng + 10 lời chúc + âm thanh nổ vẫn như plan cũ, mình sẽ thêm tiếp cho bạn
+/* BONG BÓNG + 10 LỜI CHÚC + ÂM THANH */
+const canvasB=document.getElementById('bubble-canvas');
+const ctx=canvasB.getContext('2d');
+canvasB.width=window.innerWidth;
+canvasB.height=window.innerHeight;
+
+let bubbles=[];
+const wishes=[
+  "Chúc em luôn xinh đẹp ❤️",
+  "Chúc em hạnh phúc trọn vẹn 😊",
+  "Chúc em thành công rực rỡ ✨",
+  "Chúc em vui vẻ mỗi ngày 🌸",
+  "Chúc em 17 tuổi thật rạng rỡ 🌟",
+  "Chúc em luôn mạnh mẽ 💪",
+  "Chúc em mọi điều may mắn 🍀",
+  "Chúc em được cười nhiều 😄",
+  "Chúc em giấc mơ thành hiện thực 🌈",
+  "Chúc em luôn bên anh nhé ❤️"
+];
+const popSound = new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3');
+
+function createBubble(){
+  if(bubbles.length<10){
+    const i=bubbles.length;
+    bubbles.push({x:Math.random()*(canvasB.width-100)+50,y:Math.random()*(canvasB.height-200)+50,radius:50,popped:false,text:wishes[i]});
+  }
+}
+
+function drawBubbles(){
+  ctx.clearRect(0,0,canvasB.width,canvasB.height);
+  bubbles.forEach(b=>{
+    if(!b.popped){
+      ctx.fillStyle='rgba(255,77,109,0.5)';
+      ctx.beginPath();
+      ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);
+      ctx.fill();
+      ctx.fillStyle='#fff';ctx.font='16px sans-serif';ctx.textAlign='center';
+      ctx.fillText('🎈',b.x,b.y+5);
+    }
+  });
+}
+
+function animateBubbles(){
+  drawBubbles();
+  requestAnimationFrame(animateBubbles);
+}
+animateBubbles();
+
+canvasB.addEventListener('click',(e)=>{
+  bubbles.forEach(b=>{
+    const dx=e.clientX-b.x;
+    const dy=e.clientY-b.y;
+    if(!b.popped && Math.sqrt(dx*dx+dy*dy)<b.radius){
+      b.popped=true;popSound.currentTime=0;popSound.play();
+      const wishDiv=document.createElement('div');
+      wishDiv.textContent=b.text;
+      wishDiv.style.position='fixed';
+      wishDiv.style.top='50%';
+      wishDiv.style.left='50%';
+      wishDiv.style.transform='translate(-50%,-50%)';
+      wishDiv.style.fontSize='2rem';
+      wishDiv.style.color='#ff4d6d';
+      wishDiv.style.fontFamily='Dancing Script';
+      wishDiv.style.zIndex=10002;
+      wishDiv.style.opacity=0;
+      document.body.appendChild(wishDiv);
+      gsap.to(wishDiv,{opacity:1,duration:0.5,y:-50,onComplete:()=>{
+        gsap.to(wishDiv,{opacity:0,duration:1,delay:1,onComplete:()=>{wishDiv.remove();}});
+      }});
+    }
+  });
+});
+
+const observer=new MutationObserver((mutations)=>{
+  mutations.forEach(m=>{
+    if(m.target.id==='s3' && m.target.classList.contains('active')){
+      for(let i=0;i<10;i++){setTimeout(createBubble,i*500);}
+    }
+  });
+});
+observer.observe(document.getElementById('s3'),{attributes:true});
 </script>
 
 </body>
