@@ -8,139 +8,144 @@
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=JetBrains+Mono:wght@300&family=Montserrat:wght@100;300;400;600;900&family=Pacifico&family=Playfair+Display:ital,wght@0,400;1,700&display=swap" rel="stylesheet">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
 <style>
 :root {
-    --p: #ff4d6d;
-    --p-l: #ff758f;
-    --p-d: #c9184a;
-    --s: #00f2ff;
-    --s-d: #00b4d8;
-    --bg: #030305;
-    --paper: #fffef0;
-    --envelope: #f34664;
-    --gold: #ffb703;
-
+    --p: #ff4d6d; --p-l: #ff758f; --p-d: #c9184a;
+    --s: #00f2ff; --s-d: #00b4d8;
+    --bg: #030305; --paper: #fffef0;
+    --envelope: #f34664; --gold: #ffb703;
     --f-hand: 'Dancing Script', cursive;
     --f-main: 'Montserrat', sans-serif;
     --f-code: 'JetBrains Mono', monospace;
     --f-logo: 'Pacifico', cursive;
     --f-serif: 'Playfair Display', serif;
+    --glass: rgba(255,255,255,0.03);
+    --glass-border: rgba(255,255,255,0.1);
+    --glow: 0 0 15px var(--p-d);
 }
 
-*{margin:0;padding:0;box-sizing:border-box;cursor:none;-webkit-tap-highlight-color:transparent;}
-body{background:var(--bg);color:#fff;font-family:var(--f-main);overflow:hidden;height:100vh;width:100vw;user-select:none;touch-action:none;}
-
-#bg-canvas,#fire-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;}
-#fire-canvas{z-index:5;pointer-events:none;}
-
-#cursor{position:fixed;width:10px;height:10px;background:var(--p);border-radius:50%;pointer-events:none;z-index:10001;box-shadow:0 0 15px var(--p),0 0 30px var(--p-l);transition:transform 0.1s ease-out;}
-#cursor-follower{position:fixed;width:30px;height:30px;border:1px solid var(--p-l);border-radius:50%;pointer-events:none;z-index:10000;transition:transform 0.2s ease-out;opacity:0.4;}
+*{margin:0;padding:0;box-sizing:border-box;cursor:none;}
+body{background:var(--bg);color:#fff;font-family:var(--f-main);overflow:hidden;height:100vh;width:100vw;user-select:none;}
+#bg-canvas,#fire-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;}
+#cursor{position:fixed;width:10px;height:10px;background:var(--p);border-radius:50%;pointer-events:none;z-index:10001;box-shadow:0 0 15px var(--p),0 0 30px var(--p-l);transition:transform 0.1s;}
+#cursor-follower{position:fixed;width:30px;height:30px;border:1px solid var(--p-l);border-radius:50%;pointer-events:none;z-index:10000;transition:transform 0.2s;opacity:0.4;}
 
 .glow-text{text-shadow:0 0 10px var(--p),0 0 20px var(--p-d);}
 .floating-anim{animation:floating 3s infinite ease-in-out;}
 @keyframes floating{0%,100%{transform:translateY(0) rotate(0);}50%{transform:translateY(-15px) rotate(2deg);}}
-
-.btn-magic{position:relative;background:transparent;border:1px solid var(--p);color:var(--p);padding:15px 35px;border-radius:50px;font-family:var(--f-main);font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;overflow:hidden;transition:0.4s;z-index:100;}
+.btn-magic{position:relative;background:transparent;border:1px solid var(--p);color:var(--p);padding:15px 35px;border-radius:50px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;overflow:hidden;transition:.4s;}
 .btn-magic:hover{background:var(--p);color:#fff;box-shadow:0 0 30px var(--p-d);transform:scale(1.05);}
-
-/* LOCK SCREEN */
-#lock-screen{position:fixed;inset:0;z-index:9999;background:radial-gradient(circle at center,#1a1a1a 0%,#000 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;transition:transform 1.2s cubic-bezier(1,0,0,1),opacity 1s;}
-.lock-card{position:relative;background:rgba(255,255,255,0.02);padding:70px 60px;border-radius:40px;backdrop-filter:blur(30px);border:1px solid rgba(255,255,255,0.1);text-align:center;box-shadow:0 50px 100px rgba(0,0,0,0.9),inset 0 0 30px rgba(255,77,109,0.05);transform:perspective(1200px) rotateX(5deg);max-width:480px;width:90%;animation:lockCardFloat 5s infinite ease-in-out;overflow:hidden;}
-.lock-card::before{content:'';position:absolute;top:0;left:-150%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent);transform:skewX(-20deg);transition:0.8s;animation:shineSweep 4s infinite;}
-@keyframes shineSweep{0%{left:-150%;}20%{left:150%;}100%{left:150%;}}
+.lock-card{position:relative;background:rgba(255,255,255,0.02);padding:70px 60px;border-radius:40px;backdrop-filter:blur(30px);border:1px solid var(--glass-border);text-align:center;box-shadow:0 50px 100px rgba(0,0,0,0.9),inset 0 0 30px rgba(255,77,109,0.05);transform:perspective(1200px) rotateX(5deg);max-width:480px;width:90%;animation:lockCardFloat 5s infinite ease-in-out;}
 @keyframes lockCardFloat{0%,100%{transform:perspective(1200px) rotateX(5deg) translateY(0);}50%{transform:perspective(1200px) rotateX(10deg) translateY(-20px);}}
 .lock-card h2{font-family:var(--f-code);font-size:0.8rem;letter-spacing:7px;color:var(--p);margin-bottom:15px;text-transform:uppercase;opacity:0.7;text-shadow:0 0 10px var(--p-d);}
 .digital-clock{font-family:var(--f-code);font-size:4rem;color:var(--s);text-shadow:0 0 25px var(--s-d);margin-bottom:40px;font-weight:100;letter-spacing:-2px;}
 .pass-input-container{position:relative;margin-bottom:30px;display:flex;flex-direction:column;align-items:center;}
-#pass-input{background:transparent;border:none;border-bottom:2px solid rgba(255,255,255,0.15);color:#fff;font-size:3rem;width:260px;text-align:center;letter-spacing:18px;outline:none;font-family:var(--f-code);transition:all 0.5s cubic-bezier(0.175,0.885,0.32,1.275);padding-bottom:10px;}
+#pass-input{background:transparent;border:none;border-bottom:2px solid rgba(255,255,255,0.15);color:#fff;font-size:3rem;width:260px;text-align:center;letter-spacing:18px;outline:none;font-family:var(--f-code);transition:all 0.5s;padding-bottom:10px;}
 #pass-input:focus{border-bottom-color:var(--p);width:300px;filter:drop-shadow(0 0 15px var(--p));}
 #pass-input::placeholder{color:rgba(255,255,255,0.05);letter-spacing:5px;font-size:1.1rem;text-transform:uppercase;}
-.hint-text-box{margin-top:20px;font-size:0.75rem;color:#666;font-family:var(--f-main);letter-spacing:1px;}
-#error-msg{color:var(--p);font-family:var(--f-code);font-size:0.7rem;margin-top:15px;display:none;text-transform:uppercase;letter-spacing:2px;animation:fadeIn 0.3s;}
+#error-msg{color:var(--p);font-family:var(--f-code);font-size:0.7rem;margin-top:15px;display:none;text-transform:uppercase;letter-spacing:2px;}
 .shake-effect{animation:shakeInput 0.4s cubic-bezier(.36,.07,.19,.97) both;}
 @keyframes shakeInput{10%,90%{transform:translate3d(-1px,0,0);}20%,80%{transform:translate3d(2px,0,0);}30%,50%,70%{transform:translate3d(-4px,0,0);}40%,60%{transform:translate3d(4px,0,0);}}
-
 .scene{position:absolute;inset:0;display:none;opacity:0;flex-direction:column;align-items:center;justify-content:center;z-index:10;padding:50px;text-align:center;transition:all 1.2s cubic-bezier(0.4,0,0.2,1);perspective:2000px;}
 .scene.active{display:flex;opacity:1;animation:sceneEnter 1.5s forwards;}
 @keyframes sceneEnter{from{opacity:0;transform:scale(1.1) translateY(30px) rotateX(-5deg);filter:blur(15px);}to{opacity:1;transform:scale(1) translateY(0) rotateX(0);filter:blur(0);}}
-
 .card-stage{width:340px;height:500px;margin:40px auto;position:relative;z-index:100;filter:drop-shadow(0 20px 50px rgba(0,0,0,0.8));}
 .card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 1.5s cubic-bezier(0.2,0.8,0.2,1);cursor:pointer;}
-.card-inner.is-flipped{transform:rotateY(180deg) translateZ(50px);}
+.card-inner.is-flipped{transform:rotateY(180deg);}
 .card-side{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:25px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,0.08);overflow:hidden;}
 .card-front{background:linear-gradient(145deg,#1a1a1c 0%,#050505 100%);color:var(--s);box-shadow:inset 0 0 50px rgba(0,242,255,0.05);}
 .card-front::after{content:'♣︎';position:absolute;font-size:15rem;opacity:0.03;color:#fff;top:50%;left:50%;transform:translate(-50%,-50%);}
-.card-icon-main{font-size:7rem;filter:drop-shadow(0 0 20px var(--s));margin-bottom:20px;animation:iconPulse 2s infinite ease-in-out;}
-@keyframes iconPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 20px var(--s));}50%{transform:scale(1.1);filter:drop-shadow(0 0 40px var(--s));}}
-.card-back{background:var(--paper);color:#111;transform:rotateY(180deg);padding:40px;background-image:radial-gradient(circle at 50% 50%,rgba(0,0,0,0.02) 0%,transparent 80%);border:8px solid #fff;box-shadow:inset 0 0 100px rgba(0,0,0,0.05);}
-.card-back-decoration{position:absolute;inset:15px;border:1px solid rgba(0,0,0,0.05);pointer-events:none;}
+.card-back{background:var(--paper);color:#111;transform:rotateY(180deg);padding:40px;background-image:radial-gradient(circle at 50% 50%, rgba(0,0,0,0.02) 0%, transparent 80%);border:8px solid #fff;box-shadow:inset 0 0 100px rgba(0,0,0,0.05);}
 .reveal-text-title{font-family:var(--f-hand);font-size:2.5rem;color:var(--p-d);margin-bottom:15px;}
 .reveal-text-desc{font-family:var(--f-main);font-size:1rem;line-height:1.6;font-weight:500;}
+.envelope-container{position:relative;width:420px;height:280px;background-color:var(--envelope);border-radius:0 0 15px 15px;box-shadow:0 40px 100px rgba(0,0,0,0.7);cursor:pointer;z-index:200;transition:all 0.6s;transform-style:preserve-3d;margin:60px auto;}
+.envelope-container:hover{transform:scale(1.03) translateY(-10px);}
+.envelope-flap{position:absolute;top:0;left:0;width:0;height:0;border-left:210px solid transparent;border-right:210px solid transparent;border-top:145px solid #d43d56;transform-origin:top;transition:transform 0.7s 0.3s,z-index 0.1s 0.5s;z-index:400;filter:drop-shadow(0 8px 10px rgba(0,0,0,0.3));}
+.envelope-front-fold{position:absolute;bottom:0;left:0;width:100%;height:100%;background-color:#e6405c;clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%);z-index:500;border-radius:0 0 15px 15px;box-shadow:inset 0 -10px 30px rgba(0,0,0,0.1);}
+.letter-paper-inner{position:absolute;bottom:20px;left:5%;width:90%;height:240px;background:var(--paper);border-radius:8px;padding:50px 40px;color:#2d3436;font-family:var(--f-hand);font-size:1.8rem;line-height:1.6;transition:all 1s;z-index:250;box-shadow:0 0 20px rgba(0,0,0,0.15);overflow:hidden;border:1px solid rgba(0,0,0,0.02);}
+.letter-paper-inner::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(transparent,transparent 34px,#ebebeb 34px,#ebebeb 35px);pointer-events:none;z-index:0;}
+.envelope-container.is-open .envelope-flap{transform:rotateX(180deg);z-index:150;}
+.envelope-container.is-open .letter-paper-inner{height:560px;bottom:140px;transform:scale(1.18) rotate(-1.5deg);z-index:600;box-shadow:0 40px 100px rgba(0,0,0,0.8);overflow-y:auto;padding-bottom:80px;}
+.letter-text-body{position:relative;z-index:10;opacity:0;transform:translateY(30px);transition:0.7s 1s ease-out;}
+.envelope-container.is-open .letter-text-body{opacity:1;transform:translateY(0);}
+.envelope-seal{position:absolute;top:0;left:50%;width:50px;height:50px;background:var(--p);border-radius:50%;transform:translate(-50%,-50%);z-index:600;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 5px 15px var(--p-d);transition:0.5s;}
+.envelope-container.is-open .envelope-seal{opacity:0;transform:translate(-50%,-50%) scale(0);}
+.heart-sparkle{position:absolute;color:var(--p);pointer-events:none;z-index:1000;font-size:1.2rem;animation:heartFloat 2s forwards;}
+@keyframes heartFloat{0%{transform:translateY(0) scale(1);opacity:1;}100%{transform:translateY(-100px) scale(1.5);opacity:0;}}
 </style>
 </head>
 <body>
 
 <div id="cursor"></div>
 <div id="cursor-follower"></div>
-
 <canvas id="bg-canvas"></canvas>
+<canvas id="fire-canvas"></canvas>
 
 <section id="lock-screen">
-  <div class="lock-card">
-    <h2>Hệ thống đã mã hóa</h2>
-    <div class="digital-clock" id="clock">00:00:00</div>
-    <div class="pass-input-container">
-      <input type="password" id="pass-input" placeholder="MẬT MÃ" maxlength="6" autofocus autocomplete="off">
-      <div id="error-msg">TRUY CẬP BỊ TỪ CHỐI - THỬ LẠI</div>
-    </div>
-    <div class="hint-text-box">
-      <p>Gợi ý: <span style="color: var(--p);">Ngày Thùy sinh ra đời (DDMMYY)</span></p>
-    </div>
-  </div>
+<div class="lock-card">
+<h2>Hệ thống đã mã hóa</h2>
+<div class="digital-clock" id="clock">00:00:00</div>
+<div class="pass-input-container">
+<input type="password" id="pass-input" placeholder="MẬT MÃ" maxlength="6" autofocus autocomplete="off">
+<div id="error-msg">TRUY CẬP BỊ TỪ CHỐI - THỬ LẠI</div>
+</div>
+<div class="hint-text-box">
+<p>Gợi ý: <span style="color: var(--p);">Ngày Thùy sinh ra đời (DDMMYY)</span></p>
+<p style="font-size:0.6rem;margin-top:8px;opacity:0.5;">Hệ thống chỉ chấp nhận chủ nhân duy nhất của ngày 19/03/2009</p>
+</div>
+</div>
 </section>
 
+<!-- SCENE 1 -->
 <section class="scene" id="scene-1">
-  <h1 class="glow-text floating-anim" style="font-family:var(--f-logo);font-size:4.5rem;color:var(--p);margin-bottom:25px;">Hi Thùy!</h1>
-  <div class="glass-card" style="border-left:4px solid var(--p);text-align:left;">
-    <p id="typewriter-text" style="font-family:var(--f-main);font-size:1.25rem;line-height:2;color:#ececec;min-height:180px;"></p>
-    <div style="margin-top:20px;font-family:var(--f-code);font-size:0.7rem;opacity:0.3;">CONNECTION_ID: #MARCH19_2009 | HEART_STATUS: STABLE</div>
-  </div>
-  <div id="btn-next-1-wrap" style="opacity:0;transform:translateY(20px);margin-top:40px;">
-    <button class="btn-magic" onclick="changeScene(1,2)">Khám phá bí mật ✨</button>
-  </div>
+<h1 class="glow-text floating-anim" style="font-family: var(--f-logo);font-size:4.5rem;color:var(--p);margin-bottom:25px;">Hi Thùy!</h1>
+<div class="glass-card" style="border-left:4px solid var(--p);text-align:left;">
+<p id="typewriter-text" style="font-family: var(--f-main);font-size:1.25rem;line-height:2;color:#ececec;min-height:180px;"></p>
+<div style="margin-top:20px;font-family:var(--f-code);font-size:0.7rem;opacity:0.3;">
+CONNECTION_ID: #MARCH19_2009 | HEART_STATUS: STABLE
+</div>
+</div>
+<div id="btn-next-1-wrap" style="opacity:0;transform:translateY(20px);margin-top:40px;">
+<button class="btn-magic" onclick="changeScene(1,2)">Khám phá bí mật ✨</button>
+</div>
 </section>
 
-<!-- Các scene tiếp theo + envelope + card giữ nguyên concept, tui sẽ viết tiếp phần JS tối ưu -->
+<!-- SCENE 2 -->
+<section class="scene" id="scene-2">
+<h2 class="glow-text" style="font-family: var(--f-hand);font-size:3.5rem;margin-bottom:10px;">The Mind Reader</h2>
+<p style="margin-bottom:30px;opacity:0.8;font-size:0.9rem;letter-spacing:1px;">
+Chọn 1 lá bài, nhìn vào biểu tượng và nghĩ về một điều ước trong 5 giây...
+</p>
+<div class="card-stage">
+<div class="card-inner" id="magic-card-element" onclick="handleCardFlip()">
+<div class="card-side card-front">
+<div class="card-icon-main">🎩</div>
+<p style="font-family: var(--f-code);font-size:0.8rem;letter-spacing:5px;opacity:0.5;">CLICK TO REVEAL</p>
+</div>
+<div class="card-side card-back">
+<div class="card-back-decoration"></div>
+<h3 class="reveal-text-title">Bingo! ✨</h3>
+<p class="reveal-text-desc">Lá bài nói rằng: Điều ước của em sẽ thành hiện thực, vì hôm nay là ngày của em, và anh sẽ luôn ở đây để giúp em thực hiện nó!</p>
+<div style="font-size:3rem;margin-top:20px;">🃏</div>
+</div>
+</div>
+</div>
+<div id="btn-next-2-wrap" style="opacity:0;transform:translateY(20px);">
+<button class="btn-magic" onclick="changeScene(2,3)">Mở món quà cuối cùng ❤️</button>
+</div>
+</section>
 
-<script>
-const state={isUnlocked:false,currentScene:0,typingSpeed:60,starsCount:200};
-const cursor=document.getElementById('cursor'),follower=document.getElementById('cursor-follower');
-let mX=0,mY=0,fX=0,fY=0;
-window.addEventListener('mousemove',e=>{mX=e.clientX;mY=e.clientY;gsap.to(cursor,{x:mX,y:mY,duration:0.1});});
-function updateFollower(){fX+=(mX-fX)*0.1;fY+=(mY-fY)*0.1;follower.style.transform=`translate(${fX-15}px,${fY-15}px)`;requestAnimationFrame(updateFollower);}updateFollower();
-
-function initClock(){const c=document.getElementById('clock');setInterval(()=>{const n=new Date();c.innerText=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;},1000);}initClock();
-
-const passInput=document.getElementById('pass-input'),lockScreen=document.getElementById('lock-screen'),errorMsg=document.getElementById('error-msg');
-passInput.addEventListener('input',(e)=>{const val=e.target.value;if(val.length===6){if(val==='190309'){handleUnlockSuccess();}else{handleUnlockFail();}}});
-function handleUnlockFail(){passInput.classList.add('shake-effect');errorMsg.style.display='block';gsap.to(passInput,{color:'#ff4d6d',duration:0.2});setTimeout(()=>{passInput.classList.remove('shake-effect');passInput.value='';passInput.focus();gsap.to(passInput,{color:'#fff',duration:0.2});},500);}
-function handleUnlockSuccess(){state.isUnlocked=true;gsap.to(lockScreen,{y:'-100%',duration:1.5,ease:"expo.inOut",onComplete:()=>{lockScreen.style.display='none';enterScene1();}});}
-
-function changeScene(from,to){const f=document.getElementById(`scene-${from}`),t=document.getElementById(`scene-${to}`);
-gsap.to(f,{opacity:0,y:-50,duration:1,onComplete:()=>{f.classList.remove('active');t.classList.add('active');gsap.fromTo(t,{opacity:0,y:50},{opacity:1,y:0,duration:1.2});}});}
-
-function enterScene1(){const s1=document.getElementById('scene-1');s1.classList.add('active');const target=document.getElementById('typewriter-text');
-const content="Chào Thùy, 19/03/2009. Anh là một sinh viên IT xa nhà, anh không có hoa hay quà trực tiếp để tặng em ngay lúc này... Vì thế, anh đã gửi gắm tất cả vào những dòng code này. Mỗi ngôi sao lấp lánh kia đều mang theo một lời chúc tốt đẹp nhất dành cho em. Hãy kiên nhẫn khám phá đến cuối cùng nhé, vì phép thuật thực sự vẫn đang chờ em phía trước...";
-let i=0;function type(){if(i<content.length){target.innerHTML+=content.charAt(i);i++;const speed=[',','.','!'].includes(content[i-1])?500:Math.random()*50+30;setTimeout(type,speed);}else{gsap.to('#btn-next-1-wrap',{opacity:1,y:0,duration:1});}}setTimeout(type,1000);}
-
-// Bắt đầu canvas stars tối ưu
-const bgCanvas=document.getElementById('bg-canvas'),bCtx=bgCanvas.getContext('2d');
-let stars=[],meteors=[];
-function initUniverse(){bgCanvas.width=window.innerWidth;bgCanvas.height=window.innerHeight;stars=[];meteors=[];for(let i=0;i<state.starsCount;i++){stars.push({x:Math.random()*bgCanvas.width,y:Math.random()*bgCanvas.height,size:Math.random()*1.5+0.1,opacity:Math.random(),speedO:Math.random()*0.012+0.003,vx:Math.random()*0.25-0.125,vy:Math.random()*0.25-0.125,color:i%12===0?"255,77,109":"255,255,255",range:110});}}
-initUniverse();
-
-function createMeteor(){if(Math.random()<0.008 && state.isUnlocked){meteors.push({x:Math.random()*bgCanvas.width,y:0,len:Math.random()*70+30,speed:Math.random()*12+6,opacity:1});}}
-
-function drawUniverse(){bCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height);createMeteor();
-for(let i
+<!-- SCENE 3 -->
+<section class="scene" id="scene-3">
+<h2 class="glow-text" style="font-family: var(--f-logo);font-size:3rem;margin-bottom:50px;">My Universe for Thùy</h2>
+<div class="envelope-container" id="main-envelope" onclick="openLetterAction()">
+<div class="envelope-flap"></div>
+<div class="envelope-front-fold"></div>
+<div class="letter-paper-inner" id="actual-letter">
+<div class="letter-text-body">
+<h3 style="font-size:2.2rem;color:var(--p-d);margin-bottom:20px;">Gửi bé Thùy của anh,</h3>
+<p>Chúc mừng sinh nhật cô gái tuyệt vời nhất mà anh từng biết! 19/03/2009 - Một cột mốc thật đẹp.</p>
+<p style="margin-top:15px;">Dù anh là một sinh viên IT khô khan, suốt ngày chỉ biết bug với code, nhưng trái tim anh là một hằng số vĩnh cửu luôn hướng về phía em.</p>
+<p style="margin-top:15px;">Mỗi dòng code trong trang web này là một nỗ lực của anh để
