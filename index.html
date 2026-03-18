@@ -270,19 +270,17 @@
         }
         initParticles(); drawParticles();
 
-        // 8. TIKTOK FINALE - Fireworks
-        // 8. TIKTOK FINALE - Fireworks nhẹ và nhanh
-function triggerFinalFireworks() {
+     function triggerFinalFireworks() {
     const colors = ['#ff4d6d', '#ffffff', '#ffb703'];
     let count = 0;
-    const maxCount = 50; // Tổng số "đợt" pháo hoa ít hơn
+    const maxCount = 20; // ít đợt pháo hơn
     const interval = setInterval(() => {
         // Random vị trí, tránh khu vực giữa thư
-        const xLeft = Math.random() * 0.35;   // bên trái
-        const xRight = 0.65 + Math.random() * 0.35; // bên phải
+        const xLeft = Math.random() * 0.35;   
+        const xRight = 0.65 + Math.random() * 0.35; 
 
         confetti({
-            particleCount: 8, // ít hơn
+            particleCount: 5, // ít hơn
             angle: 60,
             spread: 40,
             origin: { x: xLeft, y: 0.7 },
@@ -291,7 +289,7 @@ function triggerFinalFireworks() {
         });
 
         confetti({
-            particleCount: 8,
+            particleCount: 5,
             angle: 120,
             spread: 40,
             origin: { x: xRight, y: 0.7 },
@@ -301,7 +299,7 @@ function triggerFinalFireworks() {
 
         count++;
         if (count >= maxCount) clearInterval(interval);
-    }, 120); // bắn nhanh hơn, 120ms mỗi lần
+    }, 200); // bắn chậm hơn, 200ms mỗi lần
 }
 
         // Lắng nghe khi vào scene cuối để bắn pháo hoa
