@@ -48,6 +48,18 @@ function unlockUniverse(){
 
 createHeartExplosion()
 
+document.getElementById("bgMusic").play()
+
+lockScreen.style.opacity="0"
+
+setTimeout(()=>{
+lockScreen.style.display="none"
+},1000)
+
+}
+
+createHeartExplosion()
+
 lockScreen.style.opacity="0"
 
 setTimeout(()=>{
