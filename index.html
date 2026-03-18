@@ -604,7 +604,7 @@ canvas.height=window.innerHeight
 
 })
 
-canvas.addEventListener("click",function(e){
+canvas.addEventListener("click",handleStarClick)
 canvas.addEventListener("touchstart",handleStarClick)
 function handleStarClick(e){
 let rect=canvas.getBoundingClientRect()
