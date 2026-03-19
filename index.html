@@ -3,1075 +3,442 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Thùy's Secret Universe 2026 — Enhanced</title>
+  <title>Thùy's Secret Universe 2026 — Eternal Love</title>
 
-  <!-- Fonts: keep but with font-display=swap -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;600;900&family=Pacifico&display=swap" rel="stylesheet">
-
-  <!-- GSAP CDN (kept for transitions) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
-    /*
-      Enhanced styles:
-      - Layered, hardware-accelerated transforms
-      - Reduced repaints by favoring transform & opacity
-      - Responsive and touch-friendly
-      - Accessible sizing, high-contrast variants
-    */
-
-    :root{
+    :root {
       --p: #ff4d6d; --p-l: #ff758f; --p-d: #c9184a;
-      --bg: #03071e; --card-bg: rgba(255,255,255,0.04);
-      --glass: rgba(255,255,255,0.04);
+      --bg: #03071e; --card-bg: rgba(255,255,255,0.05);
       --gold: #ffb703; --spotify: #1DB954; --netflix: #e50914; --youtube: #ff0000;
-      --soft-shadow: 0 10px 30px rgba(0,0,0,0.6);
-      --radius-lg: 20px;
-      --max-width: 1200px;
+      --glass: rgba(255, 255, 255, 0.03);
     }
 
-    /* Global reset */
-    *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html,body{ height:100%; margin:0; font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',Roboto,"Helvetica Neue",Arial; background:var(--bg); color:#fff; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
-    body{ overflow:hidden; touch-action: manipulation; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+    html, body { height: 100%; margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: #fff; overflow: hidden; }
 
-    /* Preloader overlay */
-    #preloader{
-      position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:20000;
-      background: linear-gradient(180deg, rgba(3,7,30,0.95), rgba(3,7,30,0.9));
-      pointer-events:auto;
+    /* Preloader sang chảnh */
+    #preloader {
+      position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999;
+      background: #000; transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    #preloader .box{ text-align:center; transform: translateY(-10px); }
-    #preloader h3{ margin:0 0 12px 0; font-family:'Dancing Script'; color:var(--p); letter-spacing:1px; font-size:1.6rem; }
-    #preloader p{ color:#cfcfcf; font-size:0.9rem; margin:0; }
+    .loader-heart { font-size: 3rem; animation: pulse 1s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
 
-    /* Canvas: unified background to reduce multiple layers */
-    canvas#bg-canvas{ position:fixed; inset:0; z-index:1; pointer-events:none; display:block; }
-    /* Secondary canvas used only when needed (wishes), created on demand and destroyed for GC */
-    canvas.secondary-canvas{ position:fixed; inset:0; z-index:22; pointer-events:none; }
+    /* Canvas nền */
+    canvas#bg-canvas { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+    canvas.game-canvas { position: fixed; inset: 0; z-index: 1000; pointer-events: auto; }
 
-    /* Custom cursor (keeps original look but optimized) */
-    #cursor{
-      position:fixed; width:14px; height:14px; border-radius:50%; pointer-events:none; z-index:10005;
-      background:var(--p);
-      box-shadow:0 0 18px rgba(255,77,109,0.6); transform:translate3d(0,0,0);
-      will-change:transform,opacity;
-      mix-blend-mode:screen;
+    #cursor {
+      position: fixed; width: 14px; height: 14px; border-radius: 50%; pointer-events: none; z-index: 99999;
+      background: var(--p); box-shadow: 0 0 20px var(--p); mix-blend-mode: screen; transform: translate(-50%, -50%);
     }
 
-    /* Controls */
-    #fs-btn{
-      position:fixed; top:18px; right:18px; z-index:10010;
-      background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      border:1px solid rgba(255,255,255,0.08); color:var(--p-l);
-      padding:8px 12px; border-radius:10px; font-size:0.8rem; cursor:pointer;
-      backdrop-filter: blur(6px);
+    /* Màn hình khóa bảo mật tuyệt đối */
+    #lock-screen {
+      position: fixed; inset: 0; z-index: 50000; display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
     }
-    #controls{ position:fixed; left:18px; top:18px; z-index:10010; display:flex; gap:8px; align-items:center; }
-    .chip{ padding:8px 12px; border-radius:999px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); font-size:0.85rem; cursor:pointer; color:#fff; }
-    .chip[aria-pressed="true"]{ background:linear-gradient(90deg,var(--p),var(--p-l)); color:#111; font-weight:700; border: none; box-shadow:0 6px 20px rgba(255,77,109,0.12); }
-
-    /* Lock Screen (auth) */
-    #lock-screen{
-      position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center;
-      background: radial-gradient(circle at center, rgba(10,10,20,0.88), rgba(0,0,0,0.95));
-      padding:24px;
+    .auth-box {
+      width: min(90%, 420px); padding: 40px; border-radius: 30px; background: var(--glass);
+      border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px); text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
-    .auth-container{
-      width:min(calc(100% - 40px), 480px);
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-      border:1px solid rgba(255,255,255,0.06);
-      padding:28px; border-radius:22px; text-align:center; backdrop-filter: blur(8px);
-      box-shadow:var(--soft-shadow);
+    #password-display {
+      background: rgba(0,0,0,0.3); border: 2px solid var(--p); padding: 15px; border-radius: 50px;
+      color: #fff; font-size: 1.8rem; width: 100%; text-align: center; letter-spacing: 8px; margin: 20px 0;
     }
-    #password-input{
-      background: transparent; border:2px solid var(--p); padding:14px; border-radius:40px; color:#fff;
-      font-size:1.3rem; width:220px; text-align:center; letter-spacing:6px; outline:none; display:block; margin:14px auto;
+    .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+    .key {
+      width: 70px; height: 70px; border-radius: 50%; border: none; background: rgba(255,255,255,0.05);
+      color: #fff; font-size: 1.4rem; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.1);
     }
-    .num-row{ display:flex; justify-content:center; gap:8px; flex-wrap:wrap; }
-    .num-btn{ width:56px; height:56px; border-radius:50%; border:none; background:var(--p); color:#fff; font-size:1.1rem; cursor:pointer; box-shadow:0 8px 24px rgba(201,24,74,0.12); }
+    .key:active { background: var(--p); transform: scale(0.9); }
+    .key.special { background: var(--p-d); font-weight: bold; }
 
-    /* Scenes container */
-    .scene{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:100; pointer-events:none; opacity:0; transform:translateY(8px); transition:opacity .4s ease, transform .45s ease; }
-    .scene.active{ pointer-events:auto; opacity:1; transform:translateY(0); }
-    .scene .inner{ pointer-events:auto; width:100%; max-width:var(--max-width); margin:0 auto; padding:30px; display:flex; flex-direction:column; align-items:center; gap:18px; }
+    /* Scene Management */
+    .scene { position: absolute; inset: 0; display: none; opacity: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+    .scene.active { display: flex; opacity: 1; pointer-events: auto; }
 
-    h1,h2{ margin:0; font-family:'Dancing Script'; color:var(--p); }
-    p{ margin:0; color:#dcdcdc; }
-
-    /* Card (mind reader) */
-    .card-container{ width:300px; perspective:1200px; }
-    .inner-card{ width:100%; height:360px; transform-style:preserve-3d; transition:transform .9s cubic-bezier(.2,.9,.22,1); cursor:pointer; border-radius:18px; box-shadow:var(--soft-shadow); overflow:hidden; }
-    .inner-card.flipped{ transform:rotateY(180deg); }
-    .card-face{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; backface-visibility:hidden; padding:18px; }
-    .card-face.front{ background:linear-gradient(180deg,#0f1220,#111); color:var(--p-l); font-size:1.0rem; }
-    .card-face.back{ background:linear-gradient(180deg,#fffef0,#fff6ea); color:#222; transform:rotateY(180deg); font-family:'Dancing Script'; font-size:1.1rem; text-align:center; }
-
-    /* Game UI and heart */
-    #game-ui{ text-align:center; z-index:101; pointer-events:auto; }
-    #counter{ font-weight:800; color:var(--p); font-size:1.4rem; }
-    .heart-svg-container{ width:260px; height:260px; cursor:pointer; filter:drop-shadow(0 0 20px rgba(255,77,109,0.35)); border-radius:999px; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, rgba(255,77,109,0.06), rgba(255,77,109,0.02)); }
-    #heart-fill-path{ transition:clip-path .12s linear; }
-
-    /* Gift 3D box (simplified and GPU-accelerated) */
-    .gift-container{ width:200px; height:200px; perspective:1400px; cursor:pointer; }
-    .gift-box{ width:100%; height:100%; transform-style:preserve-3d; transition: transform .5s ease; will-change:transform; }
-    .gift-face{ position:absolute; inset:0; border-radius:12px; backface-visibility:hidden; box-shadow:0 6px 40px rgba(0,0,0,0.55); }
-    .gift-top{ transform-origin:center bottom; background:linear-gradient(90deg,var(--p-d),var(--p)); }
-    .gift-front{ transform:translateZ(90px); background:linear-gradient(120deg,var(--p),#ff6b86); }
-
-    /* Letter and cards (scrolling area) */
-    #scroll-letter{ width:92%; max-width:640px; height:80vh; background:#fffef0; color:#333; padding:28px; border-radius:12px; overflow:auto; display:none; z-index:300; box-shadow:0 30px 80px rgba(0,0,0,0.7); border:10px solid #f4f1de; }
-    .btn-primary{ padding:12px 32px; border-radius:999px; background:linear-gradient(90deg,var(--p),var(--p-l)); color:#fff; border:none; font-weight:800; cursor:pointer; box-shadow:0 10px 30px rgba(255,77,109,0.12); }
-
-    /* Premium cards */
-    .premium-card{ display:none; padding:14px; border-radius:10px; margin-top:12px; color:#fff; }
-    .netflix-style{ background:#111; border-left:6px solid var(--netflix); }
-    .spotify-style{ background:#000; border-left:6px solid var(--spotify); }
-    .youtube-style{ background:#fff; color:#222; border-left:6px solid var(--youtube); border:1px solid #ddd; }
-
-    /* Responsive */
-    @media (max-width:720px){
-      .inner-card{ height:320px; }
-      .heart-svg-container{ width:200px; height:200px; }
-      .auth-container{ padding:18px; border-radius:16px; }
-      #password-input{ width:180px; font-size:1.1rem; }
-      .num-btn{ width:48px; height:48px; }
-      #scroll-letter{ padding:18px; height:78vh; max-width:92%; }
+    .btn-action {
+      padding: 15px 45px; border-radius: 50px; background: linear-gradient(45deg, var(--p-d), var(--p));
+      border: none; color: white; font-weight: 900; cursor: pointer; margin-top: 30px;
+      letter-spacing: 2px; text-transform: uppercase; box-shadow: 0 10px 30px rgba(255,77,109,0.3);
+      transition: 0.3s;
     }
+    .btn-action:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(255,77,109,0.5); }
 
-    /* Performance helpers */
-    .will-change-transform{ will-change: transform, opacity; }
-    .hidden{ display:none!important; }
+    /* Mind Reader Card */
+    .card-wrapper { width: 300px; height: 400px; perspective: 1500px; }
+    .card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+    .card-inner.is-flipped { transform: rotateY(180deg); }
+    .card-side { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+    .card-front { background: #111; color: var(--p-l); }
+    .card-back { background: #fffef0; color: #222; transform: rotateY(180deg); font-family: 'Dancing Script'; padding: 30px; text-align: center; }
+
+    /* Heart Fill Game */
+    .heart-container { width: 220px; height: 220px; cursor: pointer; position: relative; transition: 0.1s; filter: drop-shadow(0 0 20px var(--p)); }
+    #heart-fill { transition: clip-path 0.15s ease-out; }
+
+    /* Gift Box 3D - High detail */
+    .gift-wrap { width: 180px; height: 180px; perspective: 1000px; display: none; cursor: pointer; }
+    .box-3d { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(25deg); }
+    .box-face { position: absolute; width: 180px; height: 180px; background: var(--p-d); border: 2px solid var(--p); }
+    .box-top { transform: rotateX(90deg) translateZ(90px); background: var(--p); z-index: 5; }
+    .box-front { transform: translateZ(90px); }
+    .box-left { transform: rotateY(-90deg) translateZ(90px); }
+    .box-right { transform: rotateY(90deg) translateZ(90px); }
+    .box-face::after { content:''; position: absolute; background: var(--gold); }
+    .box-front::after, .box-left::after, .box-right::after { width: 40px; height: 100%; left: 70px; }
+    .box-top::after { width: 100%; height: 40px; top: 70px; }
+
+    /* Scroll Letter */
+    #letter-area {
+      width: 95%; max-width: 550px; height: 80vh; background: #fffef0; color: #333;
+      padding: 40px; border-radius: 15px; overflow-y: auto; display: none;
+      box-shadow: 0 30px 100px rgba(0,0,0,0.8); border: 12px solid #f4f1de; z-index: 1000;
+    }
+    #letter-area::-webkit-scrollbar { width: 6px; }
+    #letter-area::-webkit-scrollbar-thumb { background: var(--p-l); border-radius: 10px; }
+
+    .prize-tag { display: none; padding: 20px; border-radius: 15px; margin-top: 15px; color: #fff; font-weight: bold; transform: translateY(20px); }
+    .netflix { background: #000; border-left: 8px solid var(--netflix); }
+    .spotify { background: #000; border-left: 8px solid var(--spotify); }
+    .youtube { background: #fff; color: #000; border: 1px solid #ddd; border-left: 8px solid var(--youtube); }
+
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
-  <!-- PRELOADER -->
-  <div id="preloader" aria-hidden="false">
-    <div class="box" role="status" aria-live="polite">
-      <h3>Vũ trụ đang ấm lên...</h3>
-      <p>Tải âm thanh & hiệu ứng, chuẩn bị bất ngờ ✨</p>
+
+<div id="preloader"><div class="loader-heart">❤️</div><h3>Đang kiến tạo vũ trụ...</h3></div>
+<button id="fs-btn" style="position:fixed; top:20px; right:20px; z-index:99999; padding:8px 15px; background:rgba(0,0,0,0.5); border:1px solid var(--p); color:var(--p); border-radius:5px; cursor:pointer;">FULLSCREEN</button>
+<canvas id="bg-canvas"></canvas>
+<div id="cursor"></div>
+<audio id="bg-music" loop><source src="musicbd.mp3" type="audio/mpeg"></audio>
+
+<section id="lock-screen">
+  <div class="auth-box">
+    <h2 style="font-family:'Dancing Script'; color:var(--p-l); font-size:2rem;">Universe of Thùy</h2>
+    <input type="password" id="password-display" readonly placeholder="******">
+    <div class="keypad" id="keypad">
+      </div>
+    <p style="margin-top:20px; font-size:0.8rem; color:#888;">Gợi ý: Ngày sinh của bé (DDMMYY) ❤️</p>
+  </div>
+</section>
+
+<section class="scene" id="s1">
+  <h1 style="font-family:'Pacifico'; font-size:4rem; color:var(--p); text-shadow: 0 0 20px rgba(255,77,109,0.5);">Hi Thùy!</h1>
+  <div id="text-container" style="max-width:500px; text-align:center; font-size:1.2rem; line-height:1.8; color:#eee; min-height:100px;"></div>
+  <button class="btn-action" onclick="goToNextScene(1, 2)">Khám phá ngay</button>
+</section>
+
+<section class="scene" id="s2">
+  <h2 style="font-family:'Dancing Script'; font-size:3rem; margin-bottom:30px;">The Mind Reader</h2>
+  <div class="card-wrapper">
+    <div class="card-inner" id="gift-card" onclick="flipGiftCard()">
+      <div class="card-side card-front">
+        <span style="font-size:5rem; filter: drop-shadow(0 0 10px gold);">🔮</span>
+        <p style="margin-top:20px; letter-spacing:3px; font-weight:900;">CLICK ĐỂ GIẢI MÃ</p>
+      </div>
+      <div class="card-side card-back">
+        <p style="font-size:1.5rem;">Anh đoán chắc chắn em đang cười...</p>
+        <p style="color:var(--p-d); margin-top:20px; font-weight:900; font-size:1.8rem;">Vì Thùy là cả thế giới của anh! ❤️</p>
+      </div>
     </div>
   </div>
+  <button id="next-to-game" class="btn-action hidden" onclick="goToNextScene(2, 3)">Tiếp tục hành trình</button>
+</section>
 
-  <!-- UI elements -->
-  <div id="controls" aria-hidden="false">
-    <button id="toggle-fx" class="chip" aria-pressed="true" title="Hiệu ứng động bật/tắt">Hiệu ứng</button>
-    <button id="toggle-fps" class="chip" aria-pressed="false" title="Hiển thị FPS">FPS</button>
+<section class="scene" id="s3">
+  <div id="bubble-ui" style="text-align:center; position:relative; z-index:2000;">
+    <h2 style="font-family:'Dancing Script'; font-size:2.8rem; color:var(--p-l);">Phá vỡ rào cản!</h2>
+    <p id="pop-counter" style="font-size:2rem; font-weight:900; color:var(--p);">0/10</p>
   </div>
-  <button id="fs-btn" aria-label="Toggle fullscreen">FULLSCREEN</button>
 
-  <!-- Single canvas for background effects -->
-  <canvas id="bg-canvas" aria-hidden="true"></canvas>
-  <div id="cursor" aria-hidden="true"></div>
-
-  <!-- Audio (deferred until unlock) -->
-  <audio id="bg-music" loop preload="auto"><source src="musicbd.mp3" type="audio/mpeg"></audio>
-
-  <!-- Lock screen -->
-  <section id="lock-screen" role="dialog" aria-modal="true" aria-label="Màn hình khoá">
-    <div class="auth-container" role="group" aria-label="Xác thực">
-      <h2 style="font-size:1rem; color:var(--p-l); letter-spacing:2px;">VŨ TRỤ CỦA THÙY</h2>
-      <input type="password" id="password-input" maxlength="6" readonly aria-label="Mã mở cửa">
-      <div class="num-row" id="numpad" aria-hidden="false" role="group" aria-label="Bàn phím số">
-        <!-- Buttons created by script -->
-      </div>
-      <p style="margin-top:12px; font-size:0.8rem; color:#aaa;">Gợi ý: Ngày sinh của bé Thùy (DDMMYY) ❤️</p>
-      <p style="margin-top:8px; font-size:0.75rem; color:#888;">Hoặc nhấn phím <kbd>U</kbd> để mở nhanh (dev shortcut)</p>
+  <div id="heart-filling-zone" class="hidden" style="display:flex; flex-direction:column; align-items:center; z-index:2000;">
+    <h2 style="font-family:'Dancing Script'; font-size:2.5rem; color:var(--p-l); margin-bottom:20px;">Lấp đầy tình yêu ❤️</h2>
+    <div class="heart-container" onclick="handleHeartClick()">
+      <svg viewBox="0 0 100 100">
+        <path d="M50,90 C50,90 85,60 85,35 A20,20 0 0,0 45,35 M50,90 C50,90 15,60 15,35 A20,20 0 0,1 55,35" fill="none" stroke="#ff4d6d" stroke-width="2"/>
+        <path id="heart-fill-path" d="M50,90 C50,90 85,60 85,35 A20,20 0 0,0 45,35 M50,90 C50,90 15,60 15,35 A20,20 0 0,1 55,35" fill="var(--p)" style="clip-path: inset(100% 0 0 0)"/>
+      </svg>
     </div>
-  </section>
+    <p id="cps-status" style="margin-top:20px; font-weight:bold; color:var(--gold); font-size:1.2rem;"></p>
+  </div>
 
-  <!-- Scenes -->
-  <section class="scene" id="s1" aria-hidden="true">
-    <div class="inner">
-      <h1 style="font-size:3.6rem;">Hi Thùy!</h1>
-      <p id="typewriter" style="max-width:520px; text-align:center; line-height:1.6; color:#d1d1d1;"></p>
-      <button class="btn-primary" id="start-journey" aria-label="Bắt đầu hành trình">Bắt đầu hành trình</button>
+  <div class="gift-wrap" id="final-gift" onclick="handleOpenGift()">
+    <div class="box-3d" id="box-anim">
+      <div class="box-face box-front"></div>
+      <div class="box-face box-top" id="box-lid"></div>
     </div>
-  </section>
+    <p style="text-align:center; margin-top:50px; font-weight:900; color:var(--gold); letter-spacing:2px;">CHẠM ĐỂ NHẬN QUÀ ✨</p>
+  </div>
 
-  <section class="scene" id="s2" aria-hidden="true">
-    <div class="inner" style="align-items:center;">
-      <h2 style="font-size:2.6rem;">The Mind Reader</h2>
-      <div class="card-container" aria-hidden="false">
-        <div class="inner-card" id="main-card" role="button" tabindex="0" aria-pressed="false" aria-label="Xem điều anh nghĩ">
-          <div class="card-face front">
-            <div>
-              <div style="font-size:4.2rem;">🔮</div>
-              <p style="margin-top:14px; font-size:0.9rem;">CHẠM ĐỂ XEM ANH NGHĨ GÌ</p>
-            </div>
-          </div>
-          <div class="card-face back" id="card-back">
-            <div style="padding:8px;">
-              <p>Anh biết chắc chắn em đang cười...</p>
-              <p style="color:var(--p-d); margin-top:10px; font-weight:bold;">Vì Thùy là món quà tuyệt nhất đời anh! ❤️</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <button id="next-btn-2" class="btn-primary hidden" aria-hidden="true">Tiếp tục</button>
+  <div id="letter-area">
+    <div style="font-family:'Dancing Script'; font-size:1.5rem; text-align:center;">
+      <h2 style="font-family:'Pacifico'; color:var(--p-d); margin-bottom:30px;">Thùy thân mến,</h2>
+      <p>Sinh nhật 17 tuổi là khoảnh khắc rực rỡ nhất của một người con gái. Anh ước mình có thể ở đó để ôm em thật chặt...</p>
+      <p>Mọi thứ trong vũ trụ này đều do anh tự tay viết nên, mong rằng nó mang lại cho em một chút niềm vui nho nhỏ.</p>
+      <p>Mãi yêu Thùy! ❤️</p>
+      <p style="text-align:right; margin-top:30px; font-size:2rem;">- Anh của em -</p>
+      <button class="btn-action" id="reveal-btn" onclick="showAllPrizes()">Mở hộp quà bí mật 🎁</button>
+
+      <div id="n-card" class="prize-tag netflix">NETFLIX: kimjihoo2000kr@gmail.com / XXXXXXXX</div>
+      <div id="s-card" class="prize-tag spotify">SPOTIFY: kimjihoo2000kr@gmail.com / XXXXXXXX</div>
+      <div id="y-card" class="prize-tag youtube">YOUTUBE: kimjihoo2000kr@gmail.com / XXXXXXXX</div>
     </div>
-  </section>
-
-  <section class="scene" id="s3" aria-hidden="true">
-    <div class="inner" style="align-items:center;">
-      <div id="game-ui" style="text-align:center; z-index:30;">
-        <h2 style="font-family:'Dancing Script'; font-size:2.4rem; color:var(--p-l); margin-bottom:10px;">Pop the bubbles!</h2>
-        <p id="counter" style="font-weight:bold; color:var(--p); font-size:1.2rem; margin-top:10px;">0/10</p>
-      </div>
-
-      <div id="heart-game" class="hidden" style="display:flex; flex-direction:column; align-items:center;">
-        <h2 style="font-family:'Dancing Script'; font-size:2.0rem; color:var(--p-l); margin-bottom:6px;">Chứng minh tình yêu đi!</h2>
-        <p style="font-size:0.85rem; color:#aaa; margin-bottom:12px;">Spam click nhanh nhưng mượt</p>
-        <div class="heart-svg-container will-change-transform" id="heart-container" role="button" tabindex="0" aria-label="Bấm để lấp đầy trái tim">
-          <svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true" focusable="false">
-            <path d="M50,90 C50,90 85,60 85,35 A20,20 0 0,0 45,35 M50,90 C50,90 15,60 15,35 A20,20 0 0,1 55,35"
-                  fill="none" stroke="#ff4d6d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <path id="heart-fill-path" d="M50,90 C50,90 85,60 85,35 A20,20 0 0,0 45,35 M50,90 C50,90 15,60 15,35 A20,20 0 0,1 55,35"
-                  fill="var(--p)" stroke="#ff4d6d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
-                  style="clip-path: inset(100% 0 0 0)"></path>
-          </svg>
-        </div>
-        <p id="cps-display" style="font-weight:bold; color:var(--gold); font-size:1.05rem; margin-top:14px;"></p>
-      </div>
-
-      <!-- Gift container -->
-      <div class="gift-container hidden" id="gift-box" aria-hidden="true" style="margin-top:18px;">
-        <div class="gift-box will-change-transform" id="inner-gift">
-          <div class="gift-face gift-front"></div>
-          <div class="gift-face gift-top" id="gift-lid"><div style="position:absolute; inset:0; display:flex; justify-content:center; align-items:center;"><div style="width:46px; height:46px; background:var(--gold); border-radius:50%; box-shadow:0 6px 18px rgba(255,183,3,0.18)"></div></div></div>
-        </div>
-      </div>
-
-      <!-- Scroll letter -->
-      <div id="scroll-letter" role="region" aria-labelledby="letter-title" tabindex="0">
-        <div style="font-family:'Dancing Script'; font-size:1.4rem; line-height:1.8; text-align:center; width:100%;">
-          <h2 id="letter-title" style="font-family:'Pacifico'; color:var(--p-d); margin-bottom:14px;">Gửi bé Thùy của anh,</h2>
-          <p>Em à, sinh nhật 17 tuổi thực sự là một cột mốc rất đẹp...</p>
-          <p>Anh rất tiếc vì không thể trực tiếp cầm món quà này trao tận tay cho em, nên anh đã tự tay xây dựng "vũ trụ nhỏ" này để gửi gắm tất cả những gì chân thành nhất từ lòng mình.</p>
-          <p>Chúc Thùy của anh luôn giữ được nụ cười tỏa nắng ấy. Mong em luôn yêu đời và rạng rỡ như ánh nắng ban mai em nhé!</p>
-          <p style="text-align:right; margin-top:16px; font-size:1.6rem;">- Người thương của em -</p>
-
-          <button class="btn-primary" id="gift-trigger" style="margin-top:18px;">Mở hộp quà bí mật 🎁</button>
-
-          <div id="netflix-card" class="premium-card netflix-style">
-            <p style="color:var(--netflix); font-weight:900; font-size:1.05rem;">NETFLIX PREMIUM</p>
-            <div class="acc-info" style="margin-top:8px; padding:8px; border-radius:8px; background:rgba(0,0,0,0.06)"><p class="acc-val">kimjihoo2000kr@gmail.com / XXXXXXXX</p></div>
-          </div>
-          <div id="spotify-card" class="premium-card spotify-style">
-            <p style="color:var(--spotify); font-weight:900; font-size:1.05rem;">SPOTIFY PREMIUM</p>
-            <div class="acc-info" style="margin-top:8px; padding:8px; border-radius:8px; background:rgba(255,255,255,0.03)"><p class="acc-val">kimjihoo2000kr@gmail.com / XXXXXXXX</p></div>
-          </div>
-          <div id="youtube-card" class="premium-card youtube-style">
-            <p style="color:var(--youtube); font-weight:900; font-size:1.05rem;">YOUTUBE PREMIUM</p>
-            <div class="acc-info" style="margin-top:8px; padding:8px; border-radius:8px; background:rgba(255,255,255,0.02)"><p class="acc-val">kimjihoo2000kr@gmail.com / XXXXXXXX</p></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Minimal accessibility helper -->
-  <div id="aria-live" aria-live="polite" style="position:fixed; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;"></div>
+  </div>
+</section>
 
 <script>
-/*
-  Enhanced JavaScript:
-  - Unified background canvas with offscreen star layer for faster renders
-  - Particle pooling for hearts/bubbles
-  - FPS limiter and optional FPS counter
-  - Debounced resize and passive listeners
-  - Reduced layout thrashing, CSS transform usage, and GC-friendly patterns
-  - Touch support and keyboard shortcuts (dev open)
-  - Organized into an IIFE to minimize global scope pollution
-*/
+/**
+ * TOÀN BỘ LOGIC ĐƯỢC VIẾT CHI TIẾT ĐỂ TỐI ƯU TRẢI NGHIỆM
+ */
+const CONFIG = {
+  SECRET: '190309',
+  MAX_BUBBLES: 10,
+  HEART_STEP: 4
+};
 
-(() => {
-  'use strict';
+let gameState = {
+  popped: 0,
+  progress: 0,
+  clicks: [],
+  activeScene: 0
+};
 
-  /* -------------------------
-     Utility & Config
-     ------------------------- */
-  const cfg = {
-    targetFPS: 60,             // set 60 (or 30 on low perf devices)
-    maxHearts: 40,
-    maxStars: 150,
-    bubbleCount: 10,
-    heartFillStep: 4,
-    password: '190309',
-    enableFX: true
-  };
+// --- HỆ THỐNG CURSOR ---
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', (e) => {
+  gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+});
 
-  // Detect low-end device (simple heuristic)
-  const lowEnd = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2;
-  if (lowEnd) cfg.targetFPS = 30;
+// --- HỆ THỐNG NỀN VŨ TRỤ ---
+const bgCanvas = document.getElementById('bg-canvas');
+const bgCtx = bgCanvas.getContext('2d');
+let stars = [], ambientHearts = [];
 
-  // DOM refs
-  const body = document.body;
-  const preloader = document.getElementById('preloader');
-  const bgCanvas = document.getElementById('bg-canvas');
-  const cursorEl = document.getElementById('cursor');
-  const fsBtn = document.getElementById('fs-btn');
-  const toggleFx = document.getElementById('toggle-fx');
-  const toggleFps = document.getElementById('toggle-fps');
-
-  const lockScreen = document.getElementById('lock-screen');
-  const passwordInput = document.getElementById('password-input');
-  const numpad = document.getElementById('numpad');
-
-  const s1 = document.getElementById('s1');
-  const s2 = document.getElementById('s2');
-  const s3 = document.getElementById('s3');
-
-  const startJourney = document.getElementById('start-journey');
-  const mainCard = document.getElementById('main-card');
-  const nextBtn2 = document.getElementById('next-btn-2');
-
-  const bubbleCounter = document.getElementById('counter');
-  const heartGameEl = document.getElementById('heart-game');
-  const heartContainer = document.getElementById('heart-container');
-  const heartFillPath = document.getElementById('heart-fill-path');
-  const cpsDisplay = document.getElementById('cps-display');
-
-  const giftBox = document.getElementById('gift-box');
-  const innerGift = document.getElementById('inner-gift');
-  const giftLid = document.getElementById('gift-lid');
-
-  const scrollLetter = document.getElementById('scroll-letter');
-  const giftTrigger = document.getElementById('gift-trigger');
-
-  const netflixCard = document.getElementById('netflix-card');
-  const spotifyCard = document.getElementById('spotify-card');
-  const youtubeCard = document.getElementById('youtube-card');
-
-  const bgCtx = bgCanvas.getContext('2d');
-
-  // Helper for debouncing
-  function debounce(fn, ms=100){ let t; return (...a) => { clearTimeout(t); t = setTimeout(()=>fn(...a), ms); }; }
-
-  // Small helper to add class transitions with GSAP fallback if available
-  function enterScene(el){
-  el.classList.add('active');
-
-  el.style.pointerEvents = 'auto';
-  el.style.opacity = '1';
-  el.style.transform = 'translateY(0)';
-
-  el.setAttribute('aria-hidden','false');
-
-  if (window.gsap){
-    gsap.fromTo(el, {opacity:0, y:8}, {opacity:1, y:0, duration:0.45});
-  }
-}
-  function leaveScene(el){
-  el.classList.remove('active');
-
-  el.style.pointerEvents = 'none';
-
-  el.setAttribute('aria-hidden','true');
+function initUniverse() {
+  bgCanvas.width = window.innerWidth;
+  bgCanvas.height = window.innerHeight;
+  stars = Array.from({ length: 150 }, () => ({
+    x: Math.random() * bgCanvas.width,
+    y: Math.random() * bgCanvas.height,
+    r: Math.random() * 1.5,
+    o: Math.random(),
+    s: Math.random() * 0.02
+  }));
+  ambientHearts = Array.from({ length: 25 }, () => ({
+    x: Math.random() * bgCanvas.width,
+    y: bgCanvas.height + 50,
+    size: Math.random() * 10 + 10,
+    speed: Math.random() * 1 + 0.5,
+    opacity: Math.random() * 0.5 + 0.2
+  }));
 }
 
-  /* -------------------------
-     Preload & init
-     ------------------------- */
-  // Create numpad
-  (function buildNumpad(){
-    for(let i=1;i<=9;i++){
-      const b = document.createElement('button');
-      b.className='num-btn';
-      b.textContent = i;
-      b.type='button';
-      b.addEventListener('click', () => press(String(i)), {passive:true});
-      numpad.appendChild(b);
-    }
-    const clearBtn = document.createElement('button');
-    clearBtn.className='num-btn';
-    clearBtn.textContent='C';
-    clearBtn.type='button';
-    clearBtn.addEventListener('click', ()=> passwordInput.value = '', {passive:true});
-    numpad.appendChild(clearBtn);
-
-    const zeroBtn = document.createElement('button');
-    zeroBtn.className='num-btn';
-    zeroBtn.textContent='0';
-    zeroBtn.type='button';
-    zeroBtn.addEventListener('click', ()=> press('0'), {passive:true});
-    numpad.appendChild(zeroBtn);
-  })();
-
-  // Preload audio with user gesture fallback
-  const bgMusic = document.getElementById('bg-music');
-  let audioUnlocked = false;
-  function tryPlayAudio(){
-    if (audioUnlocked) return;
-    bgMusic.play().then(()=> { audioUnlocked=true; }).catch(()=> { /* wait for user */ });
-  }
-
-  // Hide preloader after assets ready
-  window.addEventListener('load', () => {
-    setTimeout(()=> {
-      preloader.style.opacity = '0';
-      preloader.style.pointerEvents = 'none';
-      preloader.setAttribute('aria-hidden','true');
-      setTimeout(()=>preloader.remove(), 600);
-    }, 400);
-  });
-
-  /* -------------------------
-     Cursor and pointer smoothing
-     ------------------------- */
-  let lastPointer = {x:window.innerWidth/2, y:window.innerHeight/2};
-  let pointerTarget = {...lastPointer};
-  const pointerEase = 0.12;
-
-  // Use passive listeners to avoid blocking
-  window.addEventListener('mousemove', (e) => {
-    pointerTarget.x = e.clientX; pointerTarget.y = e.clientY;
-    if (!cursorEl) return;
-    // GSAP smooth
-    gsap.to(cursorEl, { x: pointerTarget.x - 8, y: pointerTarget.y - 8, duration: 0.12, ease: 'power2.out' });
-  }, {passive:true});
-
-  // Touch support: show cursor at finger
-  window.addEventListener('touchmove', (e) => {
-    const t = e.touches[0];
-    if (t) {
-      pointerTarget.x = t.clientX; pointerTarget.y = t.clientY;
-      gsap.to(cursorEl, { x: pointerTarget.x - 8, y: pointerTarget.y - 8, duration: 0.12, ease: 'power2.out' });
-    }
-  }, {passive:true});
-
-  /* -------------------------
-     Background Canvas: Stars + Hearts (pooled)
-     ------------------------- */
-
-  const DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1)); // clamp to avoid huge sizes
-  let canvasW = 0, canvasH = 0;
-
-  // Pools
-  const starPool = [];
-  const heartPool = [];
-
-  // Offscreen static stars for efficient redraw (rendered once)
-  let starLayer = null; // offscreen canvas
-
-  function resizeCanvas(){
-    // Debounced
-    canvasW = Math.max(320, innerWidth);
-    canvasH = Math.max(240, innerHeight);
-    bgCanvas.style.width = canvasW + 'px';
-    bgCanvas.style.height = canvasH + 'px';
-    bgCanvas.width = Math.round(canvasW * DPR);
-    bgCanvas.height = Math.round(canvasH * DPR);
-    bgCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    initStars();
-    buildHearts();
-  }
-  window.addEventListener('resize', debounce(resizeCanvas, 120));
-  resizeCanvas();
-
-  function rand(min, max){ return Math.random()*(max-min)+min; }
-
-  function initStars(){
-    starPool.length = 0;
-    const count = cfg.maxStars;
-    for(let i=0;i<count;i++){
-      starPool.push({
-        x: Math.random()*canvasW,
-        y: Math.random()*canvasH,
-        size: Math.random()*1.6 + 0.3,
-        twinkle: Math.random()*0.02 + 0.003,
-        baseAlpha: Math.random()*0.6 + 0.2,
-        alpha: Math.random()
-      });
-    }
-
-    // create offscreen star layer
-    starLayer = document.createElement('canvas');
-    starLayer.width = Math.round(canvasW * DPR);
-    starLayer.height = Math.round(canvasH * DPR);
-    const sctx = starLayer.getContext('2d');
-    sctx.scale(DPR, DPR);
-    sctx.clearRect(0,0,canvasW,canvasH);
-    for(const s of starPool){
-      sctx.beginPath();
-      sctx.fillStyle = `rgba(255,255,255,${s.baseAlpha})`;
-      sctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-      sctx.fill();
-    }
-  }
-
-  function buildHearts(){
-    heartPool.length = 0;
-    const count = cfg.maxHearts;
-    for(let i=0;i<count;i++){
-      heartPool.push({
-        x: Math.random()*canvasW,
-        y: canvasH + Math.random()*600,
-        size: Math.random()*16+8,
-        speed: Math.random()*0.6 + 0.4,
-        emoji: '❤️',
-        alpha: Math.random()*0.6 + 0.2
-      });
-    }
-  }
-
-  // FPS limiter and main loop
-  let lastTime = performance.now();
-  let acc = 0;
-  const frameDuration = 1000 / cfg.targetFPS;
-  let showFPS = false;
-  let fpsCounter = {frame:0, lastTick:performance.now(), fps:0};
-
-  function renderFrame(now){
-    const dt = now - lastTime;
-    lastTime = now;
-    acc += dt;
-    if (acc < frameDuration) {
-      // Skip to maintain target FPS
-      requestAnimationFrame(renderFrame);
-      return;
-    }
-    // Cap acc to avoid spiral
-    acc = Math.min(acc, 1000);
-
-    // Clear
-    bgCtx.clearRect(0,0,canvasW,canvasH);
-
-    // Draw gradient background
-    const g = bgCtx.createLinearGradient(0, 0, 0, canvasH);
-    g.addColorStop(0, '#02020a');
-    g.addColorStop(1, '#03071e');
-    bgCtx.fillStyle = g;
-    bgCtx.fillRect(0,0,canvasW,canvasH);
-
-    // Draw star layer (cheap compositing)
-    if (starLayer) {
-      bgCtx.globalAlpha = 0.9;
-      bgCtx.drawImage(starLayer, 0, 0, canvasW, canvasH);
-      bgCtx.globalAlpha = 1;
-    }
-
-    // Update & draw hearts pool
-    for(const h of heartPool){
-      h.y -= h.speed;
-      if (h.y < -40) {
-        h.y = canvasH + Math.random()*200;
-        h.x = Math.random() * canvasW;
-        h.speed = Math.random()*0.9 + 0.4;
-      }
-      bgCtx.save();
-      bgCtx.globalAlpha = h.alpha * 0.95;
-      bgCtx.font = `${h.size}px serif`;
-      bgCtx.fillText(h.emoji, h.x, h.y);
-      bgCtx.restore();
-    }
-
-    // subtle parallax: small overlay gradient circle near pointer for depth
-    // Using composite to avoid heavy blur operations
+function drawUniverse() {
+  bgCtx.fillStyle = '#03071e';
+  bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+  
+  // Vẽ sao lấp lánh
+  stars.forEach(s => {
+    s.o += s.s; if(s.o > 1 || s.o < 0) s.s *= -1;
     bgCtx.beginPath();
-    const radial = bgCtx.createRadialGradient(pointerTarget.x, pointerTarget.y, 0, pointerTarget.x, pointerTarget.y, Math.min(canvasW, canvasH)*0.45);
-    radial.addColorStop(0, 'rgba(255,77,109,0.06)');
-    radial.addColorStop(0.5, 'rgba(255,117,143,0.02)');
-    radial.addColorStop(1, 'rgba(3,7,30,0)');
-    bgCtx.fillStyle = radial;
-    bgCtx.fillRect(0,0,canvasW,canvasH);
+    bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    bgCtx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.o)})`;
+    bgCtx.fill();
+  });
 
-    // FPS counting
-    fpsCounter.frame++;
-    const tickNow = performance.now();
-    if (tickNow - fpsCounter.lastTick >= 1000){
-      fpsCounter.fps = fpsCounter.frame;
-      fpsCounter.frame = 0;
-      fpsCounter.lastTick = tickNow;
-      if (showFPS) updateFpsOverlay(fpsCounter.fps);
-    }
+  // Vẽ tim bay lãng mạn
+  bgCtx.font = '20px serif';
+  ambientHearts.forEach(h => {
+    h.y -= h.speed;
+    if(h.y < -50) { h.y = bgCanvas.height + 50; h.x = Math.random() * bgCanvas.width; }
+    bgCtx.globalAlpha = h.opacity;
+    bgCtx.fillText('❤️', h.x, h.y);
+  });
+  bgCtx.globalAlpha = 1;
+  requestAnimationFrame(drawUniverse);
+}
 
-    requestAnimationFrame(renderFrame);
+// --- HỆ THỐNG MẬT MÃ ---
+function buildKeypad() {
+  const pad = document.getElementById('keypad');
+  for(let i=1; i<=9; i++) {
+    pad.innerHTML += `<button class="key" onclick="handleKeyPress('${i}')">${i}</button>`;
   }
-  requestAnimationFrame(renderFrame);
+  pad.innerHTML += `<button class="key special" onclick="document.getElementById('password-display').value=''">C</button>`;
+  pad.innerHTML += `<button class="key" onclick="handleKeyPress('0')">0</button>`;
+  pad.innerHTML += `<button class="key special" style="font-size:1rem" onclick="toggleFullScreen()">FS</button>`;
+}
 
-  /* -------------------------
-     Bubble Game (canvas) optimized
-     ------------------------- */
-  // We'll create and destroy a separate canvas for the bubble mini-game to keep the background canvas uncluttered.
-  let bubbleCanvas = null;
-  let bubbleCtx = null;
-  let bubbles = [];
-  let poppedCount = 0;
-  const wishes = ["Xinh đẹp ❤️", "Bình an 🍀", "Hạnh phúc 😊", "Luôn cười 😄", "Thành công ✨", "Mạnh mẽ 💪", "May mắn 🌈", "Rạng rỡ 🌟", "Yêu đời 🌸", "Yêu anh hơn ❤️"];
+function handleKeyPress(n) {
+  const display = document.getElementById('password-display');
+  if(display.value.length < 6) display.value += n;
+  if(display.value === CONFIG.SECRET) unlockUniverse();
+}
 
-  function startBubbleGame(){
-    if (bubbleCanvas) return; // already running
-    bubbleCanvas = document.createElement('canvas');
-    bubbleCanvas.className = 'secondary-canvas';
-    bubbleCanvas.id = 'bubble-canvas';
-    bubbleCanvas.style.pointerEvents = 'auto';
-    bubbleCanvas.style.zIndex = 21;
-    document.body.appendChild(bubbleCanvas);
-    bubbleCtx = bubbleCanvas.getContext('2d');
+function unlockUniverse() {
+  document.getElementById('bg-music').play().catch(() => {});
+  gsap.to('#lock-screen', { y: '-100%', duration: 1.2, ease: 'power4.inOut', onComplete: () => {
+    document.getElementById('lock-screen').style.display = 'none';
+    startWelcomeScene();
+  }});
+}
 
-    function setup(){
-      bubbleCanvas.width = innerWidth * DPR;
-      bubbleCanvas.height = innerHeight * DPR;
-      bubbleCanvas.style.width = innerWidth + 'px';
-      bubbleCanvas.style.height = innerHeight + 'px';
-      bubbleCtx.setTransform(DPR,0,0,DPR,0,0);
-
-      // init bubble objects from wishes (pooled)
-      bubbles = wishes.slice(0, cfg.bubbleCount).map((txt, i) => ({
-        x: Math.random()*(innerWidth-120) + 60,
-        y: innerHeight + Math.random()*(i*80) + 60,
-        r: 46,
-        text: txt,
-        popped: false,
-        speed: 1.6 + Math.random()*1.6,
-        floatAmp: Math.random()*12 + 8,
-        floatFreq: Math.random()*0.03 + 0.008
-      }));
-      poppedCount = 0;
-      bubbleCounter.innerText = `${poppedCount}/10`;
-      bubbleCanvas.addEventListener('click', bubbleClickHandler, {passive:true});
-      bubbleCanvas.addEventListener('touchstart', bubbleClickHandler, {passive:true});
-      animateBubbles();
+// --- SCENE 1: WELCOME ---
+function startWelcomeScene() {
+  document.getElementById('s1').classList.add('active');
+  const txt = "Chào công chúa Thùy, cảm ơn em vì đã là một phần tuyệt vời nhất trong cuộc đời anh. Hành trình bí mật dành riêng cho em bắt đầu tại đây...";
+  let i = 0;
+  function type() {
+    if(i < txt.length) {
+      document.getElementById('text-container').innerHTML += txt.charAt(i++);
+      setTimeout(type, 40);
     }
-    setup();
+  }
+  type();
+}
 
-    // Resize handler for bubble canvas
-    const resizeHandler = debounce(() => {
-      if (!bubbleCanvas) return;
-      bubbleCanvas.width = innerWidth * DPR;
-      bubbleCanvas.height = innerHeight * DPR;
-      bubbleCanvas.style.width = innerWidth + 'px';
-      bubbleCanvas.style.height = innerHeight + 'px';
-      bubbleCtx.setTransform(DPR,0,0,DPR,0,0);
-    }, 120);
-    window.addEventListener('resize', resizeHandler);
+// --- SCENE 2: CARD ---
+function flipGiftCard() {
+  document.getElementById('gift-card').classList.add('is-flipped');
+  setTimeout(() => document.getElementById('next-to-game').classList.remove('hidden'), 800);
+}
 
-    // Animation
-    let last = performance.now();
-    function animateBubbles(now = performance.now()){
-      const dt = now - last; last = now;
-      bubbleCtx.clearRect(0,0,innerWidth, innerHeight);
-      for(const b of bubbles){
-        if (b.popped) continue;
-        b.y -= b.speed * (dt/16);
-        b.x += Math.sin(b.y * b.floatFreq) * 0.6;
-        if (b.y < -80) b.y = innerHeight + 80;
-        // draw
-        bubbleCtx.beginPath();
-        bubbleCtx.fillStyle = 'rgba(255,77,109,0.18)';
-        bubbleCtx.arc(b.x, b.y, b.r, 0, Math.PI*2);
-        bubbleCtx.fill();
-        bubbleCtx.fillStyle = '#fff';
-        bubbleCtx.font = '26px serif';
-        bubbleCtx.textAlign = 'center';
-        bubbleCtx.fillText('🎈', b.x, b.y+8);
+// --- SCENE 3: GAMES ---
+function goToNextScene(from, to) {
+  gsap.to(`#s${from}`, { opacity: 0, scale: 0.9, duration: 0.5, onComplete: () => {
+    document.getElementById(`s${from}`).classList.remove('active');
+    const next = document.getElementById(`s${to}`);
+    next.classList.add('active');
+    gsap.fromTo(next, { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 0.5 });
+    if(to === 3) initBubbleGame();
+  }});
+}
+
+function initBubbleGame() {
+  const bCanvas = document.createElement('canvas');
+  bCanvas.className = 'game-canvas';
+  document.body.appendChild(bCanvas);
+  const bCtx = bCanvas.getContext('2d');
+  bCanvas.width = window.innerWidth;
+  bCanvas.height = window.innerHeight;
+
+  const labels = ["Xinh đẹp", "Bình an", "Hạnh phúc", "Luôn cười", "Thành công", "Mạnh mẽ", "May mắn", "Rạng rỡ", "Yêu đời", "Yêu anh"];
+  let bubbles = labels.map((l, i) => ({
+    x: Math.random() * (window.innerWidth - 100) + 50,
+    y: window.innerHeight + (i * 120),
+    r: 45, v: 2 + Math.random() * 2, txt: l, popped: false
+  }));
+
+  function loop() {
+    bCtx.clearRect(0, 0, bCanvas.width, bCanvas.height);
+    bubbles.forEach(b => {
+      if(!b.popped) {
+        b.y -= b.v; if(b.y < -50) b.y = window.innerHeight + 50;
+        bCtx.beginPath(); bCtx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        bCtx.fillStyle = 'rgba(255, 77, 109, 0.4)'; bCtx.fill();
+        bCtx.fillStyle = '#fff'; bCtx.font = '16px Montserrat'; bCtx.textAlign = 'center';
+        bCtx.fillText(b.txt, b.x, b.y + 5);
       }
-      if (poppedCount < 10) requestAnimationFrame(animateBubbles);
-      else endBubbleGame();
-    }
-
-    function bubbleClickHandler(e){
-      e.preventDefault();
-      const rect = bubbleCanvas.getBoundingClientRect();
-      const cx = (e.clientX || e.touches && e.touches[0].clientX || 0) - rect.left;
-      const cy = (e.clientY || e.touches && e.touches[0].clientY || 0) - rect.top;
-      for(const b of bubbles){
-        if (!b.popped && Math.hypot(cx - b.x, cy - b.y) < b.r){
-          b.popped = true;
-          poppedCount++;
-          bubbleCounter.innerText = `${poppedCount}/10`;
-          showPopText(b.text, b.x, b.y);
-          // small particle burst using CSS for perf
-          createBurst(cx, cy, b.text);
-        }
-      }
-    }
-
-    function endBubbleGame(){
-      // cleanup bubble canvas and show heart game
-      if (bubbleCanvas){
-        bubbleCanvas.removeEventListener('click', bubbleClickHandler);
-        bubbleCanvas.remove();
-        bubbleCanvas = null;
-        bubbleCtx = null;
-      }
-      // show heart game
-      showHeartGame();
-    }
-  }
-
-  // Pop-up floating text (DOM) - optimized by reusing element creation and timeout
-  function showPopText(txt, x, y){
-    const el = document.createElement('div');
-    el.innerText = txt;
-    el.style.cssText = `position:fixed; left:${x}px; top:${y}px; color:var(--p); font-weight:bold; font-size:1.6rem; font-family:'Dancing Script'; z-index:100; transform:translate(-50%,-50%); pointer-events:none; text-shadow:0 0 10px rgba(255,255,255,0.12);`;
-    document.body.appendChild(el);
-    gsap.to(el, { y: y - 120, opacity:0, duration:1.6, ease:'power2.out', onComplete: ()=> el.remove() });
-  }
-
-  // small burst (CSS particle) for perf
-  function createBurst(x, y, label){
-    const wrapper = document.createElement('div');
-    wrapper.style.position = 'fixed';
-    wrapper.style.left = x + 'px';
-    wrapper.style.top = y + 'px';
-    wrapper.style.pointerEvents = 'none';
-    wrapper.style.zIndex = 150;
-    document.body.appendChild(wrapper);
-    const span = document.createElement('span');
-    span.textContent = '✨';
-    span.style.display = 'block';
-    span.style.fontSize = '28px';
-    wrapper.appendChild(span);
-    gsap.to(wrapper, { y: y - 90, opacity:0, scale:1.6, duration:0.9, ease:'power2.out', onComplete: ()=> wrapper.remove() });
-  }
-
-  /* -------------------------
-     Heart Game (click-to-fill) with CPS
-     ------------------------- */
-  let heartProgress = 0;
-  let clickTimes = [];
-  function showHeartGame(){
-    // hide game UI and show heart container
-    document.getElementById('game-ui')?.classList.add('hidden');
-    heartGameEl.classList.remove('hidden');
-    heartGameEl.style.display = 'flex';
-    gsap.fromTo('#heart-game', {opacity:0, y:12}, {opacity:1, y:0, duration:0.6, ease:'power3.out'});
-  }
-
-  function fillHeart(){
-    if (heartProgress >= 100) return;
-    heartProgress += cfg.heartFillStep;
-    if (heartProgress > 100) heartProgress = 100;
-    heartFillPath.style.clipPath = `inset(${100 - heartProgress}% 0 0 0)`;
-
-    // CPS
-    const now = Date.now();
-    clickTimes.push(now);
-    clickTimes = clickTimes.filter(t => now - t < 1000);
-    cpsDisplay.innerText = `Tốc độ: ${clickTimes.length} tim/s`;
-
-    // pulse animation
-    gsap.fromTo('#heart-container', {scale:1}, {scale:1.14, duration:0.08, yoyo:true, repeat:1, ease:'power2.out'});
-
-    if (heartProgress >= 100){
-      explodeHeart();
-    }
-  }
-
-  function explodeHeart(){
-    // scale big then show wishes flow
-    gsap.timeline()
-      .to('#heart-container', {scale:5, opacity:0, duration:0.6, ease:'power2.in'})
-      .call(() => {
-        heartGameEl.style.display = 'none';
-        startWishesFlow();
-      });
-
-    // light flash
-    const flash = document.createElement('div');
-    flash.style.cssText = 'position:fixed; left:50%; top:50%; width:12px; height:12px; transform:translate(-50%,-50%); border-radius:50%; background:#fff; z-index:160; box-shadow:0 0 120px 40px #fff;';
-    document.body.appendChild(flash);
-    gsap.to(flash, {scale:120, opacity:0, duration:1, ease:'power2.out', onComplete: ()=> flash.remove()});
-  }
-
-  /* -------------------------
-     Wishes flow (canvas, ephemeral)
-     ------------------------- */
-  function startWishesFlow(){
-    const wCanvas = document.createElement('canvas');
-    wCanvas.className = 'secondary-canvas';
-    wCanvas.id = 'wishes-canvas';
-    wCanvas.style.zIndex = 23;
-    document.body.appendChild(wCanvas);
-    const wCtx = wCanvas.getContext('2d');
-    wCanvas.width = innerWidth * DPR;
-    wCanvas.height = innerHeight * DPR;
-    wCanvas.style.width = innerWidth + 'px';
-    wCanvas.style.height = innerHeight + 'px';
-    wCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
-
-    const floatingMsgs = ["I love you so much <3", "Chúc mừng sinh nhật Thùy", "Anh yêu em", "Mãi bên nhau nhé", "Chúc em luôn cười tươi", "Cô gái 17 tuổi rực rỡ", "Công chúa của anh", "Bé ốc quế của anh hihi", "Vạn sự như ý", "Mãi xinh đẹp nhé Thùy"];
-    const items = floatingMsgs.map((m,i) => ({
-      text: m,
-      x: Math.random()*innerWidth,
-      y: -100 - i*80,
-      z: Math.random()*1.2,
-      rot: Math.random()*0.6 - 0.3,
-      rotSpeed: (Math.random()-0.5)*0.006,
-      speed: 0.9 + Math.random()*1.5,
-      size: 18 + Math.random()*28
-    }));
-
-    function draw(){
-      wCtx.clearRect(0,0,innerWidth, innerHeight);
-      for(const it of items){
-        it.y += it.speed;
-        it.rot += it.rotSpeed;
-        if (it.y > innerHeight + 80) it.y = -120;
-        wCtx.save();
-        wCtx.translate(it.x, it.y);
-        wCtx.rotate(it.rot);
-        wCtx.scale(1 + it.z*0.12, 1 + it.z*0.12);
-        wCtx.shadowBlur = 18;
-        wCtx.shadowColor = '#ff758f';
-        wCtx.fillStyle = `rgba(255,117,143,${0.4 + it.z*0.2})`;
-        wCtx.font = `600 ${it.size}px Montserrat`;
-        wCtx.textAlign = 'center';
-        wCtx.fillText(it.text, 0, 0);
-        wCtx.restore();
-      }
-      requestAnimationFrame(draw);
-    }
-    draw();
-
-    // after a short delay, show gift box
-    setTimeout(()=> {
-      giftBox.classList.remove('hidden');
-      giftBox.style.display = 'block';
-      if (window.gsap) {
-        gsap.from('#gift-box', {scale:0, duration:1.0, ease:'back.out(1.6)'});
-        gsap.to('#inner-gift', { rotationY: 40, repeat: -1, yoyo: true, duration: 2, ease: "sine.inOut" });
-        gsap.to('#gift-box', { y: "-=12", repeat: -1, yoyo: true, duration: 1.6, ease: "power1.inOut" });
-      }
-    }, 1600);
-  }
-
-  /* -------------------------
-     Gift open sequence
-     ------------------------- */
-  function openGift(){
-    // small shake and lid toss
-    if (window.gsap){
-      const tl = gsap.timeline();
-      tl.to('#inner-gift', { x: 8, duration:0.04, repeat:10, yoyo:true });
-      tl.to('#gift-lid', { y: -300, x: 120, rotateZ: 48, rotateX: 110, opacity: 0, duration: 1.25, ease: 'power4.out' }, '+=0.02');
-      setTimeout(()=> {
-        gsap.to(['#gift-box', '#wishes-canvas'], {opacity:0, duration:1, onComplete: ()=> {
-          giftBox.style.display='none';
-          const w = document.getElementById('wishes-canvas');
-          if (w) { w.remove(); }
-          // reveal letter
-          scrollLetter.style.display = 'flex';
-          gsap.fromTo(scrollLetter, {opacity:0, y:40, scale:0.96}, {opacity:1, y:0, scale:1, duration:0.8, ease:'back.out(1.2)'});
-        }});
-      }, 900);
-    } else {
-      // fallback: basic hide
-      giftBox.style.display='none';
-      const w = document.getElementById('wishes-canvas'); if (w) w.remove();
-      scrollLetter.style.display = 'flex';
-    }
-  }
-
-  /* -------------------------
-     Reveal prizes inside letter
-     ------------------------- */
-  function revealPrizes(){
-    [netflixCard, spotifyCard, youtubeCard].forEach((el, idx) => {
-      el.style.display = 'block';
-      if (window.gsap) gsap.from(el, {y:40, opacity:0, duration:0.6, delay: idx*0.14});
     });
-    giftTrigger.style.display = 'none';
-    setTimeout(()=> scrollLetter.scrollTo({top: scrollLetter.scrollHeight, behavior:'smooth'}), 120);
-  }
-
-  /* -------------------------
-     Helpers: show small popups & text
-     ------------------------- */
-  function showToast(text, time=1600){
-    const t = document.createElement('div');
-    t.textContent = text;
-    t.style.cssText = 'position:fixed; left:50%; bottom:14%; transform:translateX(-50%); background:rgba(0,0,0,0.6); color:#fff; padding:10px 16px; border-radius:999px; z-index:10030; font-weight:700; pointer-events:none;';
-    document.body.appendChild(t);
-    gsap.fromTo(t, {y:20, opacity:0}, {y:0, opacity:1, duration:0.4});
-    setTimeout(()=> gsap.to(t, {y:20, opacity:0, duration:0.5, onComplete: ()=> t.remove()}), time);
-  }
-
-  /* -------------------------
-     Small UX: Typewriter
-     ------------------------- */
-  function runTypewriter(){
-    const text = "Chào Thùy, cảm ơn em đã chọn xuất hiện trong cuộc đời anh. Anh đã gửi gắm tất cả vào vũ trụ nhỏ này chỉ dành riêng cho em. Hãy kiên nhẫn đi cùng anh nhé...";
-    const target = document.getElementById('typewriter');
-    let i = 0;
-    target.textContent = '';
-    function step(){
-      if (i >= text.length) return;
-      target.textContent += text.charAt(i++);
-      setTimeout(step, 36);
-    }
-    step();
-  }
-
-  /* -------------------------
-     Interaction wiring
-     ------------------------- */
-
-  // Password keypad
-  function press(num){
-    if (!passwordInput) return;
-    if (passwordInput.value.length >= 6) return;
-    passwordInput.value += num;
-    if (passwordInput.value === cfg.password){
-      unlockUniverse();
-    }
-  }
-  window.press = press; // keep compatibility with initial inline calls if any
-
-  // Dev shortcut to open
-  window.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'u'){ // dev open
-      passwordInput.value = cfg.password;
-      unlockUniverse();
-    }
-  });
-
-  function unlockUniverse(){
-    // play audio if possible
-    tryPlayAudio();
-    // animate lock screen away
-    if (window.gsap){
-      gsap.to('#lock-screen', { y: '-110%', duration: 0.9, ease:'power4.inOut', onComplete: ()=>{
-        lockScreen.style.display = 'none';
-        enterScene(s1);
-        console.log("DEBUG:", s1.classList);
-        runTypewriter();
+    if(gameState.popped < 10) requestAnimationFrame(loop);
+    else {
+      gsap.to(bCanvas, { opacity: 0, duration: 1, onComplete: () => {
+        bCanvas.remove();
+        document.getElementById('bubble-ui').classList.add('hidden');
+        document.getElementById('heart-filling-zone').classList.remove('hidden');
       }});
-    } else {
-      lockScreen.style.display = 'none';
-      enterScene(s1);
-      runTypewriter();
     }
-    document.getElementById('ar  ia-live').textContent = 'Chào mừng Thùy!';
   }
+  loop();
 
-  // Start journey
-  startJourney.addEventListener('click', () => {
-    changeScene(1, 2);
-  });
-
-  function changeScene(fromIndex, toIndex){
-    const from = document.getElementById(`s${fromIndex}`);
-    const to = document.getElementById(`s${toIndex}`);
-    if (!from || !to) return;
-    // animate
-    if (window.gsap){
-      gsap.to(from, {opacity:0, scale:0.96, duration:0.45, onComplete: ()=> { leaveScene(from); enterScene(to); if (toIndex === 3) startBubbleGame(); }});
-    } else {
-      leaveScene(from); enterScene(to);
-      if (toIndex === 3) startBubbleGame();
-    }
-    // show bubble game when reaching s3
-    if (toIndex === 3) startBubbleGame();
-  }
-
-  // Card flip
-  mainCard.addEventListener('click', () => {
-    mainCard.classList.add('flipped');
-    mainCard.setAttribute('aria-pressed','true');
-    setTimeout(()=> { nextBtn2.classList.remove('hidden'); nextBtn2.style.display='inline-block'; }, 700);
-  });
-  mainCard.addEventListener('keydown', (e) => { if (e.key === 'Enter') mainCard.click(); });
-
-  nextBtn2.addEventListener('click', () => {
-    changeScene(2,3);
-  });
-
-  // heart click
-  heartContainer.addEventListener('click', fillHeart);
-  heartContainer.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') fillHeart(); });
-
-  // gift open
-  innerGift.addEventListener('click', openGift);
-  giftTrigger.addEventListener('click', revealPrizes);
-
-  // Fullscreen toggle
-  fsBtn.addEventListener('click', () => {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
-    else document.exitFullscreen().catch(()=>{});
-  });
-
-  // Toggle effects (persist in localStorage)
-  const fxKey = 'thuy_fx';
-  function loadFxSetting(){
-    const v = localStorage.getItem(fxKey);
-    if (v === null) return true;
-    return v === '1';
-  }
-  cfg.enableFX = loadFxSetting();
-  toggleFx.setAttribute('aria-pressed', String(cfg.enableFX));
-  toggleFx.addEventListener('click', () => {
-    cfg.enableFX = !cfg.enableFX;
-    localStorage.setItem(fxKey, cfg.enableFX ? '1' : '0');
-    toggleFx.setAttribute('aria-pressed', String(cfg.enableFX));
-    showToast(cfg.enableFX ? 'Hiệu ứng bật' : 'Hiệu ứng tắt');
-  });
-
-  // FPS overlay
-  let fpsOverlay = null;
-  function updateFpsOverlay(fps){
-    if (!showFPS) return;
-    if (!fpsOverlay){
-      fpsOverlay = document.createElement('div');
-      fpsOverlay.style.cssText = 'position:fixed; right:12px; bottom:12px; z-index:10050; background:rgba(0,0,0,0.6); color:#fff; padding:6px 10px; border-radius:8px; font-weight:700;';
-      document.body.appendChild(fpsOverlay);
-    }
-    fpsOverlay.textContent = `FPS: ${fps}`;
-  }
-  toggleFps.addEventListener('click', () => {
-    showFPS = !showFPS;
-    toggleFps.setAttribute('aria-pressed', String(showFPS));
-    if (!showFPS && fpsOverlay) { fpsOverlay.remove(); fpsOverlay=null; }
-  });
-
-  /* -------------------------
-     Utility: small heart/particle demo for gift open (CSS-based)
-     ------------------------- */
-  // optional: create and manage ephemeral DOM particle elements if needed
-
-  /* -------------------------
-     Expose some helpers to console for debugging
-     ------------------------- */
-  window._thuyDebug = {
-    startBubbleGame,
-    startWishesFlow,
-    showHeartGame,
-    fillHeart,
-    openGift,
-    revealPrizes,
-    setFPS: (n) => { cfg.targetFPS = n; },
-    getState: () => ({ heartProgress, poppedCount, fx: cfg.enableFX })
+  bCanvas.onclick = (e) => {
+    bubbles.forEach(b => {
+      if(!b.popped && Math.hypot(e.clientX - b.x, e.clientY - b.y) < b.r) {
+        b.popped = true; gameState.popped++;
+        document.getElementById('pop-counter').innerText = `${gameState.popped}/10`;
+        confetti({ particleCount: 50, spread: 60, origin: { x: e.clientX/window.innerWidth, y: e.clientY/window.innerHeight }, colors: ['#ff4d6d', '#ffb703'] });
+      }
+    });
   };
+}
 
-  // ensure initial resize & draw
-  resizeCanvas();
+// --- TRÒ CHƠI TRÁI TIM ---
+function handleHeartClick() {
+  if(gameState.progress >= 100) return;
+  gameState.progress += CONFIG.HEART_STEP;
+  document.getElementById('heart-fill-path').style.clipPath = `inset(${100 - gameState.progress}% 0 0 0)`;
+  
+  // Đo tốc độ
+  const now = Date.now();
+  gameState.clicks.push(now);
+  gameState.clicks = gameState.clicks.filter(t => now - t < 1000);
+  document.getElementById('cps-status').innerText = `Tốc độ: ${gameState.clicks.length} tim/giây`;
 
-  // small UX: when user clicks anywhere on lock screen, try to unlock audio to avoid blocked autoplay
-  lockScreen.addEventListener('click', tryPlayAudio, {passive:true});
+  gsap.fromTo('.heart-container', { scale: 1 }, { scale: 1.2, duration: 0.1, yoyo: true, repeat: 1 });
 
-  // Ensure initial aria hidden states
-  leaveScene(s2); leaveScene(s3);
+  if(gameState.progress >= 100) {
+    // HIỆU ỨNG PHÁO HOA BÙNG NỔ KHI XONG
+    const duration = 3 * 1000;
+    const end = Date.now() + duration;
+    (function frame() {
+      confetti({ particleCount: 7, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff4d6d', '#ffb703'] });
+      confetti({ particleCount: 7, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff4d6d', '#ffb703'] });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    }());
 
-  // Hide preloader safety
-  setTimeout(()=> {
-    if (preloader && preloader.parentNode) {
-      preloader.style.opacity = '0';
-      preloader.style.pointerEvents = 'none';
-    }
-  }, 4500);
+    setTimeout(() => {
+      gsap.to('#heart-filling-zone', { opacity: 0, scale: 0, duration: 0.8, onComplete: () => {
+        document.getElementById('heart-filling-zone').classList.add('hidden');
+        document.getElementById('final-gift').style.display = 'block';
+        gsap.from('#final-gift', { scale: 0, rotation: 720, duration: 1.5, ease: 'back.out' });
+      }});
+    }, 1500);
+  }
+}
 
-  // Accessibility: announce readiness
-  setTimeout(()=> document.getElementById('aria-live').textContent = 'Giao diện sẵn sàng', 800);
+// --- MỞ QUÀ & BỨC THƯ ---
+function handleOpenGift() {
+  gsap.to('#box-lid', { y: -250, x: 100, rotate: 45, opacity: 0, duration: 1.5, ease: 'power4.out' });
+  setTimeout(() => {
+    gsap.to('#final-gift', { opacity: 0, duration: 0.5, onComplete: () => {
+      document.getElementById('final-gift').style.display = 'none';
+      document.getElementById('letter-area').style.display = 'block';
+      gsap.from('#letter-area', { y: 100, opacity: 0, duration: 1, ease: 'power3.out' });
+    }});
+  }, 1000);
+}
 
-  // finally: ensure audio will attempt play when user interacts anywhere
-  document.addEventListener('click', tryPlayAudio, {passive:true});
+function showAllPrizes() {
+  document.getElementById('reveal-btn').style.display = 'none';
+  ['n-card', 's-card', 'y-card'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.style.display = 'block';
+    gsap.to(el, { y: 0, opacity: 1, duration: 0.8, delay: i * 0.3 });
+  });
+}
 
-})(); // IIFE end
+function toggleFullScreen() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+
+// --- KHỞI CHẠY ---
+window.onload = () => {
+  initUniverse();
+  drawUniverse();
+  buildKeypad();
+  setTimeout(() => document.getElementById('preloader').style.opacity = '0', 1500);
+};
 </script>
-
 </body>
 </html>
