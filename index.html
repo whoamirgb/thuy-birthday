@@ -45,13 +45,21 @@
         .scene { position: absolute; inset: 0; display: none; opacity: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
         .active { display: flex; opacity: 1; }
 
-        /* HEART GAME */
+        /* --- HEART GAME REFIXED TO BE PERFECTLY ROUND --- */
         #heart-game { display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 50; }
-        .heart-svg-container { width: 250px; height: 250px; position: relative; cursor: pointer; filter: drop-shadow(0 0 15px rgba(255, 77, 109, 0.4)); transition: transform 0.1s ease; }
+        .heart-svg-container {
+            width: 250px; height: 250px; position: relative; cursor: pointer;
+            filter: drop-shadow(0 0 15px rgba(255, 77, 109, 0.4));
+            transition: transform 0.1s ease;
+        }
         #heart-fill-path { fill: var(--p); clip-path: inset(100% 0 0 0); transition: clip-path 0.1s ease; }
+        /* --------------------------------------------------- */
 
-        /* GIFT BOX */
-        .gift-container { position: relative; width: 180px; height: 180px; perspective: 1000px; display: none; cursor: pointer; z-index: 100; margin-top: 20px; filter: drop-shadow(0 20px 50px rgba(0,0,0,0.5)); }
+        .gift-container { 
+            position: relative; width: 180px; height: 180px; perspective: 1000px; 
+            display: none; cursor: pointer; z-index: 100; margin-top: 20px;
+            filter: drop-shadow(0 20px 50px rgba(0,0,0,0.5));
+        }
         .gift-box { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(25deg); transition: transform 0.5s; }
         .gift-face { position: absolute; width: 180px; height: 180px; background: linear-gradient(45deg, var(--p-d), var(--p)); border: 1px solid rgba(255,255,255,0.2); }
         .gift-face::after { content:''; position: absolute; background: linear-gradient(to right, #ffd700, var(--gold), #ffd700); box-shadow: 0 0 10px rgba(255,183,3,0.3); }
@@ -78,39 +86,13 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.8); z-index: 200; border: 10px solid #f4f1de;
         }
 
-        /* --- SCRATCH CARD STYLES --- */
-        .scratch-container {
-            position: relative;
-            width: 100%;
-            height: 160px;
-            margin: 20px 0;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            background: #fff;
-            display: none;
-        }
-        .scratch-content {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-            text-align: center;
-        }
-        .scratch-canvas {
-            position: absolute;
-            top: 0; left: 0;
-            z-index: 2;
-            cursor: crosshair;
-            touch-action: none;
-        }
-        .card-label { font-weight: 900; font-size: 1rem; margin-bottom: 5px; letter-spacing: 1px; }
-        .card-sub { font-size: 0.75rem; color: #666; margin-bottom: 10px; }
-        .card-secret { font-family: 'Montserrat'; font-weight: bold; color: #111; border: 2px dashed var(--p); padding: 8px; border-radius: 8px; background: rgba(255,77,109,0.05); }
-
+        .premium-card { display: none; width: 100%; border-radius: 12px; padding: 18px; margin-top: 15px; text-align: center; }
+        .netflix-style { background: #000; border-left: 5px solid var(--netflix); }
+        .spotify-style { background: #000; border-left: 5px solid var(--spotify); }
+        .youtube-style { background: #fff; border-left: 5px solid var(--youtube); border: 1px solid #ddd; }
+        .acc-info { margin: 8px 0; border: 1px dashed #666; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 6px; }
+        .acc-val { color: #fff; font-weight: bold; font-family: 'Montserrat'; font-size: 0.9rem; word-break: break-all; }
+        .youtube-style .acc-val { color: #000 !important; }
         .btn-primary { padding: 12px 35px; border-radius: 50px; background: var(--p); border: none; color: white; font-weight: bold; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
@@ -168,12 +150,16 @@
     <div id="heart-game">
         <h2 style="font-family:'Dancing Script'; font-size:2.2rem; color:var(--p-l); margin-bottom:10px;">Chứng minh tình yêu đi!</h2>
         <p style="font-size:0.8rem; color:#aaa; margin-bottom:25px; letter-spacing:1px;">Spam click thật nhanh để lấp đầy trái tim</p>
+        
         <div class="heart-svg-container" onclick="fillHeart()">
             <svg viewBox="0 0 100 100" width="100%" height="100%">
-                <path d="M50,90 C50,90 85,60 85,35 A20,20 0 0,0 45,35 M50,90 C50,90 15,60 15,35 A20,20 0 0,1 55,35" fill="none" stroke="#ff4d6d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                <path id="heart-fill-path" d="M50,90 C50,90 85,60 85,35 A20,20 0 0,0 45,35 M50,90 C50,90 15,60 15,35 A20,20 0 0,1 55,35" fill="var(--p)" stroke="#ff4d6d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M50,90 C50,90 85,60 85,35 A20,20 0 0,0 45,35 M50,90 C50,90 15,60 15,35 A20,20 0 0,1 55,35" 
+                      fill="none" stroke="#ff4d6d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <path id="heart-fill-path" d="M50,90 C50,90 85,60 85,35 A20,20 0 0,0 45,35 M50,90 C50,90 15,60 15,35 A20,20 0 0,1 55,35" 
+                      fill="var(--p)" stroke="#ff4d6d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </div>
+        
         <p id="cps-display" style="font-weight:bold; color:var(--gold); font-size:1.2rem; margin-top:20px;"></p>
     </div>
 
@@ -191,40 +177,25 @@
     <div id="scroll-letter">
         <div style="font-family:'Dancing Script'; font-size:1.5rem; line-height:1.8; text-align:center; width:100%;">
             <h2 style="font-family:'Pacifico'; color:var(--p-d); margin-bottom:20px;">Gửi bé Thùy của anh,</h2>
-            <p>Tuổi 17 rực rỡ nhé em! Anh trân trọng mọi phút giây có em.</p>
-            <p>Cảm ơn em vì đã xuất hiện. Cảm ơn em vì đã là em ❤️</p>
-            <p style="text-align:right; margin-top:20px; font-size:1.8rem;">- Người luôn đứng về phía em <3 -</p>
+            <p>Em à, sinh nhật 17 tuổi thực sự là một cột mốc rất đẹp...</p>
+            <p>Anh rất tiếc vì không thể trực tiếp cầm món quà này trao tận tay cho em, nên anh đã tự tay xây dựng "vũ trụ nhỏ" này để gửi gắm tất cả những gì chân thành nhất từ lòng mình.</p>
+            <p>Chúc Thùy của anh luôn giữ được nụ cười tỏa nắng ấy. Mong em luôn yêu đời và rạng rỡ như ánh nắng ban mai em nhé!</p>
+            <p style="text-align:right; margin-top:20px; font-size:1.8rem;">- Người thương của em -</p>
             
             <button class="btn-primary" id="gift-trigger" onclick="revealPrizes()">Mở hộp quà bí mật 🎁</button>
 
-            <div id="netflix-card" class="scratch-container">
-                <div class="scratch-content">
-                    <p class="card-label" style="color:var(--netflix)">NETFLIX PREMIUM 4K</p>
-                    <p class="card-sub">Ultra HD + HDR Experience</p>
-                    <div class="card-secret">Nói chuyện riêng với anh nhé! ❤️</div>
-                </div>
-                <canvas class="scratch-canvas"></canvas>
+            <div id="netflix-card" class="premium-card netflix-style">
+                <p style="color:var(--netflix); font-weight:900; font-size:1.1rem;">NETFLIX PREMIUM</p>
+                <div class="acc-info"><p class="acc-val">kimjihoo2000kr@gmail.com / XXXXXXXX</p></div>
             </div>
-
-            <div id="spotify-card" class="scratch-container">
-                <div class="scratch-content">
-                    <p class="card-label" style="color:var(--spotify)">SPOTIFY PREMIUM</p>
-                    <p class="card-sub">Individual Plan - No Ads</p>
-                    <div class="card-secret">Nói chuyện riêng với anh nhé! ❤️</div>
-                </div>
-                <canvas class="scratch-canvas"></canvas>
+            <div id="spotify-card" class="premium-card spotify-style">
+                <p style="color:var(--spotify); font-weight:900; font-size:1.1rem;">SPOTIFY PREMIUM</p>
+                <div class="acc-info"><p class="acc-val">kimjihoo2000kr@gmail.com / XXXXXXXX</p></div>
             </div>
-
-            <div id="youtube-card" class="scratch-container">
-                <div class="scratch-content">
-                    <p class="card-label" style="color:var(--youtube)">YOUTUBE PREMIUM</p>
-                    <p class="card-sub">Background Play & No Ads</p>
-                    <div class="card-secret">Nói chuyện riêng với anh nhé! ❤️</div>
-                </div>
-                <canvas class="scratch-canvas"></canvas>
+            <div id="youtube-card" class="premium-card youtube-style">
+                <p style="color:var(--youtube); font-weight:900; font-size:1.1rem;">YOUTUBE PREMIUM</p>
+                <div class="acc-info"><p class="acc-val">kimjihoo2000kr@gmail.com / XXXXXXXX</p></div>
             </div>
-
-            <p style="margin-top: 20px; font-size: 0.8rem; color: #888; font-style: italic;">(Hãy dùng tay "cào" lớp bạc để nhận quà nhé bé!)</p>
         </div>
     </div>
 </section>
@@ -276,7 +247,7 @@ function press(num) {
 }
 
 function runTypewriter() {
-    const text = "Chào Thùy, anh đã chuẩn bị một bất ngờ nhỏ dành riêng cho tuổi 17 của em. Hãy kiên nhẫn đi cùng anh nhé...";
+    const text = "Chào Thùy, cảm ơn em đã chọn xuất hiện trong cuộc đời anh. Anh đã gửi gắm tất cả vào vũ trụ nhỏ này chỉ dành riêng cho em. Hãy kiên nhẫn đi cùng anh nhé...";
     let i = 0; const target = document.getElementById('typewriter');
     function type() { if(i < text.length) { target.innerHTML += text.charAt(i); i++; setTimeout(type, 50); } }
     type();
@@ -313,6 +284,7 @@ function showPopText(txt,x,y) {
     document.body.appendChild(el); gsap.to(el, {y:y-120, opacity:0, duration:2, onComplete:()=>el.remove()});
 }
 
+// --- HEART GAME REFIXED TO SVG PERFECT HEART ---
 let heartProgress = 0;
 let clickTimes = [];
 function showHeartGame() {
@@ -322,18 +294,30 @@ function showHeartGame() {
 
 function fillHeart() {
     if(heartProgress >= 100) return;
-    heartProgress += 4;
+    heartProgress += 4; // Tăng nhanh hơn một chút
     if(heartProgress > 100) heartProgress = 100;
+    
+    // SVG Filling Logic: 100% là inset(0 0 0 0), 0% là inset(100% 0 0 0)
     document.getElementById('heart-fill-path').style.clipPath = `inset(${100 - heartProgress}% 0 0 0)`;
+    
     const now = Date.now();
     clickTimes.push(now);
     clickTimes = clickTimes.filter(t => now - t < 1000);
     document.getElementById('cps-display').innerText = `Tốc độ: ${clickTimes.length} tim/s`;
+
+    // Nhịp tim khi click
     gsap.fromTo('.heart-svg-container', {scale: 1}, {scale: 1.15, duration: 0.08, yoyo: true, repeat: 1, ease: "bounce.out"});
+
     if(heartProgress >= 100) {
+        // Nổ tung trái tim
         const tl = gsap.timeline();
         tl.to('.heart-svg-container', { scale: 5, opacity: 0, duration: 0.6, ease: 'power2.in' });
-        tl.call(() => { document.getElementById('heart-game').style.display = 'none'; startWishesFlow(); });
+        tl.call(() => {
+            document.getElementById('heart-game').style.display = 'none';
+            startWishesFlow();
+        });
+        
+        // Hiệu ứng phát sáng
         const glow = document.createElement('div');
         glow.style.cssText = "position:fixed; top:50%; left:50%; width:10px; height:10px; background:#fff; border-radius:50%; z-index:150; transform:translate(-50%,-50%); box-shadow:0 0 100px 50px #fff;";
         document.body.appendChild(glow);
@@ -355,6 +339,7 @@ function startWishesFlow() {
     setTimeout(() => { 
         document.getElementById('gift-box').style.display = 'block'; 
         gsap.from('#gift-box', {scale:0, duration:1, ease:'back.out(1.7)'});
+        // Hộp quà "thở"
         gsap.to('#inner-gift', { rotationY: 40, repeat: -1, yoyo: true, duration: 2, ease: "sine.inOut" });
         gsap.to('#gift-box', { y: "-=15", repeat: -1, yoyo: true, duration: 1.5, ease: "power1.inOut" });
     }, 2000);
@@ -362,8 +347,11 @@ function startWishesFlow() {
 
 function openGift() {
     const tl = gsap.timeline();
+    // Rung lắc hộp quà
     tl.to('#inner-gift', { x: 10, duration: 0.05, repeat: 12, yoyo: true });
+    // Bung nắp văng ra xa
     tl.to('#gift-lid', { y: -300, x: 100, rotateZ: 45, rotateX: 110, opacity: 0, duration: 1.2, ease: "power4.out" });
+    
     setTimeout(() => {
         gsap.to('#gift-box, #wishes-canvas', {opacity: 0, duration: 1, onComplete: () => {
             document.getElementById('gift-box').style.display = 'none';
@@ -376,62 +364,17 @@ function openGift() {
 }
 
 function revealPrizes() {
+    const net = document.getElementById('netflix-card');
+    const spot = document.getElementById('spotify-card');
+    const yt = document.getElementById('youtube-card');
+    const letter = document.getElementById('scroll-letter');
+    net.style.display = spot.style.display = yt.style.display = 'block';
+    gsap.from([net, spot, yt], {y:50, opacity:0, duration:0.8, stagger:0.2});
     document.getElementById('gift-trigger').style.display = 'none';
-    const containers = document.querySelectorAll('.scratch-container');
-    containers.forEach((card, i) => {
-        card.style.display = 'block';
-        gsap.from(card, {y:50, opacity:0, duration:0.8, delay: i * 0.2});
-        initScratchCard(card);
-    });
-}
-
-/* --- SCRATCH CARD LOGIC --- */
-function initScratchCard(container) {
-    const canvas = container.querySelector('.scratch-canvas');
-    const ctx = canvas.getContext('2d');
-    const width = container.offsetWidth;
-    const height = container.offsetHeight;
-    
-    canvas.width = width;
-    canvas.height = height;
-
-    // Vẽ lớp phủ màu bạc (Silver pattern)
-    ctx.fillStyle = '#C0C0C0'; // Silver
-    ctx.fillRect(0, 0, width, height);
-    
-    // Thêm hiệu ứng hạt cho lớp bạc
-    for(let i=0; i<1000; i++) {
-        ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.2})`;
-        ctx.fillRect(Math.random()*width, Math.random()*height, 2, 2);
-    }
-
-    ctx.font = "bold 18px Montserrat";
-    ctx.fillStyle = "#666";
-    ctx.textAlign = "center";
-    ctx.fillText("CÀO Ở ĐÂY ✨", width/2, height/2 + 7);
-
-    let isDrawing = false;
-    ctx.globalCompositeOperation = 'destination-out'; // Dùng để cào (xóa lớp trên)
-
-    function scratch(e) {
-        if (!isDrawing) return;
-        const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX || e.touches[0].clientX) - rect.left;
-        const y = (e.clientY || e.touches[0].clientY) - rect.top;
-
-        ctx.beginPath();
-        ctx.arc(x, y, 20, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    canvas.addEventListener('mousedown', () => isDrawing = true);
-    canvas.addEventListener('mouseup', () => isDrawing = false);
-    canvas.addEventListener('mousemove', scratch);
-    
-    canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); });
-    canvas.addEventListener('touchend', () => isDrawing = false);
-    canvas.addEventListener('touchmove', (e) => { scratch(e); e.preventDefault(); });
+    setTimeout(() => { letter.scrollTo({top: letter.scrollHeight, behavior: 'smooth'}); }, 100);
 }
 </script>
 </body>
 </html>
+
+
