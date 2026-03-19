@@ -45,26 +45,27 @@
         .scene { position: absolute; inset: 0; display: none; opacity: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
         .active { display: flex; opacity: 1; }
 
-        /* --- HEART GAME REFIXED --- */
+        /* --- HEART GAME REFIXED TO BE PERFECTLY ROUND --- */
         #heart-game { display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 50; }
         .heart-svg-container {
             width: 250px; height: 250px; position: relative; cursor: pointer;
-            filter: drop-shadow(0 0 10px rgba(255, 77, 109, 0.3));
+            filter: drop-shadow(0 0 15px rgba(255, 77, 109, 0.4));
+            transition: transform 0.1s ease;
         }
         #heart-fill-path { fill: var(--p); clip-path: inset(100% 0 0 0); transition: clip-path 0.1s ease; }
-        /* --------------------------- */
+        /* --------------------------------------------------- */
 
         .gift-container { 
             position: relative; width: 180px; height: 180px; perspective: 1000px; 
             display: none; cursor: pointer; z-index: 100; margin-top: 20px;
             filter: drop-shadow(0 20px 50px rgba(0,0,0,0.5));
         }
-        .gift-box { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(25deg); }
+        .gift-box { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(25deg); transition: transform 0.5s; }
         .gift-face { position: absolute; width: 180px; height: 180px; background: linear-gradient(45deg, var(--p-d), var(--p)); border: 1px solid rgba(255,255,255,0.2); }
-        .gift-face::after { content:''; position: absolute; background: linear-gradient(to right, #ffd700, var(--gold), #ffd700); }
+        .gift-face::after { content:''; position: absolute; background: linear-gradient(to right, #ffd700, var(--gold), #ffd700); box-shadow: 0 0 10px rgba(255,183,3,0.3); }
         .gift-top { transform: rotateX(90deg) translateZ(90px); background: var(--p); z-index: 2; }
         .gift-top::after { width: 100%; height: 40px; top: 70px; }
-        .gift-bow { position: absolute; width: 60px; height: 60px; background: var(--gold); top: -30px; left: 50%; transform: translateX(-50%) rotateX(-90deg); border-radius: 50% 50% 0 50%; }
+        .gift-bow { position: absolute; width: 60px; height: 60px; background: var(--gold); top: -30px; left: 50%; transform: translateX(-50%) rotateX(-90deg); border-radius: 50% 50% 0 50%; box-shadow: 0 0 15px var(--gold); }
         .gift-front { transform: translateZ(90px); }
         .gift-back { transform: rotateY(180deg) translateZ(90px); }
         .gift-left { transform: rotateY(-90deg) translateZ(90px); }
@@ -151,10 +152,11 @@
         <p style="font-size:0.8rem; color:#aaa; margin-bottom:25px; letter-spacing:1px;">Spam click thật nhanh để lấp đầy trái tim</p>
         
         <div class="heart-svg-container" onclick="fillHeart()">
-            <svg viewBox="0 0 32 29.6" width="100%" height="100%">
-                <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,16,21.2,16,21.2s16-11.8,16-21.2C32,3.8,28.2,0,23.6,0z" 
-                      fill="none" stroke="#ff4d6d" stroke-width="1"/>
-                <path id="heart-fill-path" d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,16,21.2,16,21.2s16-11.8,16-21.2C32,3.8,28.2,0,23.6,0z" />
+            <svg viewBox="0 0 100 100" width="100%" height="100%">
+                <path d="M50,90 C50,90 85,60 85,35 A20,20 0 0,0 45,35 M50,90 C50,90 15,60 15,35 A20,20 0 0,1 55,35" 
+                      fill="none" stroke="#ff4d6d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <path id="heart-fill-path" d="M50,90 C50,90 85,60 85,35 A20,20 0 0,0 45,35 M50,90 C50,90 15,60 15,35 A20,20 0 0,1 55,35" 
+                      fill="var(--p)" stroke="#ff4d6d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </div>
         
@@ -282,7 +284,7 @@ function showPopText(txt,x,y) {
     document.body.appendChild(el); gsap.to(el, {y:y-120, opacity:0, duration:2, onComplete:()=>el.remove()});
 }
 
-// --- HEART GAME REFIXED ---
+// --- HEART GAME REFIXED TO SVG PERFECT HEART ---
 let heartProgress = 0;
 let clickTimes = [];
 function showHeartGame() {
@@ -292,7 +294,7 @@ function showHeartGame() {
 
 function fillHeart() {
     if(heartProgress >= 100) return;
-    heartProgress += 3;
+    heartProgress += 4; // Tăng nhanh hơn một chút
     if(heartProgress > 100) heartProgress = 100;
     
     // SVG Filling Logic: 100% là inset(0 0 0 0), 0% là inset(100% 0 0 0)
@@ -303,15 +305,19 @@ function fillHeart() {
     clickTimes = clickTimes.filter(t => now - t < 1000);
     document.getElementById('cps-display').innerText = `Tốc độ: ${clickTimes.length} tim/s`;
 
-    gsap.fromTo('.heart-svg-container', {scale: 1}, {scale: 1.15, duration: 0.1, yoyo: true, repeat: 1});
+    // Nhịp tim khi click
+    gsap.fromTo('.heart-svg-container', {scale: 1}, {scale: 1.15, duration: 0.08, yoyo: true, repeat: 1, ease: "bounce.out"});
 
     if(heartProgress >= 100) {
+        // Nổ tung trái tim
         const tl = gsap.timeline();
         tl.to('.heart-svg-container', { scale: 5, opacity: 0, duration: 0.6, ease: 'power2.in' });
         tl.call(() => {
             document.getElementById('heart-game').style.display = 'none';
             startWishesFlow();
         });
+        
+        // Hiệu ứng phát sáng
         const glow = document.createElement('div');
         glow.style.cssText = "position:fixed; top:50%; left:50%; width:10px; height:10px; background:#fff; border-radius:50%; z-index:150; transform:translate(-50%,-50%); box-shadow:0 0 100px 50px #fff;";
         document.body.appendChild(glow);
@@ -333,21 +339,26 @@ function startWishesFlow() {
     setTimeout(() => { 
         document.getElementById('gift-box').style.display = 'block'; 
         gsap.from('#gift-box', {scale:0, duration:1, ease:'back.out(1.7)'});
+        // Hộp quà "thở"
         gsap.to('#inner-gift', { rotationY: 40, repeat: -1, yoyo: true, duration: 2, ease: "sine.inOut" });
+        gsap.to('#gift-box', { y: "-=15", repeat: -1, yoyo: true, duration: 1.5, ease: "power1.inOut" });
     }, 2000);
 }
 
 function openGift() {
     const tl = gsap.timeline();
-    tl.to('#inner-gift', { x: 10, duration: 0.05, repeat: 10, yoyo: true });
-    tl.to('#gift-lid', { y: -300, x: 100, rotateZ: 45, opacity: 0, duration: 1.2, ease: "power4.out" });
+    // Rung lắc hộp quà
+    tl.to('#inner-gift', { x: 10, duration: 0.05, repeat: 12, yoyo: true });
+    // Bung nắp văng ra xa
+    tl.to('#gift-lid', { y: -300, x: 100, rotateZ: 45, rotateX: 110, opacity: 0, duration: 1.2, ease: "power4.out" });
+    
     setTimeout(() => {
         gsap.to('#gift-box, #wishes-canvas', {opacity: 0, duration: 1, onComplete: () => {
             document.getElementById('gift-box').style.display = 'none';
             document.getElementById('wishes-canvas').style.display = 'none';
             const letter = document.getElementById('scroll-letter');
             letter.style.display = 'flex';
-            gsap.fromTo(letter, {opacity:0, scale:0.8, y:50}, {opacity:1, scale:1, y:0, duration:1});
+            gsap.fromTo(letter, {opacity:0, scale:0.8, y:50}, {opacity:1, scale:1, y:0, duration:1, ease: "back.out(1.2)"});
         }});
     }, 800);
 }
