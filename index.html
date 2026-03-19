@@ -54,6 +54,7 @@
         }
         #heart-fill-path { fill: var(--p); clip-path: inset(100% 0 0 0); transition: clip-path 0.1s ease; }
 
+        /* GIFT BOX */
         .gift-container { 
             position: relative; width: 180px; height: 180px; perspective: 1000px; 
             display: none; cursor: pointer; z-index: 100; margin-top: 20px;
@@ -71,13 +72,7 @@
         .gift-right { transform: rotateY(90deg) translateZ(90px); }
         .gift-front::after, .gift-back::after, .gift-left::after, .gift-right::after { width: 40px; height: 100%; left: 70px; }
 
-        .card-container { width: 280px; height: 380px; perspective: 1000px; margin: 20px; }
-        .inner-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;}
-        .inner-card.flipped { transform: rotateY(180deg); }
-        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.1); padding: 20px; }
-        .front { background: #111; color: var(--p-l); }
-        .back { background: #fffef0; color: #333; transform: rotateY(180deg); text-align: center; font-family: 'Dancing Script'; font-size: 1.4rem; }
-
+        /* LETTER & CARDS */
         #scroll-letter {
             width: 95%; max-width: 500px; height: 85vh; background: #fffef0;
             color: #333; padding: 25px; border-radius: 15px; overflow-y: auto;
@@ -85,34 +80,29 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.8); z-index: 200; border: 8px solid #f4f1de;
         }
 
-        /* SCRATCH CARD SYSTEM */
-        .premium-card { 
-            display: none; width: 100%; border-radius: 15px; padding: 20px; margin-top: 20px; 
-            text-align: center; position: relative; overflow: hidden; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        .premium-card {
+            display: none; width: 100%; border-radius: 16px; padding: 25px; margin-top: 25px;
+            text-align: left; position: relative; overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            transition: transform 0.3s; border: none;
         }
-        .netflix-style { background: #000; color: #fff; border: 2px solid var(--netflix); }
-        .spotify-style { background: #000; color: #fff; border: 2px solid var(--spotify); }
-        .youtube-style { background: #fff; color: #000; border: 2px solid var(--youtube); }
+        .premium-card:hover { transform: translateY(-5px); }
 
-        .scratch-container {
-            position: relative; width: 100%; height: 80px; 
-            margin-top: 15px; background: #eee; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .scratch-text { 
-            position: absolute; font-family: 'Montserrat'; font-weight: 800; 
-            font-size: 0.9rem; color: #333; z-index: 1; pointer-events: none;
-        }
-        .netflix-style .scratch-text, .spotify-style .scratch-text { color: #fff; }
+        .netflix-style { background: linear-gradient(135deg, #000000 0%, #333333 100%); border-left: 6px solid var(--netflix); }
+        .spotify-style { background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); border-left: 6px solid var(--spotify); }
+        .youtube-style { background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%); border-left: 6px solid var(--youtube); border: 1px solid #ddd; }
 
-        .scratch-canvas {
-            position: absolute; top: 0; left: 0; z-index: 2;
-            cursor: crosshair; touch-action: none; border-radius: 10px;
-        }
+        .card-label { font-size: 0.65rem; font-weight: 900; letter-spacing: 2px; margin-bottom: 5px; display: block; }
+        .card-title { font-size: 1.3rem; font-weight: 900; margin-bottom: 10px; font-family: 'Montserrat'; }
+        .card-desc { font-size: 0.75rem; line-height: 1.5; opacity: 0.8; margin-bottom: 15px; font-family: 'Montserrat'; font-weight: 400;}
+        .card-footer { font-weight: 700; font-size: 0.85rem; color: var(--p-d); font-style: italic; }
+
+        .netflix-style .card-label { color: var(--netflix); }
+        .spotify-style .card-label { color: var(--spotify); }
+        .youtube-style .card-label { color: var(--youtube); }
+        .youtube-style .card-desc { color: #444; }
 
         .btn-primary { padding: 12px 35px; border-radius: 50px; background: var(--p); border: none; color: white; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: var(--p-l); border-radius: 10px; }
     </style>
@@ -170,7 +160,6 @@
 
     <div id="heart-game">
         <h2 style="font-family:'Dancing Script'; font-size:2.2rem; color:var(--p-l); margin-bottom:10px;">Chứng minh tình yêu đi!</h2>
-        <p style="font-size:0.8rem; color:#aaa; margin-bottom:25px; letter-spacing:1px;">Spam click thật nhanh để lấp đầy trái tim</p>
         <div class="heart-svg-container" onclick="fillHeart()">
             <svg viewBox="0 0 100 100" width="100%" height="100%">
                 <path d="M50,90 C50,90 85,60 85,35 A20,20 0 0,0 45,35 M50,90 C50,90 15,60 15,35 A20,20 0 0,1 55,35" 
@@ -196,75 +185,64 @@
     <div id="scroll-letter">
         <div style="font-family:'Dancing Script'; font-size:1.5rem; line-height:1.8; text-align:center; width:100%;">
             <h2 style="font-family:'Pacifico'; color:var(--p-d); margin-bottom:20px;">Gửi bé Thùy của anh,</h2>
-            <p>Vậy là em đã bước sang tuổi 17 rồi đó… một độ tuổi rất đẹp, rực rỡ y như em.</p>
-            <p>Anh rất trân trọng từng khoảnh khắc có em bên cạnh. Chúc mừng sinh nhật cô gái tuyệt vời nhất của anh ❤️</p>
-            <p>Anh có chuẩn bị một vài "bí mật" nhỏ dưới đây, em hãy dùng tay cào lớp phủ để khám phá nhé!</p>
+            <p>Chúc mừng sinh nhật cô gái 17 tuổi rực rỡ nhất! Anh mong những điều ngọt ngào nhất sẽ đến với em.</p>
+            <p>Ngoài tình cảm chân thành, anh có chuẩn bị vài món quà nhỏ để "nâng cấp" trải nghiệm giải trí cho em mỗi ngày đây:</p>
             
             <button class="btn-primary" id="gift-trigger" onclick="revealPrizes()">Mở hộp quà bí mật 🎁</button>
 
             <div id="netflix-card" class="premium-card netflix-style">
-                <p style="font-weight:900; font-size:0.8rem; color:var(--netflix);">NETFLIX PREMIUM 4K HDR</p>
-                <div class="scratch-container">
-                    <span class="scratch-text">Nói chuyện riêng với anh nhé!</span>
-                    <canvas class="scratch-canvas" id="scratch-netflix"></canvas>
-                </div>
+                <span class="card-label">OFFICIAL MEMBER</span>
+                <h3 class="card-title">NETFLIX ULTRA HD 4K</h3>
+                <p class="card-desc">Thưởng thức những bộ phim bom tấn với chất lượng hình ảnh sắc nét nhất, chuẩn HDR sống động để em xem phim bộ mỗi tối thật thư giãn.</p>
+                <p class="card-footer">Nói chuyện riêng với anh nhé!</p>
             </div>
 
             <div id="spotify-card" class="premium-card spotify-style">
-                <p style="font-weight:900; font-size:0.8rem; color:var(--spotify);">SPOTIFY PREMIUM INDIVIDUAL</p>
-                <div class="scratch-container">
-                    <span class="scratch-text">Nói chuyện riêng với anh nhé!</span>
-                    <canvas class="scratch-canvas" id="scratch-spotify"></canvas>
-                </div>
+                <span class="card-label">MUSIC LOVER</span>
+                <h3 class="card-title">SPOTIFY PREMIUM</h3>
+                <p class="card-desc">Đắm chìm trong thế giới âm nhạc không quảng cáo, âm thanh chất lượng cực cao để những giai điệu yêu thích luôn đồng hành cùng em.</p>
+                <p class="card-footer">Nói chuyện riêng với anh nhé!</p>
             </div>
 
             <div id="youtube-card" class="premium-card youtube-style">
-                <p style="font-weight:900; font-size:0.8rem; color:var(--youtube);">YOUTUBE PREMIUM FAMILY</p>
-                <div class="scratch-container">
-                    <span class="scratch-text">Nói chuyện riêng với anh nhé!</span>
-                    <canvas class="scratch-canvas" id="scratch-youtube"></canvas>
-                </div>
+                <span class="card-label">ENDLESS CONTENT</span>
+                <h3 class="card-title">YOUTUBE PREMIUM</h3>
+                <p class="card-desc">Trải nghiệm xem video mượt mà, không gián đoạn, hỗ trợ nghe nhạc trong nền để em tha hồ "cày" những nội dung mình thích.</p>
+                <p class="card-footer">Nói chuyện riêng với anh nhé!</p>
             </div>
 
-            <p style="text-align:right; margin-top:30px; font-size:1.5rem;">- Thương em rất nhiều -</p>
+            <p style="text-align:right; margin-top:30px; font-size:1.5rem;">- Mãi yêu em ❤️ -</p>
         </div>
     </div>
 </section>
 
 <script>
 const wishes = ["Xinh đẹp ❤️", "Bình an 🍀", "Hạnh phúc 😊", "Luôn cười 😄", "Thành công ✨", "Mạnh mẽ 💪", "May mắn 🌈", "Rạng rỡ 🌟", "Yêu đời 🌸", "Yêu anh hơn ❤️"];
-const floatingMsgs = ["I love you so much <3", "Chúc mừng sinh nhật Thùy", "Anh yêu em", "Mãi bên nhau nhé", "Chúc em luôn cười tươi", "Cô gái 17 tuổi rực rỡ", "Công chúa của anh", "Bé ốc quế của anh hihi", "Vạn sự như ý", "Mãi xinh đẹp nhé Thùy"];
+const floatingMsgs = ["I love you so much <3", "Chúc mừng sinh nhật Thùy", "Anh yêu em", "Mãi bên nhau nhé", "Chúc em luôn cười tươi", "Công chúa của anh", "Bé ốc quế của anh hihi", "Mãi xinh đẹp nhé Thùy"];
 
 const cursor = document.getElementById('cursor');
 window.onmousemove = e => gsap.to(cursor, {x: e.clientX-6, y: e.clientY-6, duration:0.1});
 function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
 
-// Background Canvas Logic
+// Background Canvas
 const hCanvas = document.getElementById('heart-canvas');
 const hCtx = hCanvas.getContext('2d');
 let hearts = [], stars = [];
 function resize() { hCanvas.width = innerWidth; hCanvas.height = innerHeight; initStars(); }
-function initStars() {
-    stars = [];
-    for(let i=0; i<150; i++) { stars.push({ x: Math.random()*innerWidth, y: Math.random()*innerHeight, size: Math.random()*1.5+0.5, opacity: Math.random(), twinkle: Math.random()*0.02+0.005, speed: Math.random()*0.2 }); }
-}
+function initStars() { stars = []; for(let i=0; i<150; i++) { stars.push({ x: Math.random()*innerWidth, y: Math.random()*innerHeight, size: Math.random()*1.5+0.5, opacity: Math.random(), twinkle: Math.random()*0.02+0.005, speed: Math.random()*0.2 }); } }
 window.onresize = resize; resize();
 
-class Heart {
-    constructor() { this.reset(); }
-    reset() { this.x = Math.random()*hCanvas.width; this.y = hCanvas.height+20; this.size = Math.random()*15+10; this.speed = Math.random()*1.5+0.5; this.opacity = Math.random()*0.4+0.1; }
-    draw() { this.y -= this.speed; if(this.y < -30) this.reset(); hCtx.save(); hCtx.globalAlpha = this.opacity; hCtx.font = `${this.size}px serif`; hCtx.fillText('❤️', this.x, this.y); hCtx.restore(); }
-}
+class Heart { constructor() { this.reset(); } reset() { this.x = Math.random()*hCanvas.width; this.y = hCanvas.height+20; this.size = Math.random()*15+10; this.speed = Math.random()*1.5+0.5; this.opacity = Math.random()*0.4+0.1; } draw() { this.y -= this.speed; if(this.y < -30) this.reset(); hCtx.save(); hCtx.globalAlpha = this.opacity; hCtx.font = `${this.size}px serif`; hCtx.fillText('❤️', this.x, this.y); hCtx.restore(); } }
 for(let i=0; i<30; i++) hearts.push(new Heart());
 
 function animateBackground() {
     hCtx.fillStyle = '#03071e'; hCtx.fillRect(0, 0, hCanvas.width, hCanvas.height);
-    stars.forEach(s => { s.opacity += s.twinkle; if(s.opacity > 1 || s.opacity < 0) s.twinkle *= -1; s.y -= s.speed; if(s.y < 0) s.y = hCanvas.height; hCtx.save(); hCtx.shadowBlur = 10; hCtx.shadowColor = "white"; hCtx.globalAlpha = Math.abs(s.opacity); hCtx.fillStyle = "white"; hCtx.beginPath(); hCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2); hCtx.fill(); hCtx.restore(); });
+    stars.forEach(s => { s.opacity += s.twinkle; if(s.opacity > 1 || s.opacity < 0) s.twinkle *= -1; s.y -= s.speed; if(s.y < 0) s.y = hCanvas.height; hCtx.save(); hCtx.globalAlpha = Math.abs(s.opacity); hCtx.fillStyle = "white"; hCtx.beginPath(); hCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2); hCtx.fill(); hCtx.restore(); });
     hearts.forEach(h => h.draw()); requestAnimationFrame(animateBackground);
 }
 animateBackground();
 
-// Auth Logic
+// App Logic
 function press(num) {
     const input = document.getElementById('password-input');
     if(input.value.length < 6) input.value += num;
@@ -297,7 +275,6 @@ function changeScene(f, t) {
     }});
 }
 
-// Bubble Game
 let poppedCount = 0;
 function startBubbleGame() {
     const bCanvas = document.getElementById('bubble-canvas');
@@ -313,47 +290,37 @@ function startBubbleGame() {
     bCanvas.onclick = e => { bubbles.forEach(b => { if(!b.isPopped && Math.hypot(e.clientX-b.x, e.clientY-b.y)<b.r) { b.isPopped=true; poppedCount++; document.getElementById('counter').innerText=`${poppedCount}/10`; showPopText(b.text, b.x, b.y); }}); };
 }
 function showPopText(txt,x,y) {
-    const el = document.createElement('div'); el.innerText=txt; el.style.cssText=`position:fixed; left:${x}px; top:${y}px; color:var(--p); font-weight:bold; font-size:2rem; font-family:'Dancing Script'; z-index:100; text-shadow:0 0 10px white; pointer-events:none;`;
+    const el = document.createElement('div'); el.innerText=txt; el.style.cssText=`position:fixed; left:${x}px; top:${y}px; color:var(--p); font-weight:bold; font-size:2rem; font-family:'Dancing Script'; z-index:100; pointer-events:none;`;
     document.body.appendChild(el); gsap.to(el, {y:y-120, opacity:0, duration:2, onComplete:()=>el.remove()});
 }
 
-// Heart Game
 let heartProgress = 0;
-let clickTimes = [];
-function showHeartGame() {
-    gsap.to('#game-ui', {opacity: 0, duration: 0.5});
-    gsap.to('#heart-game', {display: 'flex', opacity: 1, duration: 1});
-}
+function showHeartGame() { gsap.to('#game-ui', {opacity: 0, duration: 0.5}); gsap.to('#heart-game', {display: 'flex', opacity: 1, duration: 1}); }
 function fillHeart() {
     if(heartProgress >= 100) return;
-    heartProgress += 4;
+    heartProgress += 5;
     document.getElementById('heart-fill-path').style.clipPath = `inset(${100 - heartProgress}% 0 0 0)`;
-    const now = Date.now(); clickTimes.push(now); clickTimes = clickTimes.filter(t => now - t < 1000);
-    document.getElementById('cps-display').innerText = `Tốc độ: ${clickTimes.length} tim/s`;
-    gsap.fromTo('.heart-svg-container', {scale: 1}, {scale: 1.15, duration: 0.08, yoyo: true, repeat: 1, ease: "bounce.out"});
+    gsap.fromTo('.heart-svg-container', {scale: 1}, {scale: 1.1, duration: 0.1, yoyo: true, repeat: 1});
     if(heartProgress >= 100) {
-        const tl = gsap.timeline();
-        tl.to('.heart-svg-container', { scale: 5, opacity: 0, duration: 0.6, ease: 'power2.in' });
-        tl.call(() => { document.getElementById('heart-game').style.display = 'none'; startWishesFlow(); });
+        gsap.to('.heart-svg-container', { scale: 5, opacity: 0, duration: 0.6, onComplete: () => {
+            document.getElementById('heart-game').style.display = 'none';
+            startWishesFlow();
+        }});
     }
 }
 
-// Wishes Flow & Gift
 function startWishesFlow() {
     const wCanvas = document.getElementById('wishes-canvas');
     const wCtx = wCanvas.getContext('2d');
     wCanvas.style.display = 'block'; wCanvas.width = innerWidth; wCanvas.height = innerHeight;
-    let items = floatingMsgs.map((m,i) => ({ text:m, x:Math.random()*innerWidth, y:-100-(i*150), z:Math.random()*1.5, rotation:Math.random()*0.4-0.2, rotSpeed:(Math.random()-0.5)*0.01, speed:1+Math.random()*1, size:20+Math.random()*25 }));
+    let items = floatingMsgs.map((m,i) => ({ text:m, x:Math.random()*innerWidth, y:-100-(i*150), z:Math.random()*1.5, speed:1+Math.random()*1, size:20+Math.random()*25 }));
     function draw() {
         wCtx.clearRect(0,0,wCanvas.width, wCanvas.height);
-        items.forEach(item => { item.y += item.speed; item.rotation += item.rotSpeed; const scale = 0.5 + item.z; wCtx.save(); wCtx.translate(item.x, item.y); wCtx.rotate(item.rotation); wCtx.scale(scale, scale); wCtx.fillStyle = `rgba(255,117,143,${0.4+item.z/2})`; wCtx.font = `600 ${item.size}px Montserrat`; wCtx.textAlign = 'center'; wCtx.fillText(item.text, 0, 0); wCtx.restore(); if(item.y > wCanvas.height+100) item.y = -100; });
+        items.forEach(item => { item.y += item.speed; wCtx.fillStyle = `rgba(255,117,143,${0.4+item.z/2})`; wCtx.font = `600 ${item.size}px Montserrat`; wCtx.textAlign = 'center'; wCtx.fillText(item.text, item.x, item.y); if(item.y > wCanvas.height+100) item.y = -100; });
         requestAnimationFrame(draw);
     }
     draw();
-    setTimeout(() => { 
-        document.getElementById('gift-box').style.display = 'block'; 
-        gsap.from('#gift-box', {scale:0, duration:1, ease:'back.out(1.7)'});
-    }, 2000);
+    setTimeout(() => { document.getElementById('gift-box').style.display = 'block'; gsap.from('#gift-box', {scale:0, duration:1, ease:'back.out(1.7)'}); }, 2000);
 }
 
 function openGift() {
@@ -371,62 +338,15 @@ function openGift() {
     }, 800);
 }
 
-// SCRATCH CARD REVEAL
 function revealPrizes() {
-    const cards = ['netflix', 'spotify', 'youtube'];
+    const net = document.getElementById('netflix-card');
+    const spot = document.getElementById('spotify-card');
+    const yt = document.getElementById('youtube-card');
+    const letter = document.getElementById('scroll-letter');
+    net.style.display = spot.style.display = yt.style.display = 'block';
+    gsap.from([net, spot, yt], {y:50, opacity:0, duration:0.8, stagger:0.3});
     document.getElementById('gift-trigger').style.display = 'none';
-    
-    cards.forEach(id => {
-        const card = document.getElementById(`${id}-card`);
-        card.style.display = 'block';
-        gsap.from(card, {y: 50, opacity:0, duration:0.8});
-        initScratchCard(`scratch-${id}`);
-    });
-}
-
-function initScratchCard(canvasId) {
-    const canvas = document.getElementById(canvasId);
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    const container = canvas.parentElement;
-    
-    canvas.width = container.offsetWidth;
-    canvas.height = container.offsetHeight;
-
-    // Vẽ lớp phủ bạc sang trọng
-    const gradient = ctx.createLinearGradient(0,0, canvas.width, canvas.height);
-    gradient.addColorStop(0, '#c0c0c0');
-    gradient.addColorStop(0.5, '#e0e0e0');
-    gradient.addColorStop(1, '#a0a0a0');
-    
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Thêm hiệu ứng hạt lấp lánh trên lớp bạc
-    for(let i=0; i<200; i++) {
-        ctx.fillStyle = 'rgba(255,255,255,0.3)';
-        ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 1, 1);
-    }
-
-    ctx.globalCompositeOperation = 'destination-out';
-
-    let isDrawing = false;
-    function scratch(e) {
-        if(!isDrawing) return;
-        const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX || e.touches[0].clientX) - rect.left;
-        const y = (e.clientY || e.touches[0].clientY) - rect.top;
-        
-        ctx.beginPath();
-        ctx.arc(x, y, 15, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    canvas.addEventListener('mousedown', () => isDrawing = true);
-    canvas.addEventListener('touchstart', () => isDrawing = true);
-    window.addEventListener('mouseup', () => isDrawing = false);
-    window.addEventListener('touchend', () => isDrawing = false);
-    canvas.addEventListener('mousemove', scratch);
-    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); scratch(e); });
+    setTimeout(() => { letter.scrollTo({top: letter.scrollHeight, behavior: 'smooth'}); }, 100);
 }
 </script>
 </body>
