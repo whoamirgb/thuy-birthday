@@ -928,6 +928,7 @@
       gsap.to('#lock-screen', { y: '-110%', duration: 0.9, ease:'power4.inOut', onComplete: ()=>{
         lockScreen.style.display = 'none';
         enterScene(s1);
+        console.log("DEBUG:", s1.classList);
         runTypewriter();
       }});
     } else {
