@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thùy's Secret Universe 2026</title>
+    <title>Gửi Bé Thùy - My Universe</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;600;900&family=Pacifico&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
         :root {
             --p: #ff4d6d; --p-l: #ff758f; --p-d: #c9184a;
             --bg: #03071e; --card-bg: rgba(255,255,255,0.05);
+            --gold: #ffb703;
         }
         * { margin:0; padding:0; box-sizing:border-box; cursor: none; }
         body { background: var(--bg); color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; height: 100vh; }
@@ -25,30 +26,11 @@
             box-shadow: 0 0 15px var(--p);
         }
 
-        /* Fullscreen Button */
         #fs-btn {
             position: fixed; top: 20px; right: 20px; z-index: 10002;
             background: rgba(255,255,255,0.1); border: 1px solid var(--p);
-            color: var(--p-l); padding: 8px 12px; border-radius: 5px;
-            cursor: pointer; font-size: 0.7rem; backdrop-filter: blur(5px);
+            color: var(--p-l); padding: 8px 12px; border-radius: 5px; font-size: 0.7rem;
         }
-
-        /* Auth Screen */
-        #lock-screen {
-            position: fixed; inset: 0; z-index: 9999;
-            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .auth-container {
-            padding: 40px; border-radius: 30px; background: var(--card-bg);
-            border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px); text-align: center;
-        }
-        #password-input {
-            background: transparent; border: 2px solid var(--p); padding: 15px;
-            border-radius: 50px; color: #fff; font-size: 1.5rem; width: 220px;
-            text-align: center; letter-spacing: 5px; outline: none; margin: 20px 0;
-        }
-        .num-btn { width: 55px; height: 55px; border-radius: 50%; border: none; background: var(--p); color: #fff; margin: 5px; cursor: pointer; font-size: 1.2rem; }
 
         /* Scenes */
         .scene {
@@ -57,33 +39,51 @@
         }
         .active { display: flex; opacity: 1; }
 
-        .btn-primary {
-            padding: 12px 35px; border-radius: 50px; background: var(--p);
-            border: none; color: white; font-weight: bold; cursor: pointer; margin-top: 20px;
-            box-shadow: 0 10px 20px rgba(255, 77, 109, 0.3); z-index: 100;
+        /* Lock Screen */
+        #lock-screen {
+            position: fixed; inset: 0; z-index: 9999;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
+        .auth-container { padding: 40px; border-radius: 30px; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px); text-align: center; }
+        #password-input { background: transparent; border: 2px solid var(--p); padding: 15px; border-radius: 50px; color: #fff; font-size: 1.5rem; width: 220px; text-align: center; letter-spacing: 5px; outline: none; margin: 20px 0; }
+        .num-btn { width: 50px; height: 50px; border-radius: 50%; border: none; background: var(--p); color: #fff; margin: 5px; font-size: 1.2rem; }
 
-        /* 3D Card */
-        .card-container { width: 280px; height: 380px; perspective: 1000px; margin: 20px; }
-        .inner-card {
-            width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .inner-card.flipped { transform: rotateY(180deg); }
-        .card-face {
-            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
-            border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 2px solid rgba(255,255,255,0.1); padding: 20px;
-        }
-        .front { background: #111; color: var(--p-l); }
-        .back { background: #fffef0; color: #333; transform: rotateY(180deg); text-align: center; font-family: 'Dancing Script'; font-size: 1.4rem; }
+        /* 3D Gift Box */
+        .gift-container { position: relative; width: 200px; height: 200px; perspective: 1000px; display: none; cursor: pointer; }
+        .gift-box { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(25deg); transition: 1s; }
+        .gift-face { position: absolute; width: 200px; height: 200px; background: var(--p-d); border: 2px solid var(--p); opacity: 0.9; }
+        .gift-top { transform: rotateX(90deg) translateZ(100px); background: var(--p); }
+        .gift-bottom { transform: rotateX(-90deg) translateZ(100px); }
+        .gift-front { transform: translateZ(100px); }
+        .gift-back { transform: rotateY(180deg) translateZ(100px); }
+        .gift-left { transform: rotateY(-90deg) translateZ(100px); }
+        .gift-right { transform: rotateY(90deg) translateZ(100px); }
+        /* Ribbon */
+        .gift-face::after { content:''; position: absolute; background: var(--gold); }
+        .gift-front::after, .gift-back::after, .gift-left::after, .gift-right::after { width: 40px; height: 100%; left: 80px; }
+        .gift-top::after { width: 100%; height: 40px; top: 80px; }
 
-        /* Final Letter */
-        #final-letter {
-            background: #fffef0; padding: 40px; border-radius: 10px; color: #222;
-            max-width: 500px; width: 90%; position: relative; z-index: 100;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8); display: none; opacity: 0;
+        /* Scroll Letter */
+        #scroll-letter {
+            width: 90%; max-width: 450px; height: 70vh; background: #fffef0;
+            color: #333; padding: 40px; border-radius: 5px; overflow-y: scroll;
+            display: none; opacity: 0; flex-direction: column; align-items: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); z-index: 100;
+            scrollbar-width: none; border: 8px solid #f4f1de;
         }
+        #scroll-letter::-webkit-scrollbar { display: none; }
+        .letter-content { font-family: 'Dancing Script'; font-size: 1.4rem; line-height: 1.8; text-align: center; }
+
+        /* Netflix Box */
+        #netflix-box {
+            display: none; margin-top: 40px; padding: 20px; width: 100%;
+            background: #000; border-top: 4px solid #e50914; color: white;
+            border-radius: 10px; text-align: center; animation: glow 2s infinite;
+        }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 10px #e50914; } 50% { box-shadow: 0 0 25px #e50914; } }
+
+        .btn-primary { padding: 12px 35px; border-radius: 50px; background: var(--p); border: none; color: white; font-weight: bold; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -97,104 +97,111 @@
 
 <section id="lock-screen">
     <div class="auth-container">
-        <h2 style="font-size:0.8rem; color:var(--p-l); letter-spacing: 2px;">SECRET UNIVERSE</h2>
+        <h2 style="font-size:0.8rem; color:var(--p-l); letter-spacing: 2px;">VŨ TRỤ CỦA THÙY</h2>
         <input type="password" id="password-input" maxlength="6" readonly>
         <div id="numpad">
-            <script>
-                for(let i=1; i<=9; i++) document.write(`<button class="num-btn" onclick="press('${i}')">${i}</button>`);
-            </script>
+            <script>for(let i=1; i<=9; i++) document.write(`<button class="num-btn" onclick="press('${i}')">${i}</button>`);</script>
             <button class="num-btn" onclick="document.getElementById('password-input').value=''">C</button>
             <button class="num-btn" onclick="press('0')">0</button>
         </div>
-        <p style="margin-top: 15px; font-size: 0.7rem; color: #666;">Gợi ý: Ngày sinh bé Thùy (DDMMYY) ❤️</p>
+        <p style="margin-top: 15px; font-size: 0.7rem; color: #666;">Ngày sinh của bé Thùy (DDMMYY) ❤️</p>
     </div>
 </section>
 
 <section class="scene" id="s1">
     <h1 style="font-family:'Dancing Script'; font-size:4rem; color:var(--p);">Chào Thùy!</h1>
     <p id="typewriter" style="max-width:450px; text-align:center; line-height:1.6; margin:20px; color:#ccc;"></p>
-    <button class="btn-primary" onclick="changeScene(1,2)">Bắt đầu khám phá</button>
+    <button class="btn-primary" onclick="changeScene(1,2)">Bắt đầu hành trình</button>
 </section>
 
 <section class="scene" id="s2">
-    <h2 style="font-family:'Dancing Script'; font-size:2.5rem;">The Mind Reader</h2>
-    <div class="card-container">
-        <div class="inner-card" id="main-card" onclick="this.classList.add('flipped'); showNextBtn2()">
-            <div class="card-face front">
+    <div style="perspective:1000px;">
+        <div id="main-card" style="width:280px; height:380px; position:relative; transform-style:preserve-3d; transition:1s;" onclick="flipCard()">
+            <div style="position:absolute; width:100%; height:100%; backface-visibility:hidden; background:#111; border:2px solid var(--p); border-radius:20px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
                 <span style="font-size:4rem;">🔮</span>
-                <p style="margin-top:15px; font-size:0.7rem;">CHẠM ĐỂ XEM ANH NGHĨ GÌ</p>
+                <p style="margin-top:15px; font-size:0.7rem;">CHẠM ĐỂ XEM SUY NGHĨ</p>
             </div>
-            <div class="card-face back">
-                <p>Anh đoán chắc chắn lúc này em đang mỉm cười...</p>
-                <p style="color:var(--p-d); margin-top:15px; font-weight:bold;">Vì Thùy là món quà tuyệt nhất đời anh! ❤️</p>
+            <div style="position:absolute; width:100%; height:100%; backface-visibility:hidden; background:#fffef0; color:#333; transform:rotateY(180deg); border-radius:20px; padding:30px; text-align:center; font-family:'Dancing Script'; font-size:1.5rem;">
+                <p>Anh đoán là em đang cười rất xinh...</p>
+                <p style="color:var(--p-d); margin-top:20px; font-weight:bold;">Vì em là điều quý giá nhất đời anh! ❤️</p>
             </div>
         </div>
     </div>
-    <button id="next-btn-2" class="btn-primary" style="display:none;" onclick="changeScene(2,3)">Nhận quà thôi nào!</button>
+    <button id="next-btn-2" class="btn-primary" style="display:none; margin-top:30px;" onclick="changeScene(2,3)">Khám phá món quà</button>
 </section>
 
 <section class="scene" id="s3">
     <div id="game-ui" style="text-align:center; z-index: 30;">
-        <h2 style="font-family:'Dancing Script'; font-size:3rem; color:var(--p-l);">Pop the Bubbles!</h2>
-        <p id="counter" style="font-family:'Pacifico'; color:var(--p); font-size:2rem; margin:10px;">0/10</p>
+        <h2 style="font-family:'Dancing Script'; font-size:2.5rem; color:var(--p-l);">Đập bóng bay nào!</h2>
+        <div id="counter" style="font-family:'Pacifico'; color:var(--p); font-size:2rem;">0/10</div>
     </div>
 
-    <button id="go-to-letter" class="btn-primary" style="display:none; position:fixed; bottom:50px; z-index:1001;" onclick="showFinalLetter()">Mở thư tay của anh 💌</button>
-
-    <div id="final-letter">
-        <h2 style="font-family:'Pacifico'; color:var(--p-d);">Gửi bé Thùy của anh,</h2>
-        <p style="margin-top:20px; line-height:1.7; font-family:'Dancing Script'; font-size:1.3rem;">
-            Chúc mừng sinh nhật cô gái 17 tuổi! Hy vọng vũ trụ nhỏ này khiến em vui. 
-            Chúc em luôn rạng rỡ, xinh đẹp và mãi là công chúa của anh nhé. Yêu em rất nhiều!
-        </p>
-        <div style="background:var(--p); color:white; padding:10px; border-radius:5px; display:inline-block; margin-top:20px; font-size:0.8rem; font-weight:bold;">
-            GIFT: LOVE-THUY-1903
+    <div class="gift-container" id="gift-box" onclick="openGift()">
+        <div class="gift-box">
+            <div class="gift-face gift-front"></div>
+            <div class="gift-face gift-back"></div>
+            <div class="gift-face gift-left"></div>
+            <div class="gift-face gift-right"></div>
+            <div class="gift-face gift-bottom"></div>
+            <div class="gift-face gift-top" id="gift-top-lid"></div>
         </div>
-        <p style="text-align:right; margin-top:30px; font-family:'Dancing Script'; font-size: 1.5rem; color:var(--p-d);">- Anh người yêu IT -</p>
+        <p id="tap-guide" style="text-align:center; margin-top:20px; font-size:0.8rem; color:var(--gold); font-weight:bold;">CHẠM VÀO HỘP QUÀ ✨</p>
+    </div>
+
+    <div id="scroll-letter">
+        <div class="letter-content">
+            <h2 style="font-family:'Pacifico'; color:var(--p-d); margin-bottom:20px;">Gửi Bé Thùy của anh,</h2>
+            <p>Em à, hôm nay là một ngày thực sự đặc biệt...</p>
+            <p>Giữa hàng tỷ người, anh thấy mình là người may mắn nhất khi có em bên cạnh. Anh không thể tặng quà tận tay cho em lúc này, nên anh đã tự tay viết nên vũ trụ này, nơi chỉ có anh, em và những lời chân thành nhất.</p>
+            <br>
+            <p>Chúc Thùy tuổi 17 thật rực rỡ. Mong em luôn giữ được nụ cười trong veo ấy, mong em luôn bình yên trước những bão giông ngoài kia. Đừng lo lắng gì cả, vì phía sau em sẽ luôn có một người sẵn sàng che chở và yêu thương em vô điều kiện.</p>
+            <br>
+            <p>Em là công chúa, là niềm vui, và là lý do để anh cố gắng mỗi ngày. Hãy mãi luôn rạng rỡ như ánh nắng ban mai em nhé!</p>
+            <br>
+            <p>Anh yêu em rất nhiều!</p>
+            <p style="text-align:right; margin-top:30px; font-size:1.8rem;">- Người yêu của Thùy -</p>
+            
+            <button class="btn-primary" id="btn-netflix" onclick="showNetflix()">Nhận món quà bí mật 🎁</button>
+
+            <div id="netflix-box">
+                <p style="color:#e50914; font-weight:900; font-size:1.5rem; letter-spacing:2px;">NETFLIX PREMIMUN</p>
+                <div style="margin:15px 0; border:1px dashed #444; padding:10px;">
+                    <p style="font-size:0.8rem; color:#aaa;">Tài khoản:</p>
+                    <p style="font-weight:bold; color:#fff;">thuycongchua@love.com</p>
+                    <p style="font-size:0.8rem; color:#aaa; margin-top:10px;">Mật khẩu:</p>
+                    <p style="font-weight:bold; color:#fff;">vutrucuathuy1903</p>
+                </div>
+                <p style="font-size:0.7rem; font-style:italic;">Cùng xem những bộ phim thật hay nhé! ❤️</p>
+            </div>
+        </div>
     </div>
 </section>
 
 <script>
-/* 1. DATA */
+/* DATA & CONFIG */
 const wishes = ["Xinh đẹp ❤️", "Bình an 🍀", "Hạnh phúc 😊", "Luôn cười 😄", "Thành công ✨", "Mạnh mẽ 💪", "May mắn 🌈", "Rạng rỡ 🌟", "Yêu đời 🌸", "Yêu anh hơn ❤️"];
 const floatingMsgs = ["I love you so much <3", "Chúc mừng sinh nhật Thùy", "Anh yêu em", "Mãi bên nhau nhé", "Chúc em luôn cười tươi", "Cô gái 17 tuổi rực rỡ", "Công chúa của anh", "Bé ốc quế của anh hihi", "Vạn sự như ý", "Mãi xinh đẹp nhé Thùy"];
 
-/* 2. CURSOR & FULLSCREEN */
 const cursor = document.getElementById('cursor');
 window.onmousemove = e => gsap.to(cursor, {x: e.clientX-6, y: e.clientY-6, duration:0.1});
-function toggleFullScreen() {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-    else if (document.exitFullscreen) document.exitFullscreen();
-}
+function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
 
-/* 3. HEART BACKGROUND */
+/* HEART BG */
 const hCanvas = document.getElementById('heart-canvas');
 const hCtx = hCanvas.getContext('2d');
 let hearts = [];
 function resize() { hCanvas.width = innerWidth; hCanvas.height = innerHeight; }
 window.onresize = resize; resize();
-
 class Heart {
     constructor() { this.reset(); }
-    reset() {
-        this.x = Math.random() * hCanvas.width; this.y = hCanvas.height + 20;
-        this.size = Math.random() * 15 + 10; this.speed = Math.random() * 1.5 + 0.5;
-        this.opacity = Math.random() * 0.4 + 0.1;
-    }
-    draw() {
-        this.y -= this.speed; if (this.y < -30) this.reset();
-        hCtx.globalAlpha = this.opacity; hCtx.font = `${this.size}px serif`;
-        hCtx.fillText('❤️', this.x, this.y);
-    }
+    reset() { this.x = Math.random() * hCanvas.width; this.y = hCanvas.height + 20; this.size = Math.random() * 15 + 10; this.speed = Math.random() * 1.5 + 0.5; this.opacity = Math.random() * 0.4 + 0.1; }
+    draw() { this.y -= this.speed; if (this.y < -30) this.reset(); hCtx.globalAlpha = this.opacity; hCtx.font = `${this.size}px serif`; hCtx.fillText('❤️', this.x, this.y); }
 }
 for(let i=0; i<30; i++) hearts.push(new Heart());
-function animateHearts() {
-    hCtx.clearRect(0,0,hCanvas.width, hCanvas.height);
-    hearts.forEach(h => h.draw()); requestAnimationFrame(animateHearts);
-}
+function animateHearts() { hCtx.clearRect(0,0,hCanvas.width, hCanvas.height); hearts.forEach(h => h.draw()); requestAnimationFrame(animateHearts); }
 animateHearts();
 
-/* 4. LOGIC CHÍNH */
+/* AUTH & SCENES */
 function press(num) {
     const input = document.getElementById('password-input');
     if(input.value.length < 6) input.value += num;
@@ -207,133 +214,91 @@ function press(num) {
         }});
     }
 }
-
 function runTypewriter() {
-    const text = "Chào Thùy, cảm ơn em đã chọn xuất hiện trong cuộc đời anh. Anh đã gửi gắm tất cả vào những dòng code này — một thế giới nhỏ bé chỉ dành riêng cho em. Hãy kiên nhẫn đi cùng anh nhé...";
+    const text = "Chào Thùy, cảm ơn em đã chọn xuất hiện trong cuộc đời anh. Anh đã tự tay viết nên vũ trụ nhỏ này chỉ dành riêng cho em. Hãy kiên nhẫn đi cùng anh nhé...";
     let i = 0; const target = document.getElementById('typewriter');
     function type() { if(i < text.length) { target.innerHTML += text.charAt(i); i++; setTimeout(type, 50); } }
     type();
 }
-
-function showNextBtn2() {
-    setTimeout(() => {
-        const btn = document.getElementById('next-btn-2');
-        btn.style.display = 'block'; gsap.from(btn, {y: 20, opacity:0});
-    }, 800);
+function flipCard() {
+    document.getElementById('main-card').style.transform = "rotateY(180deg)";
+    setTimeout(() => { document.getElementById('next-btn-2').style.display = 'block'; }, 800);
 }
-
 function changeScene(f, t) {
-    gsap.to(`#s${f}`, {opacity:0, scale: 0.9, duration:0.5, onComplete: () => {
+    gsap.to(`#s${f}`, {opacity:0, scale:0.9, duration:0.5, onComplete: () => {
         document.getElementById(`s${f}`).style.display = 'none';
         const next = document.getElementById(`s${t}`);
         next.style.display = 'flex';
-        gsap.fromTo(next, {opacity:0, scale: 1.1}, {opacity:1, scale:1, duration:0.5});
+        gsap.fromTo(next, {opacity:0, scale:1.1}, {opacity:1, scale:1, duration:0.5});
         if(t === 3) startBubbleGame();
     }});
 }
 
-/* 5. BUBBLE GAME */
+/* GAME & WISHES FLOW */
 let poppedCount = 0;
 function startBubbleGame() {
     const bCanvas = document.getElementById('bubble-canvas');
     const bCtx = bCanvas.getContext('2d');
     bCanvas.style.display = 'block'; bCanvas.width = innerWidth; bCanvas.height = innerHeight;
-    let bubbles = wishes.map((txt, i) => ({
-        x: Math.random() * (innerWidth - 100) + 50,
-        y: innerHeight + (i * 150) + 100,
-        r: 45, text: txt, isPopped: false, speed: 2 + Math.random() * 1.5
-    }));
-
+    let bubbles = wishes.map((txt, i) => ({ x: Math.random()*(innerWidth-100)+50, y: innerHeight+(i*150)+100, r:45, text:txt, isPopped:false, speed:2+Math.random()*1.5 }));
     function draw() {
         bCtx.clearRect(0,0,bCanvas.width, bCanvas.height);
-        bubbles.forEach(b => {
-            if(!b.isPopped) {
-                b.y -= b.speed; b.x += Math.sin(b.y/40);
-                if(b.y < -50) b.y = innerHeight + 50;
-                bCtx.beginPath(); bCtx.arc(b.x, b.y, b.r, 0, Math.PI*2);
-                bCtx.fillStyle = 'rgba(255, 77, 109, 0.5)'; bCtx.fill();
-                bCtx.fillStyle = '#fff'; bCtx.font = '30px Arial'; bCtx.textAlign = 'center';
-                bCtx.fillText('🎈', b.x, b.y + 10);
-            }
-        });
-        if(poppedCount < 10) requestAnimationFrame(draw);
-        else { bCanvas.style.display = 'none'; startWishesFlow(); }
+        bubbles.forEach(b => { if(!b.isPopped) { b.y -= b.speed; b.x += Math.sin(b.y/40); if(b.y<-50) b.y=innerHeight+50; bCtx.beginPath(); bCtx.arc(b.x,b.y,b.r,0,Math.PI*2); bCtx.fillStyle='rgba(255,77,109,0.5)'; bCtx.fill(); bCtx.fillStyle='#fff'; bCtx.font='30px Arial'; bCtx.textAlign='center'; bCtx.fillText('🎈',b.x,b.y+10); }});
+        if(poppedCount<10) requestAnimationFrame(draw); else { bCanvas.style.display='none'; startWishesFlow(); }
     }
     draw();
-
-    bCanvas.onclick = e => {
-        bubbles.forEach(b => {
-            if(!b.isPopped && Math.hypot(e.clientX - b.x, e.clientY - b.y) < b.r) {
-                b.isPopped = true; poppedCount++;
-                document.getElementById('counter').innerText = `${poppedCount}/10`;
-                showFloatingText(b.text, b.x, b.y);
-            }
-        });
-    };
+    bCanvas.onclick = e => { bubbles.forEach(b => { if(!b.isPopped && Math.hypot(e.clientX-b.x, e.clientY-b.y)<b.r) { b.isPopped=true; poppedCount++; document.getElementById('counter').innerText=`${poppedCount}/10`; showPopText(b.text, b.x, b.y); }}); };
+}
+function showPopText(txt,x,y) {
+    const el = document.createElement('div'); el.innerText=txt; el.style.cssText=`position:fixed; left:${x}px; top:${y}px; color:var(--p); font-weight:bold; font-size:2rem; font-family:'Dancing Script'; z-index:100; text-shadow:0 0 10px white; pointer-events:none;`;
+    document.body.appendChild(el); gsap.to(el, {y:y-120, opacity:0, duration:2, onComplete:()=>el.remove()});
 }
 
-function showFloatingText(txt, x, y) {
-    const el = document.createElement('div');
-    el.innerText = txt; el.style.cssText = `position:fixed; left:${x}px; top:${y}px; color:var(--p); font-weight:bold; font-size:2rem; font-family:'Dancing Script'; z-index:100; text-shadow:0 0 10px white; pointer-events:none;`;
-    document.body.appendChild(el);
-    gsap.to(el, {y: y-120, opacity:0, duration:2, onComplete: () => el.remove()});
-}
-
-/* 6. WISHES FLOW (THEO YÊU CẦU: CHẢY TỪ TRÊN XUỐNG) */
 function startWishesFlow() {
-    gsap.to('#game-ui', {opacity: 0, duration: 1});
+    gsap.to('#game-ui', {opacity:0, duration:1});
     const wCanvas = document.getElementById('wishes-canvas');
     const wCtx = wCanvas.getContext('2d');
     wCanvas.style.display = 'block'; wCanvas.width = innerWidth; wCanvas.height = innerHeight;
-
-    let items = [];
-    floatingMsgs.forEach((m, i) => {
-        items.push({
-            text: m, x: Math.random() * wCanvas.width, y: -100 - (i * 150),
-            z: Math.random() * 1.5, rotation: Math.random() * 0.4 - 0.2,
-            rotSpeed: (Math.random() - 0.5) * 0.01, speed: 1 + Math.random() * 1,
-            size: 20 + Math.random() * 25
-        });
-    });
-
+    let items = floatingMsgs.map((m,i) => ({ text:m, x:Math.random()*innerWidth, y:-100-(i*150), z:Math.random()*1.5, rotation:Math.random()*0.4-0.2, rotSpeed:(Math.random()-0.5)*0.01, speed:1+Math.random()*1, size:20+Math.random()*25 }));
     function draw() {
         wCtx.clearRect(0,0,wCanvas.width, wCanvas.height);
         items.forEach(item => {
-            item.y += item.speed; // CHẢY TỪ TRÊN XUỐNG
-            item.rotation += item.rotSpeed;
-            const scale = 0.5 + item.z;
-            wCtx.save();
-            wCtx.translate(item.x, item.y);
-            wCtx.rotate(item.rotation);
-            wCtx.scale(scale, scale);
-            wCtx.shadowBlur = 15; wCtx.shadowColor = '#ff758f';
-            wCtx.fillStyle = `rgba(255, 117, 143, ${0.4 + item.z/2})`;
-            wCtx.font = `600 ${item.size}px Montserrat`;
-            wCtx.textAlign = 'center';
-            wCtx.fillText(item.text, 0, 0);
-            wCtx.restore();
-            if(item.y > wCanvas.height + 100) item.y = -100;
+            item.y += item.speed; item.rotation += item.rotSpeed;
+            const scale = 0.5 + item.z; wCtx.save(); wCtx.translate(item.x, item.y); wCtx.rotate(item.rotation); wCtx.scale(scale, scale);
+            wCtx.shadowBlur = 15; wCtx.shadowColor = '#ff758f'; wCtx.fillStyle = `rgba(255,117,143,${0.4+item.z/2})`; wCtx.font = `600 ${item.size}px Montserrat`; wCtx.textAlign = 'center'; wCtx.fillText(item.text, 0, 0); wCtx.restore();
+            if(item.y > wCanvas.height+100) item.y = -100;
         });
         requestAnimationFrame(draw);
     }
     draw();
-
-    // Hiện nút sau 5 giây để cô ấy ngắm
-    setTimeout(() => {
-        const btn = document.getElementById('go-to-letter');
-        btn.style.display = 'block';
-        gsap.fromTo(btn, {opacity: 0, y: 50}, {opacity: 1, y: 0, duration: 1});
-    }, 5000);
+    setTimeout(() => { document.getElementById('gift-box').style.display = 'block'; gsap.from('#gift-box', {scale:0, duration:1, ease:'back.out(1.7)'}); }, 5000);
 }
 
-function showFinalLetter() {
-    gsap.to('#wishes-canvas, #go-to-letter', {opacity: 0, duration: 1, onComplete: () => {
-        document.getElementById('wishes-canvas').style.display = 'none';
-        document.getElementById('go-to-letter').style.display = 'none';
-        const letter = document.getElementById('final-letter');
-        letter.style.display = 'block';
-        gsap.to(letter, {opacity: 1, scale: 1, duration: 1.5, ease: 'elastic.out(1, 0.6)'});
-    }});
+/* GIFT & LETTER LOGIC */
+function openGift() {
+    gsap.to('#gift-top-lid', {y: -150, rotateX: 110, duration: 1});
+    gsap.to('#tap-guide', {opacity: 0});
+    setTimeout(() => {
+        gsap.to('#gift-box, #wishes-canvas', {opacity: 0, duration: 1, onComplete: () => {
+            document.getElementById('gift-box').style.display = 'none';
+            document.getElementById('wishes-canvas').style.display = 'none';
+            const letter = document.getElementById('scroll-letter');
+            letter.style.display = 'flex';
+            gsap.to(letter, {opacity: 1, y: 0, duration: 1.5});
+        }});
+    }, 1000);
+}
+
+function showNetflix() {
+    const box = document.getElementById('netflix-box');
+    box.style.display = 'block';
+    gsap.from(box, {y: 50, opacity: 0, duration: 1});
+    document.getElementById('btn-netflix').style.display = 'none';
+    // Cuộn xuống cuối để thấy quà
+    setTimeout(() => {
+        const letter = document.getElementById('scroll-letter');
+        letter.scrollTo({ top: letter.scrollHeight, behavior: 'smooth' });
+    }, 100);
 }
 </script>
 </body>
