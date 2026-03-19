@@ -352,15 +352,25 @@
 
   // Small helper to add class transitions with GSAP fallback if available
   function enterScene(el){
-    el.classList.add('active');
-    el.setAttribute('aria-hidden','false');
-    // animate softly
-    if (window.gsap) gsap.fromTo(el, {opacity:0, y:8}, {opacity:1, y:0, duration:0.45, ease:'power2.out'});
+  el.classList.add('active');
+
+  el.style.pointerEvents = 'auto';
+  el.style.opacity = '1';
+  el.style.transform = 'translateY(0)';
+
+  el.setAttribute('aria-hidden','false');
+
+  if (window.gsap){
+    gsap.fromTo(el, {opacity:0, y:8}, {opacity:1, y:0, duration:0.45});
   }
+}
   function leaveScene(el){
-    el.classList.remove('active');
-    el.setAttribute('aria-hidden','true');
-  }
+  el.classList.remove('active');
+
+  el.style.pointerEvents = 'none';
+
+  el.setAttribute('aria-hidden','true');
+}
 
   /* -------------------------
      Preload & init
@@ -936,7 +946,7 @@
       enterScene(s1);
       runTypewriter();
     }
-    document.getElementById('aria-live').textContent = 'Chào mừng Thùy!';
+    document.getElementById('ar  ia-live').textContent = 'Chào mừng Thùy!';
   }
 
   // Start journey
