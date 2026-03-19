@@ -52,17 +52,44 @@
         .front { background: #111; color: var(--p-l); }
         .back { background: #fffef0; color: #333; transform: rotateY(180deg); text-align: center; font-family: 'Dancing Script'; font-size: 1.4rem; }
 
-        .gift-container { position: relative; width: 160px; height: 160px; perspective: 1000px; display: none; cursor: pointer; z-index: 100; margin-top: 20px;}
-        .gift-box { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(25deg); transition: 0.8s; }
-        .gift-face { position: absolute; width: 160px; height: 160px; background: var(--p-d); border: 2px solid var(--p); }
-        .gift-top { transform: rotateX(90deg) translateZ(80px); background: var(--p); z-index: 2; }
-        .gift-front { transform: translateZ(80px); }
-        .gift-back { transform: rotateY(180deg) translateZ(80px); }
-        .gift-left { transform: rotateY(-90deg) translateZ(80px); }
-        .gift-right { transform: rotateY(90deg) translateZ(80px); }
-        .gift-face::after { content:''; position: absolute; background: var(--gold); }
-        .gift-front::after, .gift-back::after, .gift-left::after, .gift-right::after { width: 30px; height: 100%; left: 65px; }
-        .gift-top::after { width: 100%; height: 30px; top: 65px; }
+        /* --- PHẦN HỘP QUÀ XỊN XÒ MỚI --- */
+        .gift-container { 
+            position: relative; width: 180px; height: 180px; perspective: 1000px; 
+            display: none; cursor: pointer; z-index: 100; margin-top: 20px;
+            filter: drop-shadow(0 20px 50px rgba(0,0,0,0.5));
+        }
+        .gift-box { 
+            width: 100%; height: 100%; position: relative; transform-style: preserve-3d; 
+            transform: rotateX(-20deg) rotateY(25deg); transition: transform 0.5s;
+        }
+        .gift-face { 
+            position: absolute; width: 180px; height: 180px; 
+            background: linear-gradient(45deg, var(--p-d), var(--p)); 
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.3);
+        }
+        /* Ruy băng vàng metallic */
+        .gift-face::after { 
+            content:''; position: absolute; 
+            background: linear-gradient(to right, #ffd700, var(--gold), #ffd700);
+            box-shadow: 0 0 15px rgba(255,183,3,0.3);
+        }
+        .gift-top { transform: rotateX(90deg) translateZ(90px); background: var(--p); z-index: 2; }
+        .gift-top::after { width: 100%; height: 40px; top: 70px; }
+        
+        /* Nơ trang trí trên nắp */
+        .gift-bow {
+            position: absolute; width: 60px; height: 60px; background: var(--gold);
+            top: -30px; left: 50%; transform: translateX(-50%) rotateX(-90deg);
+            border-radius: 50% 50% 0 50%; box-shadow: 0 0 15px var(--gold);
+        }
+
+        .gift-front { transform: translateZ(90px); }
+        .gift-back { transform: rotateY(180deg) translateZ(90px); }
+        .gift-left { transform: rotateY(-90deg) translateZ(90px); }
+        .gift-right { transform: rotateY(90deg) translateZ(90px); }
+        .gift-front::after, .gift-back::after, .gift-left::after, .gift-right::after { width: 40px; height: 100%; left: 70px; }
+        /* --- KẾT THÚC PHẦN HỘP QUÀ --- */
 
         #scroll-letter {
             width: 90%; max-width: 480px; height: 80vh; background: #fffef0;
@@ -74,24 +101,17 @@
         #scroll-letter::-webkit-scrollbar { width: 5px; }
         #scroll-letter::-webkit-scrollbar-thumb { background: var(--p-l); border-radius: 10px; }
 
-        /* Premium Cards Tối Ưu Lại Để Không Bị Mờ */
-        .premium-card {
-            display: none; width: 100%; border-radius: 12px;
-            padding: 18px; margin-top: 15px; text-align: center;
-        }
+        .premium-card { display: none; width: 100%; border-radius: 12px; padding: 18px; margin-top: 15px; text-align: center; }
         .netflix-style { background: #000; border-left: 5px solid var(--netflix); }
-        .spotify-style { background: #000; border-left: 5px solid var(--spotify); } /* Đổi nền sang đen để rõ chữ hơn */
+        .spotify-style { background: #000; border-left: 5px solid var(--spotify); }
         .youtube-style { background: #fff; border-left: 5px solid var(--youtube); border: 1px solid #ddd; }
 
         .acc-info { margin: 8px 0; border: 1px dashed #666; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 6px; }
         .youtube-style .acc-info { border-color: #ccc; }
-        
         .acc-label { font-size: 0.7rem; color: #888; text-transform: uppercase; font-weight: 900; }
         .youtube-style .acc-label { color: #555; }
-        
         .acc-val { color: #fff; font-weight: bold; font-family: 'Montserrat'; font-size: 0.9rem; word-break: break-all; }
         .youtube-style .acc-val { color: #000 !important; }
-
         .btn-primary { padding: 12px 35px; border-radius: 50px; background: var(--p); border: none; color: white; font-weight: bold; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
@@ -147,14 +167,16 @@
     </div>
 
     <div class="gift-container" id="gift-box" onclick="openGift()">
-        <div class="gift-box">
+        <div class="gift-box" id="inner-gift">
             <div class="gift-face gift-front"></div>
             <div class="gift-face gift-back"></div>
             <div class="gift-face gift-left"></div>
             <div class="gift-face gift-right"></div>
-            <div class="gift-face gift-top" id="gift-lid"></div>
+            <div class="gift-face gift-top" id="gift-lid">
+                <div class="gift-bow"></div>
+            </div>
         </div>
-        <p style="text-align:center; margin-top:20px; color:var(--gold); font-weight:bold; font-size:0.8rem; letter-spacing:2px;">CHẠM ĐỂ MỞ QUÀ ✨</p>
+        <p id="gift-text" style="text-align:center; margin-top:40px; color:var(--gold); font-weight:bold; font-size:0.9rem; letter-spacing:2px; text-shadow: 0 0 10px rgba(255,183,3,0.5);">CHẠM ĐỂ MỞ QUÀ ✨</p>
     </div>
 
     <div id="scroll-letter">
@@ -206,6 +228,7 @@
 </section>
 
 <script>
+// --- GIỮ NGUYÊN DỮ LIỆU CỦA BẠN ---
 const wishes = ["Xinh đẹp ❤️", "Bình an 🍀", "Hạnh phúc 😊", "Luôn cười 😄", "Thành công ✨", "Mạnh mẽ 💪", "May mắn 🌈", "Rạng rỡ 🌟", "Yêu đời 🌸", "Yêu anh hơn ❤️"];
 const floatingMsgs = ["I love you so much <3", "Chúc mừng sinh nhật Thùy", "Anh yêu em", "Mãi bên nhau nhé", "Chúc em luôn cười tươi", "Cô gái 17 tuổi rực rỡ", "Công chúa của anh", "Bé ốc quế của anh hihi", "Vạn sự như ý", "Mãi xinh đẹp nhé Thùy"];
 
@@ -312,20 +335,44 @@ function startWishesFlow() {
         requestAnimationFrame(draw);
     }
     draw();
-    setTimeout(() => { document.getElementById('gift-box').style.display = 'block'; gsap.from('#gift-box', {scale:0, duration:1, ease:'back.out(1.7)'}); }, 5000);
+    
+    // --- HIỆU ỨNG HIỆN HỘP QUÀ MỚI ---
+    setTimeout(() => { 
+        document.getElementById('gift-box').style.display = 'block'; 
+        gsap.from('#gift-box', {scale:0, duration:1.2, ease:'back.out(1.7)'});
+        // Làm hộp quà "thở" nhè nhẹ
+        gsap.to('#inner-gift', { rotationY: 40, repeat: -1, yoyo: true, duration: 2, ease: "sine.inOut" });
+        gsap.to('#gift-box', { y: "-=15", repeat: -1, yoyo: true, duration: 1.5, ease: "power1.inOut" });
+    }, 5000);
 }
 
+// --- HÀM MỞ QUÀ XỊN XÒ ---
 function openGift() {
-    gsap.to('#gift-lid', {y: -150, rotateX: 110, duration: 1});
+    const tl = gsap.timeline();
+    // 1. Rung lắc cực mạnh
+    tl.to('#inner-gift', { x: 10, duration: 0.05, repeat: 10, yoyo: true });
+    // 2. Bung nắp văng ra xa
+    tl.to('#gift-lid', { 
+        y: -300, x: 100, rotateZ: 45, rotateX: 110, opacity: 0, 
+        duration: 1.2, ease: "power4.out" 
+    }, ">");
+    // 3. Hiệu ứng bùng nổ ánh sáng
+    tl.to('#gift-text', { opacity:0, duration: 0.2 }, "<");
+    
+    const glow = document.createElement('div');
+    glow.style.cssText = "position:fixed; top:50%; left:50%; width:10px; height:10px; background:#fff; border-radius:50%; z-index:150; transform:translate(-50%,-50%); box-shadow:0 0 100px 50px #fff;";
+    document.body.appendChild(glow);
+    gsap.to(glow, { scale: 100, opacity: 0, duration: 1, onComplete: () => glow.remove() });
+
     setTimeout(() => {
         gsap.to('#gift-box, #wishes-canvas', {opacity: 0, duration: 1, onComplete: () => {
             document.getElementById('gift-box').style.display = 'none';
             document.getElementById('wishes-canvas').style.display = 'none';
             const letter = document.getElementById('scroll-letter');
             letter.style.display = 'flex';
-            gsap.to(letter, {opacity:1, y:0, duration:1.5});
+            gsap.fromTo(letter, {opacity:0, y:100, scale:0.5}, {opacity:1, y:0, scale:1, duration:1.5, ease: "back.out(1.2)"});
         }});
-    }, 1000);
+    }, 800);
 }
 
 function revealPrizes() {
@@ -333,15 +380,10 @@ function revealPrizes() {
     const spot = document.getElementById('spotify-card');
     const yt = document.getElementById('youtube-card');
     const letter = document.getElementById('scroll-letter');
-    
     net.style.display = spot.style.display = yt.style.display = 'block';
-    
     gsap.from([net, spot, yt], {y:50, opacity:0, duration:0.8, stagger:0.2});
     document.getElementById('gift-trigger').style.display = 'none';
-    
-    setTimeout(() => {
-        letter.scrollTo({top: letter.scrollHeight, behavior: 'smooth'});
-    }, 100);
+    setTimeout(() => { letter.scrollTo({top: letter.scrollHeight, behavior: 'smooth'}); }, 100);
 }
 </script>
 </body>
