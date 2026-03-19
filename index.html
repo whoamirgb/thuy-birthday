@@ -16,7 +16,7 @@
         body { background: var(--bg); color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; height: 100vh; }
 
         canvas { position: fixed; inset: 0; pointer-events: none; }
-        #heart-canvas { z-index: 1; opacity: 0.4; }
+        #heart-canvas { z-index: 1; opacity: 0.6; } /* Tăng nhẹ opacity để thấy sao rõ hơn */
         #bubble-canvas { z-index: 20; pointer-events: auto; display: none; }
         #wishes-canvas { z-index: 25; display: none; }
 
@@ -194,19 +194,67 @@ const cursor = document.getElementById('cursor');
 window.onmousemove = e => gsap.to(cursor, {x: e.clientX-6, y: e.clientY-6, duration:0.1});
 function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
 
-/* HEART BG */
+/* HEART & STAR BG (THÊM SAO VÀO ĐÂY) */
 const hCanvas = document.getElementById('heart-canvas');
 const hCtx = hCanvas.getContext('2d');
 let hearts = [];
-function resize() { hCanvas.width = innerWidth; hCanvas.height = innerHeight; }
-window.onresize = resize; resize();
+let stars = []; // Mảng chứa sao
+
+function resize() { hCanvas.width = innerWidth; hCanvas.height = innerHeight; initStars(); }
+window.onresize = resize; 
+
+// Khởi tạo sao
+function initStars() {
+    stars = [];
+    for(let i=0; i<100; i++) {
+        stars.push({
+            x: Math.random() * hCanvas.width,
+            y: Math.random() * hCanvas.height,
+            size: Math.random() * 2,
+            opacity: Math.random(),
+            speed: Math.random() * 0.05,
+            twinkleSpeed: 0.01 + Math.random() * 0.02
+        });
+    }
+}
+
+resize();
+
 class Heart {
     constructor() { this.reset(); }
     reset() { this.x = Math.random()*hCanvas.width; this.y = hCanvas.height+20; this.size = Math.random()*15+10; this.speed = Math.random()*1.5+0.5; this.opacity = Math.random()*0.4+0.1; }
-    draw() { this.y -= this.speed; if(this.y < -30) this.reset(); hCtx.globalAlpha = this.opacity; hCtx.font = `${this.size}px serif`; hCtx.fillText('❤️', this.x, this.y); }
+    draw() { 
+        this.y -= this.speed; 
+        if(this.y < -30) this.reset(); 
+        hCtx.globalAlpha = this.opacity; 
+        hCtx.font = `${this.size}px serif`; 
+        hCtx.fillText('❤️', this.x, this.y); 
+    }
 }
+
 for(let i=0; i<30; i++) hearts.push(new Heart());
-function animateHearts() { hCtx.clearRect(0,0,hCanvas.width, hCanvas.height); hearts.forEach(h=>h.draw()); requestAnimationFrame(animateHearts); }
+
+function animateHearts() { 
+    hCtx.clearRect(0,0,hCanvas.width, hCanvas.height);
+    
+    // Vẽ sao trước (nằm đằng sau trái tim)
+    stars.forEach(s => {
+        s.opacity += s.twinkleSpeed;
+        if(s.opacity > 1 || s.opacity < 0) s.twinkleSpeed *= -1;
+        s.y -= s.speed; // Sao trôi nhẹ
+        if(s.y < 0) s.y = hCanvas.height;
+        
+        hCtx.globalAlpha = Math.abs(s.opacity);
+        hCtx.fillStyle = "white";
+        hCtx.beginPath();
+        hCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        hCtx.fill();
+    });
+
+    // Vẽ trái tim
+    hearts.forEach(h=>h.draw()); 
+    requestAnimationFrame(animateHearts); 
+}
 animateHearts();
 
 /* HÀM PRESS CŨ CỦA BẠN */
