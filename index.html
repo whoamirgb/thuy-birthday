@@ -45,7 +45,6 @@
         .scene { position: absolute; inset: 0; display: none; opacity: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
         .active { display: flex; opacity: 1; }
 
-        /* Card 3D */
         .card-container { width: 280px; height: 380px; perspective: 1000px; margin: 20px; }
         .inner-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;}
         .inner-card.flipped { transform: rotateY(180deg); }
@@ -53,7 +52,6 @@
         .front { background: #111; color: var(--p-l); }
         .back { background: #fffef0; color: #333; transform: rotateY(180deg); text-align: center; font-family: 'Dancing Script'; font-size: 1.4rem; }
 
-        /* Gift Box */
         .gift-container { position: relative; width: 160px; height: 160px; perspective: 1000px; display: none; cursor: pointer; z-index: 100; margin-top: 20px;}
         .gift-box { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(25deg); transition: 0.8s; }
         .gift-face { position: absolute; width: 160px; height: 160px; background: var(--p-d); border: 2px solid var(--p); }
@@ -66,31 +64,31 @@
         .gift-front::after, .gift-back::after, .gift-left::after, .gift-right::after { width: 30px; height: 100%; left: 65px; }
         .gift-top::after { width: 100%; height: 30px; top: 65px; }
 
-        /* Scroll Letter */
         #scroll-letter {
             width: 90%; max-width: 480px; height: 80vh; background: #fffef0;
             color: #333; padding: 30px; border-radius: 10px; overflow-y: auto;
             display: none; opacity: 0; flex-direction: column; align-items: center;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8); z-index: 200; border: 10px solid #f4f1de;
+            scroll-behavior: smooth;
         }
         #scroll-letter::-webkit-scrollbar { width: 5px; }
         #scroll-letter::-webkit-scrollbar-thumb { background: var(--p-l); border-radius: 10px; }
 
-        /* Premium Cards */
+        /* Premium Cards Tối Ưu Diện Tích */
         .premium-card {
-            display: none; width: 100%; border-radius: 15px;
-            padding: 20px; margin-top: 20px; text-align: center;
+            display: none; width: 100%; border-radius: 12px;
+            padding: 15px; margin-top: 15px; text-align: center;
             transition: 0.3s;
         }
-        .netflix-style { background: #000; border-left: 5px solid var(--netflix); box-shadow: 0 0 15px rgba(229, 9, 20, 0.3); }
-        .spotify-style { background: #121212; border-left: 5px solid var(--spotify); box-shadow: 0 0 15px rgba(29, 185, 84, 0.3); }
-        .youtube-style { background: #ffffff; color: #333; border-left: 5px solid var(--youtube); box-shadow: 0 0 15px rgba(255, 0, 0, 0.2); }
+        .netflix-style { background: #000; border-left: 5px solid var(--netflix); box-shadow: 0 5px 15px rgba(229, 9, 20, 0.2); }
+        .spotify-style { background: #121212; border-left: 5px solid var(--spotify); box-shadow: 0 5px 15px rgba(29, 185, 84, 0.2); }
+        .youtube-style { background: #ffffff; color: #333; border-left: 5px solid var(--youtube); box-shadow: 0 5px 15px rgba(255, 0, 0, 0.15); }
         .youtube-style .acc-val { color: #000 !important; }
 
-        .acc-info { margin: 10px 0; border: 1px dashed #ccc; padding: 10px; background: rgba(0,0,0,0.03); border-radius: 8px; }
-        .netflix-style .acc-info, .spotify-style .acc-info { border-color: #555; background: rgba(255,255,255,0.05); }
-        .acc-label { font-size: 0.7rem; color: #888; text-transform: uppercase; font-weight: 900; }
-        .acc-val { color: #fff; font-weight: bold; font-family: 'Montserrat'; font-size: 0.9rem; }
+        .acc-info { margin: 8px 0; border: 1px dashed #ccc; padding: 8px; background: rgba(0,0,0,0.02); border-radius: 6px; }
+        .netflix-style .acc-info, .spotify-style .acc-info { border-color: #444; background: rgba(255,255,255,0.03); }
+        .acc-label { font-size: 0.65rem; color: #888; text-transform: uppercase; font-weight: 900; }
+        .acc-val { color: #fff; font-weight: bold; font-family: 'Montserrat'; font-size: 0.85rem; word-break: break-all; }
 
         .btn-primary { padding: 12px 35px; border-radius: 50px; background: var(--p); border: none; color: white; font-weight: bold; cursor: pointer; margin-top: 20px; }
     </style>
@@ -163,7 +161,7 @@
             <p>Em à, sinh nhật 17 tuổi thực sự là một cột mốc rất đẹp...</p>
             <p>Anh rất tiếc vì không thể trực tiếp cầm món quà này trao tận tay cho em, nên anh đã tự tay xây dựng "vũ trụ nhỏ" này để gửi gắm tất cả những gì chân thành nhất từ lòng mình.</p>
             <br>
-            <p>Chúc Thùy của anh luôn giữ được nụ cười tỏa nắng ấy. Mong em mỗi ngày thức dậy đều thấy yêu đời, thấy mình xinh đẹp và được trân trọng. Hãy mãi là cô công chúa nhỏ rạng rỡ của anh nhé!</p>
+            <p>Chúc Thùy của anh luôn giữ được nụ cười tỏa nắng ấy. Mong em luôn yêu đời và rạng rỡ như ánh nắng ban mai em nhé!</p>
             <br>
             <p>Yêu em rất nhiều!</p>
             <p style="text-align:right; margin-top:20px; font-size:1.8rem;">- Người thương của em -</p>
@@ -171,42 +169,41 @@
             <button class="btn-primary" id="gift-trigger" onclick="revealPrizes()">Mở hộp quà bí mật 🎁</button>
 
             <div id="netflix-card" class="premium-card netflix-style">
-                <p style="color:var(--netflix); font-weight:900; font-size:1.2rem; letter-spacing:2px;">NETFLIX PREMIUM</p>
+                <p style="color:var(--netflix); font-weight:900; font-size:1.1rem; letter-spacing:2px;">NETFLIX PREMIUM</p>
                 <div class="acc-info">
                     <p class="acc-label">Email:</p>
                     <p class="acc-val">kimjihoo2000kr@gmail.com</p>
-                    <p class="acc-label" style="margin-top:8px;">Password:</p>
+                    <p class="acc-label" style="margin-top:6px;">Password:</p>
                     <p class="acc-val">XXXXXXXX</p>
                 </div>
             </div>
 
             <div id="spotify-card" class="premium-card spotify-style">
-                <p style="color:var(--spotify); font-weight:900; font-size:1.2rem; letter-spacing:2px;">SPOTIFY PREMIUM</p>
+                <p style="color:var(--spotify); font-weight:900; font-size:1.1rem; letter-spacing:2px;">SPOTIFY PREMIUM</p>
                 <div class="acc-info">
                     <p class="acc-label">Email:</p>
                     <p class="acc-val">kimjihoo2000kr@gmail.com</p>
-                    <p class="acc-label" style="margin-top:8px;">Password:</p>
+                    <p class="acc-label" style="margin-top:6px;">Password:</p>
                     <p class="acc-val">XXXXXXXX</p>
                 </div>
             </div>
 
             <div id="youtube-card" class="premium-card youtube-style">
-                <p style="color:var(--youtube); font-weight:900; font-size:1.2rem; letter-spacing:2px;">YOUTUBE PREMIUM</p>
+                <p style="color:var(--youtube); font-weight:900; font-size:1.1rem; letter-spacing:2px;">YOUTUBE PREMIUM</p>
                 <div class="acc-info">
                     <p class="acc-label">Email:</p>
                     <p class="acc-val">kimjihoo2000kr@gmail.com</p>
-                    <p class="acc-label" style="margin-top:8px;">Password:</p>
+                    <p class="acc-label" style="margin-top:6px;">Password:</p>
                     <p class="acc-val">XXXXXXXX</p>
                 </div>
-                <p style="font-size:0.7rem; color:#666; font-style:italic; margin-top:5px;">Xem Youtube không quảng cáo luôn nhé! ❤️</p>
             </div>
-            <p style="margin-bottom: 50px;"></p>
+            <p style="margin-bottom: 50px; font-size: 0.8rem; color: #888; font-style: italic; margin-top: 15px;">Chúc bé xem phim và nghe nhạc thật vui! ❤️</p>
         </div>
     </div>
 </section>
 
 <script>
-/* DATA & CONFIG */
+/* DATA */
 const wishes = ["Xinh đẹp ❤️", "Bình an 🍀", "Hạnh phúc 😊", "Luôn cười 😄", "Thành công ✨", "Mạnh mẽ 💪", "May mắn 🌈", "Rạng rỡ 🌟", "Yêu đời 🌸", "Yêu anh hơn ❤️"];
 const floatingMsgs = ["I love you so much <3", "Chúc mừng sinh nhật Thùy", "Anh yêu em", "Mãi bên nhau nhé", "Chúc em luôn cười tươi", "Cô gái 17 tuổi rực rỡ", "Công chúa của anh", "Bé ốc quế của anh hihi", "Vạn sự như ý", "Mãi xinh đẹp nhé Thùy"];
 
@@ -214,7 +211,7 @@ const cursor = document.getElementById('cursor');
 window.onmousemove = e => gsap.to(cursor, {x: e.clientX-6, y: e.clientY-6, duration:0.1});
 function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
 
-/* BACKGROUND: STARS & HEARTS */
+/* BACKGROUND */
 const hCanvas = document.getElementById('heart-canvas');
 const hCtx = hCanvas.getContext('2d');
 let hearts = [], stars = [];
@@ -246,7 +243,7 @@ function animateBackground() {
 }
 animateBackground();
 
-/* APP LOGIC */
+/* LOGIC */
 function press(num) {
     const input = document.getElementById('password-input');
     if(input.value.length < 6) input.value += num;
@@ -335,10 +332,17 @@ function revealPrizes() {
     const net = document.getElementById('netflix-card');
     const spot = document.getElementById('spotify-card');
     const yt = document.getElementById('youtube-card');
+    const letter = document.getElementById('scroll-letter');
+    
     net.style.display = spot.style.display = yt.style.display = 'block';
-    gsap.from([net, spot, yt], {y:50, opacity:0, duration:1, stagger:0.3});
+    
+    gsap.from([net, spot, yt], {y:50, opacity:0, duration:0.8, stagger:0.2});
     document.getElementById('gift-trigger').style.display = 'none';
-    setTimeout(() => { document.getElementById('scroll-letter').scrollTo({top: 9999, behavior:'smooth'}); }, 100);
+    
+    // Cuộn mượt mà xuống vùng quà tặng để Thùy thấy cả 3 thẻ
+    setTimeout(() => {
+        letter.scrollTo({top: letter.scrollHeight, behavior: 'smooth'});
+    }, 100);
 }
 </script>
 </body>
