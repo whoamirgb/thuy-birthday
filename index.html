@@ -16,7 +16,7 @@
         body { background: var(--bg); color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; height: 100vh; }
 
         canvas { position: fixed; inset: 0; pointer-events: none; }
-        #heart-canvas { z-index: 1; opacity: 0.6; } /* Tăng nhẹ opacity để thấy sao rõ hơn */
+        #heart-canvas { z-index: 1; } 
         #bubble-canvas { z-index: 20; pointer-events: auto; display: none; }
         #wishes-canvas { z-index: 25; display: none; }
 
@@ -32,7 +32,7 @@
             color: var(--p-l); padding: 8px 12px; border-radius: 5px; font-size: 0.7rem;
         }
 
-        /* Lock Screen - GIỮ NGUYÊN STYLE CŨ */
+        /* Lock Screen */
         #lock-screen {
             position: fixed; inset: 0; z-index: 9999;
             background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
@@ -45,7 +45,6 @@
         .scene { position: absolute; inset: 0; display: none; opacity: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
         .active { display: flex; opacity: 1; }
 
-        /* Card 3D */
         .card-container { width: 280px; height: 380px; perspective: 1000px; margin: 20px; }
         .inner-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;}
         .inner-card.flipped { transform: rotateY(180deg); }
@@ -53,7 +52,6 @@
         .front { background: #111; color: var(--p-l); }
         .back { background: #fffef0; color: #333; transform: rotateY(180deg); text-align: center; font-family: 'Dancing Script'; font-size: 1.4rem; }
 
-        /* 3D GIFT BOX */
         .gift-container { position: relative; width: 160px; height: 160px; perspective: 1000px; display: none; cursor: pointer; z-index: 100; margin-top: 20px;}
         .gift-box { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transform: rotateX(-20deg) rotateY(25deg); transition: 0.8s; }
         .gift-face { position: absolute; width: 160px; height: 160px; background: var(--p-d); border: 2px solid var(--p); }
@@ -66,7 +64,6 @@
         .gift-front::after, .gift-back::after, .gift-left::after, .gift-right::after { width: 30px; height: 100%; left: 65px; }
         .gift-top::after { width: 100%; height: 30px; top: 65px; }
 
-        /* THƯ CUỘN DÀI */
         #scroll-letter {
             width: 90%; max-width: 450px; height: 75vh; background: #fffef0;
             color: #333; padding: 30px; border-radius: 10px; overflow-y: auto;
@@ -76,7 +73,6 @@
         #scroll-letter::-webkit-scrollbar { width: 5px; }
         #scroll-letter::-webkit-scrollbar-thumb { background: var(--p-l); border-radius: 10px; }
 
-        /* NETFLIX */
         #netflix-card {
             display: none; width: 100%; background: #000; border-radius: 10px;
             padding: 20px; margin-top: 30px; border-left: 5px solid #e50914;
@@ -175,9 +171,9 @@
                 <p style="color:#e50914; font-weight:900; font-size:1.4rem; letter-spacing:2px;">NETFLIX PREMIUM</p>
                 <div style="margin:15px 0; border:1px dashed #555; padding:10px; background:rgba(255,255,255,0.05);">
                     <p style="font-size:0.8rem; color:#888;">Account:</p>
-                    <p style="color:#fff; font-weight:bold;">thuycuaanh@love.com</p>
+                    <p style="color:#fff; font-weight:bold;">kimjihoo2000kr@gmail.com</p>
                     <p style="font-size:0.8rem; color:#888; margin-top:10px;">Password:</p>
-                    <p style="color:#fff; font-weight:bold;">vutrucuathuy1903</p>
+                    <p style="color:#fff; font-weight:bold;">XXXXXXXX</p>
                 </div>
                 <p style="font-size:0.7rem; color:#aaa; font-style:italic;">Chúc bé xem phim thật vui cùng anh nhé! ❤️</p>
             </div>
@@ -186,7 +182,7 @@
 </section>
 
 <script>
-/* --- GIỮ NGUYÊN LOGIC CŨ CỦA BẠN --- */
+/* --- DATA --- */
 const wishes = ["Xinh đẹp ❤️", "Bình an 🍀", "Hạnh phúc 😊", "Luôn cười 😄", "Thành công ✨", "Mạnh mẽ 💪", "May mắn 🌈", "Rạng rỡ 🌟", "Yêu đời 🌸", "Yêu anh hơn ❤️"];
 const floatingMsgs = ["I love you so much <3", "Chúc mừng sinh nhật Thùy", "Anh yêu em", "Mãi bên nhau nhé", "Chúc em luôn cười tươi", "Cô gái 17 tuổi rực rỡ", "Công chúa của anh", "Bé ốc quế của anh hihi", "Vạn sự như ý", "Mãi xinh đẹp nhé Thùy"];
 
@@ -194,70 +190,84 @@ const cursor = document.getElementById('cursor');
 window.onmousemove = e => gsap.to(cursor, {x: e.clientX-6, y: e.clientY-6, duration:0.1});
 function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
 
-/* HEART & STAR BG (THÊM SAO VÀO ĐÂY) */
+/* --- BACKGROUND: HEARTS & TWINKLING STARS --- */
 const hCanvas = document.getElementById('heart-canvas');
 const hCtx = hCanvas.getContext('2d');
 let hearts = [];
-let stars = []; // Mảng chứa sao
+let stars = [];
 
-function resize() { hCanvas.width = innerWidth; hCanvas.height = innerHeight; initStars(); }
-window.onresize = resize; 
+function resize() { 
+    hCanvas.width = innerWidth; 
+    hCanvas.height = innerHeight; 
+    initStars(); 
+}
 
-// Khởi tạo sao
 function initStars() {
     stars = [];
-    for(let i=0; i<100; i++) {
+    for(let i=0; i<150; i++) {
         stars.push({
             x: Math.random() * hCanvas.width,
             y: Math.random() * hCanvas.height,
-            size: Math.random() * 2,
+            size: Math.random() * 1.5 + 0.5,
             opacity: Math.random(),
-            speed: Math.random() * 0.05,
-            twinkleSpeed: 0.01 + Math.random() * 0.02
+            twinkle: Math.random() * 0.02 + 0.005,
+            speed: Math.random() * 0.2 
         });
     }
 }
 
+window.onresize = resize;
 resize();
 
 class Heart {
     constructor() { this.reset(); }
-    reset() { this.x = Math.random()*hCanvas.width; this.y = hCanvas.height+20; this.size = Math.random()*15+10; this.speed = Math.random()*1.5+0.5; this.opacity = Math.random()*0.4+0.1; }
+    reset() { 
+        this.x = Math.random()*hCanvas.width; 
+        this.y = hCanvas.height+20; 
+        this.size = Math.random()*15+10; 
+        this.speed = Math.random()*1.5+0.5; 
+        this.opacity = Math.random()*0.4+0.1; 
+    }
     draw() { 
         this.y -= this.speed; 
         if(this.y < -30) this.reset(); 
+        hCtx.save();
         hCtx.globalAlpha = this.opacity; 
         hCtx.font = `${this.size}px serif`; 
         hCtx.fillText('❤️', this.x, this.y); 
+        hCtx.restore();
     }
 }
 
 for(let i=0; i<30; i++) hearts.push(new Heart());
 
-function animateHearts() { 
-    hCtx.clearRect(0,0,hCanvas.width, hCanvas.height);
+function animateBackground() { 
+    hCtx.fillStyle = '#03071e'; 
+    hCtx.fillRect(0, 0, hCanvas.width, hCanvas.height);
     
-    // Vẽ sao trước (nằm đằng sau trái tim)
     stars.forEach(s => {
-        s.opacity += s.twinkleSpeed;
-        if(s.opacity > 1 || s.opacity < 0) s.twinkleSpeed *= -1;
-        s.y -= s.speed; // Sao trôi nhẹ
+        s.opacity += s.twinkle;
+        if(s.opacity > 1 || s.opacity < 0) s.twinkle *= -1;
+        s.y -= s.speed;
         if(s.y < 0) s.y = hCanvas.height;
-        
+
+        hCtx.save();
+        hCtx.shadowBlur = 10;
+        hCtx.shadowColor = "white";
         hCtx.globalAlpha = Math.abs(s.opacity);
         hCtx.fillStyle = "white";
         hCtx.beginPath();
         hCtx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
         hCtx.fill();
+        hCtx.restore();
     });
 
-    // Vẽ trái tim
-    hearts.forEach(h=>h.draw()); 
-    requestAnimationFrame(animateHearts); 
+    hearts.forEach(h => h.draw()); 
+    requestAnimationFrame(animateBackground); 
 }
-animateHearts();
+animateBackground();
 
-/* HÀM PRESS CŨ CỦA BẠN */
+/* --- LOGIC --- */
 function press(num) {
     const input = document.getElementById('password-input');
     if(input.value.length < 6) input.value += num;
@@ -292,7 +302,6 @@ function changeScene(f, t) {
     }});
 }
 
-/* BUBBLE GAME */
 let poppedCount = 0;
 function startBubbleGame() {
     const bCanvas = document.getElementById('bubble-canvas');
@@ -312,7 +321,6 @@ function showPopText(txt,x,y) {
     document.body.appendChild(el); gsap.to(el, {y:y-120, opacity:0, duration:2, onComplete:()=>el.remove()});
 }
 
-/* HIỆU ỨNG LỜI CHÚC CHẢY XUỐNG */
 function startWishesFlow() {
     gsap.to('#game-ui', {opacity:0, duration:1});
     const wCanvas = document.getElementById('wishes-canvas');
@@ -330,11 +338,9 @@ function startWishesFlow() {
         requestAnimationFrame(draw);
     }
     draw();
-    // Sau 5s hiện hộp quà
     setTimeout(() => { document.getElementById('gift-box').style.display = 'block'; gsap.from('#gift-box', {scale:0, duration:1, ease:'back.out(1.7)'}); }, 5000);
 }
 
-/* MỞ QUÀ & HIỆN THƯ */
 function openGift() {
     gsap.to('#gift-lid', {y: -150, rotateX: 110, duration: 1});
     setTimeout(() => {
