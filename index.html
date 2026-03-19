@@ -14,9 +14,8 @@
         * { margin:0; padding:0; box-sizing:border-box; cursor: none; }
         body { background: var(--bg); color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; height: 100vh; }
 
-        /* Canvas Layers */
         canvas { position: fixed; inset: 0; pointer-events: none; }
-        #heart-canvas { z-index: 1; opacity: 0.5; }
+        #heart-canvas { z-index: 1; opacity: 0.4; }
         #bubble-canvas { z-index: 20; pointer-events: auto; display: none; }
         #wishes-canvas { z-index: 25; display: none; }
 
@@ -26,7 +25,15 @@
             box-shadow: 0 0 15px var(--p);
         }
 
-        /* Authentication Screen */
+        /* Fullscreen Button */
+        #fs-btn {
+            position: fixed; top: 20px; right: 20px; z-index: 10002;
+            background: rgba(255,255,255,0.1); border: 1px solid var(--p);
+            color: var(--p-l); padding: 8px 12px; border-radius: 5px;
+            cursor: pointer; font-size: 0.7rem; backdrop-filter: blur(5px);
+        }
+
+        /* Auth Screen */
         #lock-screen {
             position: fixed; inset: 0; z-index: 9999;
             background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
@@ -41,8 +48,7 @@
             border-radius: 50px; color: #fff; font-size: 1.5rem; width: 220px;
             text-align: center; letter-spacing: 5px; outline: none; margin: 20px 0;
         }
-        .num-btn { width: 55px; height: 55px; border-radius: 50%; border: none; background: var(--p); color: #fff; margin: 5px; cursor: pointer; font-size: 1.2rem; transition: 0.3s; }
-        .num-btn:hover { background: var(--p-d); transform: scale(1.1); }
+        .num-btn { width: 55px; height: 55px; border-radius: 50%; border: none; background: var(--p); color: #fff; margin: 5px; cursor: pointer; font-size: 1.2rem; }
 
         /* Scenes */
         .scene {
@@ -51,8 +57,14 @@
         }
         .active { display: flex; opacity: 1; }
 
-        /* Card 3D */
-        .card-container { width: 280px; height: 400px; perspective: 1000px; margin: 30px; }
+        .btn-primary {
+            padding: 12px 35px; border-radius: 50px; background: var(--p);
+            border: none; color: white; font-weight: bold; cursor: pointer; margin-top: 20px;
+            box-shadow: 0 10px 20px rgba(255, 77, 109, 0.3); z-index: 100;
+        }
+
+        /* 3D Card */
+        .card-container { width: 280px; height: 380px; perspective: 1000px; margin: 20px; }
         .inner-card {
             width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
@@ -61,30 +73,22 @@
         .card-face {
             position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
             border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 2px solid rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.1); padding: 20px;
         }
         .front { background: #111; color: var(--p-l); }
-        .back { background: #fffef0; color: #333; transform: rotateY(180deg); padding: 20px; text-align: center; font-family: 'Dancing Script'; font-size: 1.5rem; }
+        .back { background: #fffef0; color: #333; transform: rotateY(180deg); text-align: center; font-family: 'Dancing Script'; font-size: 1.4rem; }
 
         /* Final Letter */
         #final-letter {
             background: #fffef0; padding: 40px; border-radius: 10px; color: #222;
             max-width: 500px; width: 90%; position: relative; z-index: 100;
             box-shadow: 0 30px 60px rgba(0,0,0,0.8); display: none; opacity: 0;
-            transform: scale(0.5);
         }
-
-        .btn-primary {
-            padding: 12px 35px; border-radius: 50px; background: var(--p);
-            border: none; color: white; font-weight: bold; cursor: pointer; margin-top: 20px;
-            box-shadow: 0 10px 20px rgba(255, 77, 109, 0.3);
-        }
-        
-        #counter { font-size: 2rem; font-family: 'Pacifico'; color: var(--p); margin: 10px; }
     </style>
 </head>
 <body>
 
+<button id="fs-btn" onclick="toggleFullScreen()">FULLSCREEN</button>
 <audio id="bg-music" loop><source src="musicbd.mp3" type="audio/mpeg"></audio>
 <div id="cursor"></div>
 <canvas id="heart-canvas"></canvas>
@@ -93,8 +97,8 @@
 
 <section id="lock-screen">
     <div class="auth-container">
-        <h2 style="font-size:0.9rem; color:var(--p-l); letter-spacing: 2px;">VŨ TRỤ CỦA THÙY</h2>
-        <input type="password" id="password-input" maxlength="6" readonly placeholder="******">
+        <h2 style="font-size:0.8rem; color:var(--p-l); letter-spacing: 2px;">SECRET UNIVERSE</h2>
+        <input type="password" id="password-input" maxlength="6" readonly>
         <div id="numpad">
             <script>
                 for(let i=1; i<=9; i++) document.write(`<button class="num-btn" onclick="press('${i}')">${i}</button>`);
@@ -102,96 +106,95 @@
             <button class="num-btn" onclick="document.getElementById('password-input').value=''">C</button>
             <button class="num-btn" onclick="press('0')">0</button>
         </div>
-        <p style="margin-top: 15px; font-size: 0.7rem; color: #888;">Gợi ý: Ngày sinh của bé (DDMMYY) ✨</p>
+        <p style="margin-top: 15px; font-size: 0.7rem; color: #666;">Gợi ý: Ngày sinh bé Thùy (DDMMYY) ❤️</p>
     </div>
 </section>
 
 <section class="scene" id="s1">
-    <h1 style="font-family:'Dancing Script'; font-size:4.5rem; color:var(--p);">Hi Thùy!</h1>
-    <p id="typewriter" style="max-width:500px; text-align:center; line-height:1.8; margin:25px; color:#ddd; font-weight:300;"></p>
-    <button class="btn-primary" onclick="changeScene(1,2)">Tiếp tục hành trình</button>
+    <h1 style="font-family:'Dancing Script'; font-size:4rem; color:var(--p);">Chào Thùy!</h1>
+    <p id="typewriter" style="max-width:450px; text-align:center; line-height:1.6; margin:20px; color:#ccc;"></p>
+    <button class="btn-primary" onclick="changeScene(1,2)">Bắt đầu khám phá</button>
 </section>
 
 <section class="scene" id="s2">
-    <h2 style="font-family:'Dancing Script'; font-size:2.5rem; margin-bottom:10px;">The Mind Reader</h2>
+    <h2 style="font-family:'Dancing Script'; font-size:2.5rem;">The Mind Reader</h2>
     <div class="card-container">
-        <div class="inner-card" id="main-card" onclick="flipCard()">
+        <div class="inner-card" id="main-card" onclick="this.classList.add('flipped'); showNextBtn2()">
             <div class="card-face front">
-                <span style="font-size:5rem; filter: drop-shadow(0 0 10px var(--p));">🔮</span>
-                <p style="margin-top:20px; font-size:0.8rem; letter-spacing:1px;">CHẠM ĐỂ ĐỌC SUY NGHĨ</p>
+                <span style="font-size:4rem;">🔮</span>
+                <p style="margin-top:15px; font-size:0.7rem;">CHẠM ĐỂ XEM ANH NGHĨ GÌ</p>
             </div>
             <div class="card-face back">
-                <p>Anh biết lúc này em đang cười...</p>
-                <p style="color:var(--p-d); margin-top:15px; font-weight:bold;">Vì em là điều tuyệt vời nhất mà anh có! ❤️</p>
+                <p>Anh đoán chắc chắn lúc này em đang mỉm cười...</p>
+                <p style="color:var(--p-d); margin-top:15px; font-weight:bold;">Vì Thùy là món quà tuyệt nhất đời anh! ❤️</p>
             </div>
         </div>
     </div>
-    <button id="next-btn-2" class="btn-primary" style="display:none;" onclick="changeScene(2,3)">Khám phá món quà</button>
+    <button id="next-btn-2" class="btn-primary" style="display:none;" onclick="changeScene(2,3)">Nhận quà thôi nào!</button>
 </section>
 
 <section class="scene" id="s3">
-    <div id="game-ui" style="text-align:center;">
+    <div id="game-ui" style="text-align:center; z-index: 30;">
         <h2 style="font-family:'Dancing Script'; font-size:3rem; color:var(--p-l);">Pop the Bubbles!</h2>
-        <p style="color:#aaa;">Đập vỡ 10 quả bóng để giải mã điều bí mật</p>
-        <div id="counter">0/10</div>
+        <p id="counter" style="font-family:'Pacifico'; color:var(--p); font-size:2rem; margin:10px;">0/10</p>
     </div>
 
+    <button id="go-to-letter" class="btn-primary" style="display:none; position:fixed; bottom:50px; z-index:1001;" onclick="showFinalLetter()">Mở thư tay của anh 💌</button>
+
     <div id="final-letter">
-        <h2 style="font-family:'Pacifico'; color:var(--p-d); font-size: 1.8rem;">Gửi bé Thùy của anh,</h2>
-        <p style="margin-top:20px; line-height:1.7; font-size: 1.1rem; font-family: 'Dancing Script';">
-            Chúc mừng sinh nhật cô gái 17 tuổi! Hy vọng vũ trụ nhỏ này khiến em mỉm cười. 
-            Chúc em luôn rạng rỡ, xinh đẹp và mãi là công chúa trong thế giới của hai đứa mình nhé. Yêu em!
+        <h2 style="font-family:'Pacifico'; color:var(--p-d);">Gửi bé Thùy của anh,</h2>
+        <p style="margin-top:20px; line-height:1.7; font-family:'Dancing Script'; font-size:1.3rem;">
+            Chúc mừng sinh nhật cô gái 17 tuổi! Hy vọng vũ trụ nhỏ này khiến em vui. 
+            Chúc em luôn rạng rỡ, xinh đẹp và mãi là công chúa của anh nhé. Yêu em rất nhiều!
         </p>
-        <div style="background:var(--p); color:white; padding:12px; border-radius:8px; display:inline-block; margin-top:25px; font-size:0.9rem; font-weight:bold;">
-            GIFT CODE: LOVE-THUY-1903
+        <div style="background:var(--p); color:white; padding:10px; border-radius:5px; display:inline-block; margin-top:20px; font-size:0.8rem; font-weight:bold;">
+            GIFT: LOVE-THUY-1903
         </div>
-        <p style="text-align:right; margin-top:30px; font-family:'Dancing Script'; font-size: 1.8rem; color: var(--p-d);">- Anh người yêu IT -</p>
+        <p style="text-align:right; margin-top:30px; font-family:'Dancing Script'; font-size: 1.5rem; color:var(--p-d);">- Anh người yêu IT -</p>
     </div>
 </section>
 
 <script>
-/* --- 1. CONFIG & DATA --- */
+/* 1. DATA */
 const wishes = ["Xinh đẹp ❤️", "Bình an 🍀", "Hạnh phúc 😊", "Luôn cười 😄", "Thành công ✨", "Mạnh mẽ 💪", "May mắn 🌈", "Rạng rỡ 🌟", "Yêu đời 🌸", "Yêu anh hơn ❤️"];
-const floatingMessages = ["Chúc mừng sinh nhật", "Công chúa của anh", "Bình an cho em", "Thanh Tuyền", "Luôn cười tươi nhé", "I Love You 3000", "Xinh đẹp nhất", "Thùy Nguyễn ❤️", "Happy Birthday 🎂", "Mãi yêu em"];
+const floatingMsgs = ["I love you so much <3", "Chúc mừng sinh nhật Thùy", "Anh yêu em", "Mãi bên nhau nhé", "Chúc em luôn cười tươi", "Cô gái 17 tuổi rực rỡ", "Công chúa của anh", "Bé ốc quế của anh hihi", "Vạn sự như ý", "Mãi xinh đẹp nhé Thùy"];
 
-/* --- 2. TRÁI TIM NỀN --- */
+/* 2. CURSOR & FULLSCREEN */
+const cursor = document.getElementById('cursor');
+window.onmousemove = e => gsap.to(cursor, {x: e.clientX-6, y: e.clientY-6, duration:0.1});
+function toggleFullScreen() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else if (document.exitFullscreen) document.exitFullscreen();
+}
+
+/* 3. HEART BACKGROUND */
 const hCanvas = document.getElementById('heart-canvas');
 const hCtx = hCanvas.getContext('2d');
 let hearts = [];
-function resize() { hCanvas.width = window.innerWidth; hCanvas.height = window.innerHeight; }
+function resize() { hCanvas.width = innerWidth; hCanvas.height = innerHeight; }
 window.onresize = resize; resize();
 
 class Heart {
     constructor() { this.reset(); }
     reset() {
-        this.x = Math.random() * hCanvas.width;
-        this.y = hCanvas.height + 20;
-        this.size = Math.random() * 15 + 10;
-        this.speed = Math.random() * 1.5 + 0.5;
+        this.x = Math.random() * hCanvas.width; this.y = hCanvas.height + 20;
+        this.size = Math.random() * 15 + 10; this.speed = Math.random() * 1.5 + 0.5;
         this.opacity = Math.random() * 0.4 + 0.1;
     }
-    update() {
-        this.y -= this.speed;
-        if (this.y < -30) this.reset();
-    }
     draw() {
-        hCtx.globalAlpha = this.opacity;
-        hCtx.font = `${this.size}px serif`;
+        this.y -= this.speed; if (this.y < -30) this.reset();
+        hCtx.globalAlpha = this.opacity; hCtx.font = `${this.size}px serif`;
         hCtx.fillText('❤️', this.x, this.y);
     }
 }
 for(let i=0; i<30; i++) hearts.push(new Heart());
-function animateBackground() {
+function animateHearts() {
     hCtx.clearRect(0,0,hCanvas.width, hCanvas.height);
-    hearts.forEach(h => { h.update(); h.draw(); });
-    requestAnimationFrame(animateBackground);
+    hearts.forEach(h => h.draw()); requestAnimationFrame(animateHearts);
 }
-animateBackground();
+animateHearts();
 
-/* --- 3. LOGIC XỬ LÝ --- */
-const cursor = document.getElementById('cursor');
-window.onmousemove = (e) => gsap.to(cursor, {x: e.clientX-6, y: e.clientY-6, duration: 0.1});
-
+/* 4. LOGIC CHÍNH */
 function press(num) {
     const input = document.getElementById('password-input');
     if(input.value.length < 6) input.value += num;
@@ -206,148 +209,131 @@ function press(num) {
 }
 
 function runTypewriter() {
-    const text = "Chào Thùy, cảm ơn em đã xuất hiện trong cuộc đời anh. Anh đã gửi gắm tất cả tình cảm vào những dòng code này — một thế giới nhỏ bé chỉ dành riêng cho em. Hãy đi cùng anh đến cuối nhé...";
-    let i = 0;
-    const target = document.getElementById('typewriter');
-    function type() {
-        if(i < text.length) { target.innerHTML += text.charAt(i); i++; setTimeout(type, 50); }
-    }
+    const text = "Chào Thùy, cảm ơn em đã chọn xuất hiện trong cuộc đời anh. Anh đã gửi gắm tất cả vào những dòng code này — một thế giới nhỏ bé chỉ dành riêng cho em. Hãy kiên nhẫn đi cùng anh nhé...";
+    let i = 0; const target = document.getElementById('typewriter');
+    function type() { if(i < text.length) { target.innerHTML += text.charAt(i); i++; setTimeout(type, 50); } }
     type();
 }
 
-function flipCard() {
-    document.getElementById('main-card').classList.add('flipped');
+function showNextBtn2() {
     setTimeout(() => {
         const btn = document.getElementById('next-btn-2');
-        btn.style.display = 'block';
-        gsap.from(btn, {y: 20, opacity: 0});
+        btn.style.display = 'block'; gsap.from(btn, {y: 20, opacity:0});
     }, 800);
 }
 
 function changeScene(f, t) {
-    gsap.to(`#s${f}`, {opacity: 0, scale: 0.9, duration: 0.5, onComplete: () => {
+    gsap.to(`#s${f}`, {opacity:0, scale: 0.9, duration:0.5, onComplete: () => {
         document.getElementById(`s${f}`).style.display = 'none';
         const next = document.getElementById(`s${t}`);
         next.style.display = 'flex';
-        gsap.fromTo(next, {opacity: 0, scale: 1.1}, {opacity: 1, scale: 1, duration: 0.5});
+        gsap.fromTo(next, {opacity:0, scale: 1.1}, {opacity:1, scale:1, duration:0.5});
         if(t === 3) startBubbleGame();
     }});
 }
 
-/* --- 4. TRÒ CHƠI ĐẬP BÓNG --- */
-let popped = 0;
+/* 5. BUBBLE GAME */
+let poppedCount = 0;
 function startBubbleGame() {
     const bCanvas = document.getElementById('bubble-canvas');
     const bCtx = bCanvas.getContext('2d');
-    bCanvas.style.display = 'block';
-    bCanvas.width = window.innerWidth;
-    bCanvas.height = window.innerHeight;
-
+    bCanvas.style.display = 'block'; bCanvas.width = innerWidth; bCanvas.height = innerHeight;
     let bubbles = wishes.map((txt, i) => ({
         x: Math.random() * (innerWidth - 100) + 50,
         y: innerHeight + (i * 150) + 100,
-        r: 45, text: txt, isPopped: false, speed: 2 + Math.random() * 2
+        r: 45, text: txt, isPopped: false, speed: 2 + Math.random() * 1.5
     }));
 
     function draw() {
         bCtx.clearRect(0,0,bCanvas.width, bCanvas.height);
         bubbles.forEach(b => {
             if(!b.isPopped) {
-                b.y -= b.speed;
-                b.x += Math.sin(b.y/50);
+                b.y -= b.speed; b.x += Math.sin(b.y/40);
                 if(b.y < -50) b.y = innerHeight + 50;
-                bCtx.beginPath();
-                bCtx.arc(b.x, b.y, b.r, 0, Math.PI*2);
-                bCtx.fillStyle = 'rgba(255, 77, 109, 0.5)';
-                bCtx.fill();
-                bCtx.fillStyle = '#fff';
-                bCtx.font = '30px Arial';
-                bCtx.textAlign = 'center';
+                bCtx.beginPath(); bCtx.arc(b.x, b.y, b.r, 0, Math.PI*2);
+                bCtx.fillStyle = 'rgba(255, 77, 109, 0.5)'; bCtx.fill();
+                bCtx.fillStyle = '#fff'; bCtx.font = '30px Arial'; bCtx.textAlign = 'center';
                 bCtx.fillText('🎈', b.x, b.y + 10);
             }
         });
-        if(popped < 10) requestAnimationFrame(draw);
+        if(poppedCount < 10) requestAnimationFrame(draw);
         else { bCanvas.style.display = 'none'; startWishesFlow(); }
     }
     draw();
 
-    bCanvas.onclick = (e) => {
+    bCanvas.onclick = e => {
         bubbles.forEach(b => {
             if(!b.isPopped && Math.hypot(e.clientX - b.x, e.clientY - b.y) < b.r) {
-                b.isPopped = true;
-                popped++;
-                document.getElementById('counter').innerText = `${popped}/10`;
-                showPopText(b.text, b.x, b.y);
+                b.isPopped = true; poppedCount++;
+                document.getElementById('counter').innerText = `${poppedCount}/10`;
+                showFloatingText(b.text, b.x, b.y);
             }
         });
     };
 }
 
-function showPopText(txt, x, y) {
+function showFloatingText(txt, x, y) {
     const el = document.createElement('div');
-    el.innerText = txt;
-    el.style.cssText = `position:fixed; left:${x}px; top:${y}px; color:white; font-family:'Dancing Script'; font-size:2rem; pointer-events:none; z-index:100; text-shadow:0 0 10px var(--p);`;
+    el.innerText = txt; el.style.cssText = `position:fixed; left:${x}px; top:${y}px; color:var(--p); font-weight:bold; font-size:2rem; font-family:'Dancing Script'; z-index:100; text-shadow:0 0 10px white; pointer-events:none;`;
     document.body.appendChild(el);
-    gsap.to(el, {y: y-100, opacity:0, duration:1.5, onComplete:() => el.remove()});
+    gsap.to(el, {y: y-120, opacity:0, duration:2, onComplete: () => el.remove()});
 }
 
-/* --- 5. HIỆU ỨNG LỜI CHÚC 3D (THAY THẾ MATRIX) --- */
+/* 6. WISHES FLOW (THEO YÊU CẦU: CHẢY TỪ TRÊN XUỐNG) */
 function startWishesFlow() {
-    gsap.to('#game-ui', {opacity:0, duration: 1});
+    gsap.to('#game-ui', {opacity: 0, duration: 1});
     const wCanvas = document.getElementById('wishes-canvas');
     const wCtx = wCanvas.getContext('2d');
-    wCanvas.style.display = 'block';
-    wCanvas.width = window.innerWidth;
-    wCanvas.height = window.innerHeight;
+    wCanvas.style.display = 'block'; wCanvas.width = innerWidth; wCanvas.height = innerHeight;
 
     let items = [];
-    floatingMessages.forEach((m, i) => {
+    floatingMsgs.forEach((m, i) => {
         items.push({
-            text: m,
-            x: Math.random() * wCanvas.width,
-            y: wCanvas.height + (i * 100),
-            z: Math.random() * 2, // Chiều sâu
-            rotation: Math.random() * Math.PI * 2,
-            rotSpeed: (Math.random() - 0.5) * 0.02,
-            speed: 1 + Math.random() * 2,
-            fontSize: 20 + Math.random() * 30
+            text: m, x: Math.random() * wCanvas.width, y: -100 - (i * 150),
+            z: Math.random() * 1.5, rotation: Math.random() * 0.4 - 0.2,
+            rotSpeed: (Math.random() - 0.5) * 0.01, speed: 1 + Math.random() * 1,
+            size: 20 + Math.random() * 25
         });
     });
 
-    function drawFlow() {
+    function draw() {
         wCtx.clearRect(0,0,wCanvas.width, wCanvas.height);
         items.forEach(item => {
-            item.y -= item.speed;
+            item.y += item.speed; // CHẢY TỪ TRÊN XUỐNG
             item.rotation += item.rotSpeed;
-            
-            // Hiệu ứng giả lập 3D (xoay và kích thước theo Z)
             const scale = 0.5 + item.z;
             wCtx.save();
             wCtx.translate(item.x, item.y);
             wCtx.rotate(item.rotation);
             wCtx.scale(scale, scale);
-            
-            wCtx.shadowBlur = 15;
-            wCtx.shadowColor = 'var(--p-l)';
-            wCtx.fillStyle = `rgba(255, 117, 143, ${0.3 + item.z/2})`;
-            wCtx.font = `bold ${item.fontSize}px Montserrat`;
+            wCtx.shadowBlur = 15; wCtx.shadowColor = '#ff758f';
+            wCtx.fillStyle = `rgba(255, 117, 143, ${0.4 + item.z/2})`;
+            wCtx.font = `600 ${item.size}px Montserrat`;
             wCtx.textAlign = 'center';
             wCtx.fillText(item.text, 0, 0);
             wCtx.restore();
-
-            if(item.y < -200) item.y = wCanvas.height + 200;
+            if(item.y > wCanvas.height + 100) item.y = -100;
         });
-        requestAnimationFrame(drawFlow);
+        requestAnimationFrame(draw);
     }
-    drawFlow();
+    draw();
 
-    // Sau 5 giây hiện bức thư cuối
+    // Hiện nút sau 5 giây để cô ấy ngắm
     setTimeout(() => {
-        gsap.to(wCanvas, {opacity: 0, duration: 2});
+        const btn = document.getElementById('go-to-letter');
+        btn.style.display = 'block';
+        gsap.fromTo(btn, {opacity: 0, y: 50}, {opacity: 1, y: 0, duration: 1});
+    }, 5000);
+}
+
+function showFinalLetter() {
+    gsap.to('#wishes-canvas, #go-to-letter', {opacity: 0, duration: 1, onComplete: () => {
+        document.getElementById('wishes-canvas').style.display = 'none';
+        document.getElementById('go-to-letter').style.display = 'none';
         const letter = document.getElementById('final-letter');
         letter.style.display = 'block';
         gsap.to(letter, {opacity: 1, scale: 1, duration: 1.5, ease: 'elastic.out(1, 0.6)'});
-    }, 5000);
+    }});
 }
 </script>
 </body>
