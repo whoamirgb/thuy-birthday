@@ -45,73 +45,14 @@
         .scene { position: absolute; inset: 0; display: none; opacity: 0; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
         .active { display: flex; opacity: 1; }
 
-        /* --- HEART GAME WITH PERFECT HEART SHAPE --- */
+        /* --- HEART GAME REFIXED TO BE PERFECTLY ROUND --- */
         #heart-game { display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 50; }
-        
-        .heart-container {
-            width: 300px;
-            height: 300px;
-            position: relative;
-            cursor: pointer;
-            filter: drop-shadow(0 0 20px rgba(255, 77, 109, 0.6));
-            margin: 20px 0;
+        .heart-svg-container {
+            width: 250px; height: 250px; position: relative; cursor: pointer;
+            filter: drop-shadow(0 0 15px rgba(255, 77, 109, 0.4));
+            transition: transform 0.1s ease;
         }
-        
-        .heart-svg {
-            width: 100%;
-            height: 100%;
-            transform: rotate(0deg);
-        }
-        
-        #heart-outline {
-            fill: none;
-            stroke: var(--p);
-            stroke-width: 3;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-        
-        #heart-fill {
-            fill: var(--p);
-            clip-path: polygon(50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%);
-            transition: clip-path 0.1s ease;
-        }
-        
-        .heart-beat {
-            animation: heartbeat 0.3s ease-in-out;
-        }
-        
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            30% { transform: scale(1.2); }
-            60% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        
-        .heart-glow {
-            animation: glowPulse 2s infinite;
-        }
-        
-        @keyframes glowPulse {
-            0% { filter: drop-shadow(0 0 20px rgba(255, 77, 109, 0.6)); }
-            50% { filter: drop-shadow(0 0 40px rgba(255, 77, 109, 0.9)); }
-            100% { filter: drop-shadow(0 0 20px rgba(255, 77, 109, 0.6)); }
-        }
-        
-        #cps-display {
-            font-weight: bold;
-            color: var(--gold);
-            font-size: 1.3rem;
-            margin-top: 20px;
-            text-shadow: 0 0 10px rgba(255, 183, 3, 0.5);
-        }
-        
-        .progress-text {
-            color: #fff;
-            font-size: 1rem;
-            margin-top: 10px;
-            opacity: 0.8;
-        }
+        #heart-fill-path { fill: var(--p); clip-path: inset(100% 0 0 0); transition: clip-path 0.1s ease; }
         /* --------------------------------------------------- */
 
         .gift-container { 
@@ -208,17 +149,17 @@
 
     <div id="heart-game">
         <h2 style="font-family:'Dancing Script'; font-size:2.2rem; color:var(--p-l); margin-bottom:10px;">Chứng minh tình yêu đi!</h2>
-        <p style="font-size:0.9rem; color:#aaa; margin-bottom:20px; letter-spacing:1px;">Click thật nhanh để lấp đầy trái tim</p>
+        <p style="font-size:0.8rem; color:#aaa; margin-bottom:25px; letter-spacing:1px;">Spam click thật nhanh để lấp đầy trái tim</p>
         
-        <div class="heart-container" onclick="fillHeart()">
-            <svg class="heart-svg" viewBox="0 0 100 100">
-                <!-- Perfect heart shape path -->
-                <path id="heart-outline" d="M50,88 C50,88 92,60 92,32 C92,12 72,8 50,26 C28,8 8,12 8,32 C8,60 50,88 50,88" />
-                <path id="heart-fill" d="M50,88 C50,88 92,60 92,32 C92,12 72,8 50,26 C28,8 8,12 8,32 C8,60 50,88 50,88" />
+        <div class="heart-svg-container" onclick="fillHeart()">
+            <svg viewBox="0 0 100 100" width="100%" height="100%">
+                <path d="M50,90 C50,90 85,60 85,35 A20,20 0 0,0 45,35 M50,90 C50,90 15,60 15,35 A20,20 0 0,1 55,35" 
+                      fill="none" stroke="#ff4d6d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <path id="heart-fill-path" d="M50,90 C50,90 85,60 85,35 A20,20 0 0,0 45,35 M50,90 C50,90 15,60 15,35 A20,20 0 0,1 55,35" 
+                      fill="var(--p)" stroke="#ff4d6d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </div>
         
-        <div class="progress-text">Trái tim đang được lấp đầy...</div>
         <p id="cps-display" style="font-weight:bold; color:var(--gold); font-size:1.2rem; margin-top:20px;"></p>
     </div>
 
@@ -343,118 +284,44 @@ function showPopText(txt,x,y) {
     document.body.appendChild(el); gsap.to(el, {y:y-120, opacity:0, duration:2, onComplete:()=>el.remove()});
 }
 
-// --- HEART GAME WITH PERFECT HEART SHAPE ---
+// --- HEART GAME REFIXED TO SVG PERFECT HEART ---
 let heartProgress = 0;
 let clickTimes = [];
-
 function showHeartGame() {
     gsap.to('#game-ui', {opacity: 0, duration: 0.5});
     gsap.to('#heart-game', {display: 'flex', opacity: 1, duration: 1});
-    
-    // Add floating animation to heart
-    gsap.to('.heart-container', {
-        y: -10,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "power1.inOut"
-    });
 }
 
 function fillHeart() {
     if(heartProgress >= 100) return;
-    
-    // Increase progress faster with each click
-    heartProgress += 5;
+    heartProgress += 4; // Tăng nhanh hơn một chút
     if(heartProgress > 100) heartProgress = 100;
     
-    // Calculate clip path points based on progress
-    // We create a polygon that reveals from bottom to top with a heart shape
-    const percent = heartProgress / 100;
-    const points = [];
+    // SVG Filling Logic: 100% là inset(0 0 0 0), 0% là inset(100% 0 0 0)
+    document.getElementById('heart-fill-path').style.clipPath = `inset(${100 - heartProgress}% 0 0 0)`;
     
-    // Create a smooth heart-shaped reveal
-    for(let i = 0; i <= 20; i++) {
-        const angle = (i / 20) * Math.PI * 2;
-        const x = 50 + 45 * Math.sin(angle) * (1 - percent * 0.1);
-        const y = 100 - (100 - 10) * percent + 45 * Math.cos(angle) * (1 - percent * 0.1);
-        points.push(`${x}% ${y}%`);
-    }
-    
-    // Apply clip path
-    document.getElementById('heart-fill').style.clipPath = `polygon(50% 100%, ${points.join(', ')})`;
-    
-    // Heartbeat animation
-    document.querySelector('.heart-container').classList.add('heart-beat');
-    setTimeout(() => {
-        document.querySelector('.heart-container').classList.remove('heart-beat');
-    }, 300);
-    
-    // Calculate CPS
     const now = Date.now();
     clickTimes.push(now);
     clickTimes = clickTimes.filter(t => now - t < 1000);
-    document.getElementById('cps-display').innerHTML = `❤️ ${clickTimes.length} nhịp tim/giây ❤️`;
+    document.getElementById('cps-display').innerText = `Tốc độ: ${clickTimes.length} tim/s`;
+
+    // Nhịp tim khi click
+    gsap.fromTo('.heart-svg-container', {scale: 1}, {scale: 1.15, duration: 0.08, yoyo: true, repeat: 1, ease: "bounce.out"});
 
     if(heartProgress >= 100) {
-        // Explode heart effect
+        // Nổ tung trái tim
         const tl = gsap.timeline();
-        
-        // Create explosion particles
-        for(let i = 0; i < 20; i++) {
-            const particle = document.createElement('div');
-            particle.innerHTML = '❤️';
-            particle.style.cssText = `
-                position: fixed;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-                color: var(--p);
-                font-size: 30px;
-                z-index: 1000;
-                pointer-events: none;
-            `;
-            document.body.appendChild(particle);
-            
-            const angle = (i / 20) * Math.PI * 2;
-            const distance = 200;
-            gsap.to(particle, {
-                x: Math.cos(angle) * distance,
-                y: Math.sin(angle) * distance,
-                opacity: 0,
-                scale: 2,
-                duration: 1,
-                ease: "power2.out",
-                onComplete: () => particle.remove()
-            });
-        }
-        
-        tl.to('.heart-container', {
-            scale: 2,
-            opacity: 0,
-            duration: 0.8,
-            ease: "power2.in",
-            onComplete: () => {
-                document.getElementById('heart-game').style.display = 'none';
-                startWishesFlow();
-            }
+        tl.to('.heart-svg-container', { scale: 5, opacity: 0, duration: 0.6, ease: 'power2.in' });
+        tl.call(() => {
+            document.getElementById('heart-game').style.display = 'none';
+            startWishesFlow();
         });
         
-        // Add bright flash
-        const flash = document.createElement('div');
-        flash.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 999;
-            pointer-events: none;
-            opacity: 0;
-        `;
-        document.body.appendChild(flash);
-        gsap.to(flash, { opacity: 0.8, duration: 0.2, yoyo: true, repeat: 1, onComplete: () => flash.remove() });
+        // Hiệu ứng phát sáng
+        const glow = document.createElement('div');
+        glow.style.cssText = "position:fixed; top:50%; left:50%; width:10px; height:10px; background:#fff; border-radius:50%; z-index:150; transform:translate(-50%,-50%); box-shadow:0 0 100px 50px #fff;";
+        document.body.appendChild(glow);
+        gsap.to(glow, { scale: 100, opacity: 0, duration: 1, onComplete: () => glow.remove() });
     }
 }
 
@@ -472,7 +339,7 @@ function startWishesFlow() {
     setTimeout(() => { 
         document.getElementById('gift-box').style.display = 'block'; 
         gsap.from('#gift-box', {scale:0, duration:1, ease:'back.out(1.7)'});
-        // Gift box breathing animation
+        // Hộp quà "thở"
         gsap.to('#inner-gift', { rotationY: 40, repeat: -1, yoyo: true, duration: 2, ease: "sine.inOut" });
         gsap.to('#gift-box', { y: "-=15", repeat: -1, yoyo: true, duration: 1.5, ease: "power1.inOut" });
     }, 2000);
@@ -480,9 +347,9 @@ function startWishesFlow() {
 
 function openGift() {
     const tl = gsap.timeline();
-    // Shake gift box
+    // Rung lắc hộp quà
     tl.to('#inner-gift', { x: 10, duration: 0.05, repeat: 12, yoyo: true });
-    // Lid flies away
+    // Bung nắp văng ra xa
     tl.to('#gift-lid', { y: -300, x: 100, rotateZ: 45, rotateX: 110, opacity: 0, duration: 1.2, ease: "power4.out" });
     
     setTimeout(() => {
@@ -502,4 +369,12 @@ function revealPrizes() {
     const yt = document.getElementById('youtube-card');
     const letter = document.getElementById('scroll-letter');
     net.style.display = spot.style.display = yt.style.display = 'block';
-    gsap.from([net, spot, yt], {y:
+    gsap.from([net, spot, yt], {y:50, opacity:0, duration:0.8, stagger:0.2});
+    document.getElementById('gift-trigger').style.display = 'none';
+    setTimeout(() => { letter.scrollTo({top: letter.scrollHeight, behavior: 'smooth'}); }, 100);
+}
+</script>
+</body>
+</html>
+
+
