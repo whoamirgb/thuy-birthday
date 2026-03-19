@@ -72,41 +72,39 @@
         .gift-right { transform: rotateY(90deg) translateZ(90px); }
         .gift-front::after, .gift-back::after, .gift-left::after, .gift-right::after { width: 40px; height: 100%; left: 70px; }
 
-        /* LETTER & PREMIUM CARDS */
+        /* LETTER & CARDS */
         #scroll-letter {
-            width: 95%; max-width: 520px; height: 85vh; background: #fffef0;
-            color: #333; padding: 35px 25px; border-radius: 20px; overflow-y: auto;
+            width: 95%; max-width: 500px; height: 85vh; background: #fffef0;
+            color: #333; padding: 25px; border-radius: 15px; overflow-y: auto;
             display: none; opacity: 0; flex-direction: column; align-items: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.8); z-index: 200; border: 10px solid #f4f1de;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8); z-index: 200; border: 8px solid #f4f1de;
         }
-
-        .letter-content { font-family:'Dancing Script'; font-size:1.5rem; line-height:1.7; text-align:justify; width:100%; padding-bottom: 30px; }
 
         .premium-card {
-            display: none; width: 100%; border-radius: 18px; padding: 25px; margin-top: 25px;
+            display: none; width: 100%; border-radius: 16px; padding: 25px; margin-top: 25px;
             text-align: left; position: relative; overflow: hidden;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.1); border: none;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            transition: transform 0.3s; border: none;
         }
+        .premium-card:hover { transform: translateY(-5px); }
 
-        .netflix-style { background: linear-gradient(135deg, #000000 0%, #2b2b2b 100%); border-left: 6px solid var(--netflix); }
-        .spotify-style { background: linear-gradient(135deg, #000000 0%, #121212 100%); border-left: 6px solid var(--spotify); }
-        .youtube-style { background: linear-gradient(135deg, #ffffff 0%, #f7f7f7 100%); border-left: 6px solid var(--youtube); border: 1px solid #eee; }
+        .netflix-style { background: linear-gradient(135deg, #000000 0%, #333333 100%); border-left: 6px solid var(--netflix); }
+        .spotify-style { background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); border-left: 6px solid var(--spotify); }
+        .youtube-style { background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%); border-left: 6px solid var(--youtube); border: 1px solid #ddd; }
 
-        .card-label { font-size: 0.6rem; font-weight: 900; letter-spacing: 2px; margin-bottom: 6px; display: block; }
-        .card-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 8px; font-family: 'Montserrat'; }
-        .card-desc { font-size: 0.75rem; line-height: 1.6; opacity: 0.8; margin-bottom: 12px; font-family: 'Montserrat'; }
-        .card-footer { font-weight: 800; font-size: 0.85rem; color: var(--p-d); font-style: italic; }
+        .card-label { font-size: 0.65rem; font-weight: 900; letter-spacing: 2px; margin-bottom: 5px; display: block; }
+        .card-title { font-size: 1.3rem; font-weight: 900; margin-bottom: 10px; font-family: 'Montserrat'; }
+        .card-desc { font-size: 0.75rem; line-height: 1.5; opacity: 0.8; margin-bottom: 15px; font-family: 'Montserrat'; font-weight: 400;}
+        .card-footer { font-weight: 700; font-size: 0.85rem; color: var(--p-d); font-style: italic; }
 
-        .netflix-style .card-label, .netflix-style .card-title { color: var(--netflix); }
-        .spotify-style .card-label, .spotify-style .card-title { color: var(--spotify); }
-        .youtube-style .card-label, .youtube-style .card-title { color: var(--youtube); }
-        .youtube-style .card-desc { color: #555; }
+        .netflix-style .card-label { color: var(--netflix); }
+        .spotify-style .card-label { color: var(--spotify); }
+        .youtube-style .card-label { color: var(--youtube); }
+        .youtube-style .card-desc { color: #444; }
 
-        .btn-primary { padding: 12px 35px; border-radius: 50px; background: var(--p); border: none; color: white; font-weight: bold; cursor: pointer; margin-top: 20px; transition: transform 0.2s; }
-        .btn-primary:active { transform: scale(0.95); }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+        .btn-primary { padding: 12px 35px; border-radius: 50px; background: var(--p); border: none; color: white; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--p-l); border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -184,56 +182,39 @@
         <p style="text-align:center; margin-top:40px; color:var(--gold); font-weight:bold; font-size:0.8rem; letter-spacing:2px;">CHẠM ĐỂ MỞ QUÀ ✨</p>
     </div>
 
-    <div id="scroll-letter">
-        <div class="letter-content">
-            <h2 style="font-family:'Pacifico'; color:var(--p-d); margin-bottom:25px; text-align:center;">Gửi bé Thùy của anh,</h2>
+    <div id="scroll-letter"> <div style="font-family:'Dancing Script'; font-size:1.5rem; line-height:1.8; text-align:center; width:100%;"> <h2 style="font-family:'Pacifico'; color:var(--p-d); margin-bottom:20px;">Gửi bé Thùy của anh,</h2> <p>Vậy là em đã bước sang tuổi 17 rồi đó… một độ tuổi rất đẹp, rất rực rỡ, giống hệt như cách em xuất hiện trong cuộc đời anh vậy.</p> <p>Anh không biết phải bắt đầu từ đâu nữa, vì thật ra… từ khi có em, mọi thứ trong anh dường như cũng thay đổi theo một cách rất nhẹ nhàng. Những ngày bình thường bỗng trở nên đáng mong chờ hơn, những khoảnh khắc nhỏ nhặt cũng trở nên ý nghĩa hơn… chỉ vì trong đó có em.</p> <p>Anh biết mình không phải là người giỏi nói những lời hoa mỹ, cũng không phải kiểu người lúc nào cũng thể hiện được hết cảm xúc của mình. Nhưng nếu có một điều anh chắc chắn, thì đó là… anh thật sự rất trân trọng em. Trân trọng cách em cười, cách em quan tâm, và cả những lúc em vô tư, đáng yêu đến mức làm anh chỉ muốn giữ lại tất cả những khoảnh khắc đó mãi mãi.</p> <p>Tuổi 17 của em, anh không mong gì quá lớn lao đâu. Anh chỉ mong em luôn vui vẻ, luôn giữ được nụ cười tỏa nắng ấy. Mong những điều buồn sẽ nhẹ lại, những điều tốt đẹp sẽ đến nhiều hơn. Mong em luôn là chính em – một cô gái vừa đáng yêu, vừa mạnh mẽ theo cách rất riêng.</p> <p>Anh cũng mong rằng, dù sau này có chuyện gì xảy ra, em vẫn sẽ nhớ rằng đã từng có một người luôn âm thầm đứng phía sau, luôn muốn em hạnh phúc, luôn mong em bình an… và luôn dành cho em một tình cảm rất đặc biệt.</p> <p>Cảm ơn em vì đã xuất hiện. Cảm ơn em vì đã là em</p> <p>Chúc mừng sinh nhật em – cô gái 17 tuổi rực rỡ nhất trong mắt anh ❤️</p> <p>Thương em rất nhiều.</p> <p style="text-align:right; margin-top:20px; font-size:1.8rem;">- Người luôn đứng về phía em <3 -</p>
             
-            <p>Vậy là cô gái nhỏ của anh đã chính thức bước sang tuổi 17 rồi đó… Một độ tuổi thật đẹp, thật rực rỡ, giống hệt như cách mà em đã xuất hiện và làm bừng sáng thế giới của anh vậy.</p>
-            
-            <p>Ngồi viết những dòng này, anh chợt nhận ra mình may mắn đến nhường nào. Anh không biết phải bắt đầu từ đâu để nói hết những suy nghĩ trong lòng, vì thật sự từ khi có em, mọi thứ xung quanh anh dường như đều trở nên nhẹ nhàng và đáng yêu hơn rất nhiều. Những ngày bình thường bỗng hóa thành những ngày đáng mong chờ, và cả những khoảnh khắc nhỏ nhặt nhất cũng trở nên vô cùng ý nghĩa… chỉ đơn giản vì trong những khoảnh khắc đó có em.</p>
-            
-            <p>Anh biết bản thân mình vốn không giỏi nói những lời hoa mỹ, đôi khi còn vụng về trong cách thể hiện tình cảm. Nhưng nếu có một điều trên đời này anh có thể khẳng định chắc chắn, thì đó là việc anh trân trọng em nhiều đến thế nào. Anh trân trọng từng nụ cười làm bừng sáng cả khuôn mặt em, trân trọng cách em quan tâm anh bằng những điều nhỏ bé, và cả những lúc em vô tư, tinh nghịch khiến anh chỉ muốn giữ mãi những phút giây ấy lại cho riêng mình.</p>
-            
-            <p>Tuổi 17 của em, anh không mong gì quá lớn lao hay xa xôi cả. Anh chỉ mong Thùy của anh luôn giữ được sự lạc quan và nụ cười tỏa nắng ấy trên môi. Mong rằng những áp lực hay nỗi buồn nếu có đến cũng sẽ sớm tan biến như mây trời, để nhường chỗ cho những điều ngọt ngào và tốt đẹp hơn. Mong em luôn tự tin là chính mình – một cô gái vừa dịu dàng, đáng yêu, nhưng cũng vô cùng mạnh mẽ theo cách của riêng em.</p>
-            
-            <p>Dù sau này cuộc sống có thay đổi ra sao, anh vẫn sẽ luôn ở đây, ngay phía sau em. Anh sẽ luôn là người sẵn sàng lắng nghe, chia sẻ và đứng về phía em vô điều kiện. Cảm ơn em vì đã đến, cảm ơn em vì đã kiên nhẫn và dành tình cảm cho anh.</p>
-            
-            <p>Chúc mừng sinh nhật cô gái 17 tuổi rực rỡ nhất trong mắt anh ❤️ Anh có chuẩn bị một vài "đặc quyền" nhỏ dưới đây để chăm sóc cho những giờ phút thư giãn của em, hy vọng em sẽ thích nhé!</p>
-
-            <p style="text-align:right; margin-top:30px; font-size:1.8rem;">Thương em thật nhiều,</p>
-            <p style="text-align:right; font-size:1.2rem;">Người luôn đứng về phía em <3</p>
-
-            <div style="text-align:center; margin-top:40px;">
-                <button class="btn-primary" id="gift-trigger" onclick="revealPrizes()">Mở hộp quà bí mật của Thùy 🎁</button>
-            </div>
+            <button class="btn-primary" id="gift-trigger" onclick="revealPrizes()">Mở hộp quà bí mật 🎁</button>
 
             <div id="netflix-card" class="premium-card netflix-style">
-                <span class="card-label">SPECIAL GIFT</span>
+                <span class="card-label">OFFICIAL MEMBER</span>
                 <h3 class="card-title">NETFLIX ULTRA HD 4K</h3>
-                <p class="card-desc">Dành cho những tối cuối tuần chill cùng phim ảnh. Chất lượng 4K sắc nét nhất để em tận hưởng trọn vẹn từng thước phim yêu thích nhé.</p>
+                <p class="card-desc">Thưởng thức những bộ phim bom tấn với chất lượng hình ảnh sắc nét nhất, chuẩn HDR sống động để em xem phim bộ mỗi tối thật thư giãn.</p>
                 <p class="card-footer">Nói chuyện riêng với anh nhé!</p>
             </div>
 
             <div id="spotify-card" class="premium-card spotify-style">
-                <span class="card-label">FOR YOUR EARS</span>
+                <span class="card-label">MUSIC LOVER</span>
                 <h3 class="card-title">SPOTIFY PREMIUM</h3>
-                <p class="card-desc">Để âm nhạc luôn bên cạnh em mỗi khi vui hay buồn. Không quảng cáo, âm thanh chuẩn nhất để giọng ca em yêu thích vang lên thật trong trẻo.</p>
+                <p class="card-desc">Đắm chìm trong thế giới âm nhạc không quảng cáo, âm thanh chất lượng cực cao để những giai điệu yêu thích luôn đồng hành cùng em.</p>
                 <p class="card-footer">Nói chuyện riêng với anh nhé!</p>
             </div>
 
             <div id="youtube-card" class="premium-card youtube-style">
-                <span class="card-label">SMOOTH EXPERIENCE</span>
+                <span class="card-label">ENDLESS CONTENT</span>
                 <h3 class="card-title">YOUTUBE PREMIUM</h3>
-                <p class="card-desc">Xem vlog, học tập hay giải trí mà không bao giờ bị gián đoạn. Anh muốn mọi thứ em chạm vào đều thật mượt mà và dễ chịu.</p>
+                <p class="card-desc">Trải nghiệm xem video mượt mà, không gián đoạn, hỗ trợ nghe nhạc trong nền để em tha hồ "cày" những nội dung mình thích.</p>
                 <p class="card-footer">Nói chuyện riêng với anh nhé!</p>
             </div>
+
+            <p style="text-align:right; margin-top:30px; font-size:1.5rem;">- Mãi yêu em ❤️ -</p>
         </div>
     </div>
 </section>
 
 <script>
 const wishes = ["Xinh đẹp ❤️", "Bình an 🍀", "Hạnh phúc 😊", "Luôn cười 😄", "Thành công ✨", "Mạnh mẽ 💪", "May mắn 🌈", "Rạng rỡ 🌟", "Yêu đời 🌸", "Yêu anh hơn ❤️"];
-const floatingMsgs = ["I love you so much <3", "Chúc mừng sinh nhật Thùy", "Anh yêu em", "Mãi bên nhau nhé", "Công chúa của anh", "Bé ốc quế của anh hihi", "Mãi xinh đẹp nhé Thùy"];
+const floatingMsgs = ["I love you so much <3", "Chúc mừng sinh nhật Thùy", "Anh yêu em", "Mãi bên nhau nhé", "Chúc em luôn cười tươi", "Công chúa của anh", "Bé ốc quế của anh hihi", "Mãi xinh đẹp nhé Thùy"];
 
 const cursor = document.getElementById('cursor');
 window.onmousemove = e => gsap.to(cursor, {x: e.clientX-6, y: e.clientY-6, duration:0.1});
@@ -257,6 +238,7 @@ function animateBackground() {
 }
 animateBackground();
 
+// App Logic
 function press(num) {
     const input = document.getElementById('password-input');
     if(input.value.length < 6) input.value += num;
@@ -284,7 +266,7 @@ function changeScene(f, t) {
         document.getElementById(`s${f}`).style.display = 'none';
         const next = document.getElementById(`s${t}`);
         next.style.display = 'flex';
-        gsap.fromTo(next, {opacity:1, scale:1, duration:0.5});
+        gsap.fromTo(next, {opacity:0, scale:1.1}, {opacity:1, scale:1, duration:0.5});
         if(t === 3) startBubbleGame();
     }});
 }
@@ -347,7 +329,7 @@ function openGift() {
             document.getElementById('wishes-canvas').style.display = 'none';
             const letter = document.getElementById('scroll-letter');
             letter.style.display = 'flex';
-            gsap.fromTo(letter, {opacity:0, scale:0.8, y:50}, {opacity:1, scale:1, y:0, duration:1});
+            gsap.fromTo(letter, {opacity:0, scale:0.8}, {opacity:1, scale:1, duration:1});
         }});
     }, 800);
 }
